@@ -30,6 +30,19 @@ export const fetchPoolStats = async(id,{refetch}) => {
   }
 }
 
+export const fetchPoolRanks = async(id,{refetch}) => {
+  if(!id) {
+    throw Error("missed id")
+  }
+  const { Messages } = await ao.dryrun({
+    process: id,
+    tags: {Action:"Ranks"}
+  })
+  if(Messages?.length>0&&Messages[0]){
+    return JSON.parse(Messages[0]?.Data)
+  }
+}
+
 export const fetchPoolMine = async({pool_id,agent_id},{refetch}) => {
   if(!pool_id||!agent_id) {
     throw Error("missed pool id or agent id")
@@ -57,3 +70,4 @@ export const fetchActiveBets = async([id,{size,cursor}],{value,refetch})=>{
     return JSON.parse(Messages[0]?.Data)
   }
 }
+

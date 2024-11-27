@@ -33,10 +33,10 @@ export default props => {
     <main class="container">
       <section class="py-12 response_cols">
         <div class="col-span-full lg:col-span-8 flex flex-col">
-          <span class="text-6xl text-balance">A decentralized lottery game built on the AO computer</span>
+          <span class="text-6xl text-balance leading-18">A decentralized lottery game built on TheAoComputer</span>
         </div>
         <div class="col-span-full lg:col-span-4 lg:col-end-13  rounded-2xl flex flex-col justify-between gap-4">
-          <div class="flex flex-col">
+          <div class="flex flex-col gap-2">
             <span class="text-current/50 uppercase">Progressive Jackpot</span>
             <span class="text-4xl">
               <Show when={!state.loading} fallback="...">${toBalanceValue(state()?.jackpot, pool.denomination||6,2)}</Show>
@@ -66,15 +66,14 @@ export default props => {
           
         </div>
         <div class="col-span-full lg:col-span-7 lg:col-end-13">
-          <h2 class="text-3xl pb-4 text-balance">Base on the community, sharing profits with our community</h2>
-          <p class="text-sm text-current/50">Each bet is taxed at 10%, with profits being 100% distributed to the community. Users receive regular profit dividends based on the amount of profit-sharing token $ALT they hold.</p>
+          <h2 class="text-3xl pb-4 text-balance leading-10">Base on the community, Sharing profits by holding $LOTTO</h2>
+          <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $LOTTO allows you to continuously share in the jackpot profits. You can earn $LOTTO through betting and mining.</p>
         </div>
-      
       </section>
 
       <section class="py-8 response_cols border-t border-current/20 px-2">
         <div class=" col-span-full lg:col-span-4 flex flex-col justify-between gap-4">
-          <span class="text-3xl text-balance">On-chain betting and drawing without human control, Simple, Open and Transparent.</span>
+          <span class="text-3xl text-balance leading-10">On-chain betting and drawing without human control, Simple, Open and Transparent.</span>
           <span>
             <span class="text-current/50">The contract: </span>
             <Show when={pool?.id}>

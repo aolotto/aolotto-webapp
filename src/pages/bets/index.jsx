@@ -98,7 +98,7 @@ export default props => {
               
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
-            <div class="text-current/50 text-balance">All bets matching the lucky number {generateRange(pool?.digits||3)} will share the jackpot after draw. If no matching bets are placed, the last bettor takes all.</div>
+            <div class="text-current/50 text-sm">New bets extend the draw by 24 hours until wagers hit the jackpot or $1000. Matching bets share the reward. If no match, the last bettor takes all. <a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
             <div>
               <button 
                 class="btn btn-xl btn-primary"

@@ -24,6 +24,8 @@ export default props=>{
     label:"Minings"
   },{
     label:"Dividends"
+  },{
+    label:"Rewards"
   }])
 
   return(
@@ -53,7 +55,7 @@ export default props=>{
       <section class="response_cols py-8 px-1">
         <div class="col-span-full lg:col-span-7">
 
-          <InfoItem label={"Total Tickets"}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
+          <InfoItem label={"Tickets"}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
           <InfoItem label={"Total Bet"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
           <InfoItem label={"Total Win"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
           <InfoItem label={"Total Mine"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mine||0,agent.denomination||12,4)}</Show> <Ticker class="text-current/50">{agent.ticker}</Ticker></InfoItem>
@@ -64,7 +66,7 @@ export default props=>{
         <div class="col-span-full lg:col-span-4 lg:col-end-13">
           <div class="flex justify-between pb-4">
             <div class="flex flex-col">
-              <span class="text-current/50 uppercase">Uncliam Rewards</span>
+              <span class="text-current/50 uppercase">Unclaimed</span>
               <span><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[0]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></span>
             </div>
             <div>

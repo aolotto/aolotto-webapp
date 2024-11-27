@@ -2,19 +2,18 @@ import { createEffect, createMemo, For, Match, Show, Suspense, Switch } from "so
 import Avatar from "../../components/avatar"
 import { Icon } from "@iconify-icon/solid"
 import { ranks } from "../../signals/pool"
-import { pool } from "../../signals/global"
+import { agent } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import Ticker from "../../components/ticker"
 
 
 export default props => {
-  const bettings = createMemo(()=>ranks()?.bettings)
-  createEffect(()=>console.log("bettings",bettings()))
+  const minings = createMemo(()=>ranks()?.minings)
   return(
     <div class="response_cols gap-2 py-8">
       <Switch fallback={<span class="col-span-full">no rankings</span>}>
-        <Match when={bettings()?.length > 0}>
-          <For each={bettings()} when={!ranks.loading} fallback="loading...">
+        <Match when={minings()?.length > 0}>
+          <For each={minings()} when={!ranks.loading} fallback="loading...">
             {(item,index)=>{
               const [i] = Object.entries(item)
               return(
@@ -31,7 +30,7 @@ export default props => {
                   </div>
                   <div class="flex gap-8 items-center flex-1"><Avatar class="size-6" username={i?.[0]||"aolotto"}/> {i?.[0]} </div>
                   <div class="w-80 flex items-center justify-between">
-                    <span>{toBalanceValue(i?.[1]||0,pool.denomination||6,4)} <Ticker class="text-current/50">{pool.ticker}</Ticker></span>
+                    <span>{toBalanceValue(i?.[1]||0,agent.denomination||12,4)} <Ticker class="text-current/50">{agent.ticker}</Ticker></span>
                     <Icon icon="ei:external-link"></Icon>
                   </div>
                 </div>

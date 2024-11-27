@@ -15,6 +15,16 @@ export const Multiplier = props => {
   
   return(
     <div class="flex items-center rounded-md gap-3 ">
+       <button
+        class="btn btn-xs rounded-full uppercase"
+        disabled={value()<=min||props?.disabled}
+        onClick={()=>{
+          setValue(min)
+          onChange()
+        }}
+      >
+        min
+      </button>
       <button 
         class="btn btn-xs rounded-full btn-icon "
         disabled={value()<=min||props?.disabled}
@@ -37,6 +47,16 @@ export const Multiplier = props => {
         }}
       >
         <Icon icon="iconoir:plus"></Icon>
+      </button>
+      <button
+        class="btn btn-xs rounded-full uppercase"
+        disabled={value()>=max||props?.disabled}
+        onClick={()=>{
+          setValue(max)
+          onChange()
+        }}
+      >
+        max
       </button>
     </div>
   )

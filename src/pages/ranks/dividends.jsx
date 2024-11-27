@@ -8,13 +8,12 @@ import Ticker from "../../components/ticker"
 
 
 export default props => {
-  const bettings = createMemo(()=>ranks()?.bettings)
-  createEffect(()=>console.log("bettings",bettings()))
+  const dividends = createMemo(()=>ranks()?.dividends)
   return(
     <div class="response_cols gap-2 py-8">
       <Switch fallback={<span class="col-span-full">no rankings</span>}>
-        <Match when={bettings()?.length > 0}>
-          <For each={bettings()} when={!ranks.loading} fallback="loading...">
+        <Match when={dividends()?.length > 0}>
+          <For each={dividends()} when={!ranks.loading} fallback="loading...">
             {(item,index)=>{
               const [i] = Object.entries(item)
               return(
