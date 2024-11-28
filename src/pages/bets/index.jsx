@@ -98,7 +98,7 @@ export default props => {
               
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
-            <div class="text-current/50 text-sm">New bets extend the draw by 24 hours until wagers hit the jackpot or $1000. Matching bets share the reward. If no match, the last bettor takes all. <a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
+            <div class="text-current/50 text-sm">New bets extend the draw by <b class="text-base-content">24</b> hours until the wagers hit <b class="text-base-content">${toBalanceValue(state()?.wager_limit,6,1)}</b>. Matching bets share the reward. If no match, the last bettor takes all. <a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
             <div>
               <button 
                 class="btn btn-xl btn-primary"
@@ -121,10 +121,10 @@ export default props => {
       </section>
 
       <Show when={mine()}>
-        <section class="response_cols py-8 border-t border-current/20 flex justify-center">
-          <span class="inline-flex bg-third text-third-content">Bet&Mine</span> 
-          <span class="text-current/50">Mining quota of <span class="text-base-content"><Show when={!mine.loading} fallback="...">{toBalanceValue(mine()?.quota?.[0],agent.denomination||12,2)}</Show></span>
-           / {toBalanceValue(mine()?.quota?.[1],agent.denomination||12,2)} $LOTTO in this round. Estimated mining reward: <span class="text-base-content">{toBalanceValue(mine()?.quota?.[0] / 2100,agent.denomination||12,2)}</span> $LOTTO/bet</span>
+        <section class="response_cols py-8 border-t border-current/20 flex justify-center items-center">
+          <span class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1">Bet2Earn<Icon icon="carbon:information"></Icon></span> 
+          <span class="text-current/50">Remaining quota of <span class="text-base-content"><Show when={!mine.loading} fallback="...">{toBalanceValue(mine()?.quota?.[0],agent.denomination||12,2)}</Show></span>
+           /{toBalanceValue(mine()?.quota?.[1],agent.denomination||12,2)} $LOTTO in this round. Next ticket mining reward: <span class="text-base-content">{toBalanceValue(mine()?.quota?.[0] / 2100,agent.denomination||12,2)}</span> $LOTTO/bet</span>
         </section>
       </Show>
       

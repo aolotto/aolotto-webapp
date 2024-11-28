@@ -3,7 +3,7 @@ import Avatar from "../../components/avatar"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { Tabs } from "../../components/tabs"
-import { createMemo, Show } from "solid-js"
+import { createEffect, createMemo, createSignal, Match, Show, Suspense, Switch } from "solid-js"
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
@@ -11,6 +11,8 @@ import { pool,currency,agent } from "../../signals/global"
 import { createPlayerAccount,balances } from "../../signals/player"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"
+import Rewards from "./rewards"
+import Spinner from "../../components/spinner"
 
 
 
@@ -19,14 +21,21 @@ export default props=>{
 
   const subMenus = createMemo(()=>[{
     label:"Tickets",
-    key:"123"
+    key:"tickets"
   },{
-    label:"Minings"
+    label:"Rewards",
+    key:"rewards"
   },{
-    label:"Dividends"
+    label:"Dividends",
+    key:"dividends"
   },{
-    label:"Rewards"
+    label:"Claims",
+    key: "claims"
   }])
+
+  const [tab,setTab] = createSignal(subMenus()?.[0])
+
+  
 
   return(
   <Show when={connected()} fallback={<main class="container">welcome</main>}>
@@ -96,19 +105,24 @@ export default props=>{
             </div>
           </div>
         </div>
-        
-    
-   
 
       </section>
 
       <Tabs
         class="mt-0"
         items={subMenus()}
-        current={subMenus()?.[0]}
+        current={tab()||subMenus()?.[0]}
+        onSelected={({index,item})=>setTab(item)}
       />
-
-      <Tickets/>
+      <Suspense fallback={<Spinner/>}>
+        <Switch>
+          <Match when={tab()?.key=="tickets"}><Tickets/></Match>
+          <Match when={tab()?.key=="dividends"}><div>dividends</div></Match>
+          <Match when={tab()?.key=="rewards"}><Rewards/></Match>
+          <Match when={tab()?.key=="claims"}><div>claims</div></Match>
+        </Switch>
+      </Suspense>
+      
     </main>
   </Show>
   )

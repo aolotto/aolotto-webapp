@@ -31,9 +31,9 @@ export default props => {
   ]))
   return (
     <main class="container">
-      <section class="py-12 response_cols">
+      <section class="py-16 response_cols">
         <div class="col-span-full lg:col-span-8 flex flex-col">
-          <span class="text-6xl text-balance leading-18">A decentralized lottery game built on TheAoComputer</span>
+          <span class="text-6xl text-balance leading-18">1st decentralized <b>lottery</b> pool built on TheAoComputer</span>
         </div>
         <div class="col-span-full lg:col-span-4 lg:col-end-13  rounded-2xl flex flex-col justify-between gap-4">
           <div class="flex flex-col gap-2">
@@ -54,24 +54,24 @@ export default props => {
 
       </section>
 
-      <section class="py-8 response_cols border-t border-current/20 px-2">
+      <section class="py-16 response_cols border-t border-current/20 px-2">
         <div class="col-span-full lg:col-span-4">
           <div class="uppercase text-current/50">total sold</div>
           <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pool.denomination || 6,2)}</Show></div>
-          <div class="pt-2">
-            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Taxation:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
-            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Shared:</span> <span>${toBalanceValue(stats()?.taxation?.[2]*0.1,pool.denomination || 6,2)}</span></div>
-            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span>2</span><span class="text-current/50">$LOTTO holders</span></div>
+          <div class="pt-4">
+            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Realized Revenue:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
+            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Distributed:</span> <span>${toBalanceValue(stats()?.taxation?.[2]*0.1,pool.denomination || 6,2)}</span></div>
+            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total</span><span>2</span><span class="text-current/50">$LOTTO holders</span></div>
           </div>
           
         </div>
         <div class="col-span-full lg:col-span-7 lg:col-end-13">
-          <h2 class="text-3xl pb-4 text-balance leading-10">Base on the community, Sharing profits by holding $LOTTO</h2>
-          <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $LOTTO allows you to continuously share in the jackpot profits. You can earn $LOTTO through betting and mining.</p>
+          <h2 class="text-3xl pb-6 text-balance leading-10">Base on the community, Sharing profits by holding $LOTTO</h2>
+          <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $LOTTO allows you to continuously share in the profits. 70% of the total supply of 21 million will be earned for free through the #Bet2Earn mechanism.</p>
         </div>
       </section>
 
-      <section class="py-8 response_cols border-t border-current/20 px-2">
+      <section class="py-16 response_cols border-t border-current/20 px-2">
         <div class=" col-span-full lg:col-span-4 flex flex-col justify-between gap-4">
           <span class="text-3xl text-balance leading-10">On-chain betting and drawing without human control, Simple, Open and Transparent.</span>
           <span>
