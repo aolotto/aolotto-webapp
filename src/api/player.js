@@ -162,9 +162,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
         }
       }
     `
-    console.log(query_str)
     const res = await ao.query(query_str)
-    console.log("res",res)
     let bets
     if(res?.length > 0){
       bets = res.map(({node,cursor})=>{
@@ -173,6 +171,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
         for (const {name,value} of node.tags) {
           tags[name] = value
         }
+        const mining = tags["X-Mined"]?.split(",")
  
         return({
           id: node.id,
@@ -187,9 +186,9 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
           x_numbers: tags['X-Numbers'],
           price : tags.Price,
           timestamp : node?.block?.timestamp,
-          x_mine_amount : tags['X-Mine-Amount'],
-          x_mine_currency : tags['X-Mine-Currency'],
-          x_mine_token : tags['X-Mine-Token'],
+          created : tags['Created'],
+          round : tags['Round'],
+          mining,
           cursor
         })
       })
@@ -198,6 +197,254 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
     return bets
   } catch (error) {
     console.error("fetch user bets faild.", error)
+    return null
+  }
+}
+
+
+
+export async function fetchPlayerRewards([{player_id,pool_id},{size,cursor}],{refetching}){
+  console.log("fetchPlayerRewards",player_id)
+
+  if(!player_id) return null
+
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          recipients: ["${player_id}"],
+          first: ${size||100},
+          after: "${cursor?cursor:''}",
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "Action",
+              values: ["Win-Notice"]
+            },{
+              name: "From-Process",
+              values: ["${pool_id}"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp
+              }
+            }
+          }
+        }
+      }
+    `
+    console.log(query_str)
+    const res = await ao.query(query_str)
+    console.log("res",res)
+    let rewards
+    if(res?.length > 0){
+      rewards = res.map(({node,cursor})=>{
+        const tags = {}
+        for (const {name,value} of node.tags) {
+          tags[name] = value
+        }
+        return({
+          id: node.id,
+          prize: tags?.Prize,
+          tax: tags?.Tax,
+          token: tags?.Token,
+          ticker: tags?.Ticker,
+          denomination: tags?.Denomination,
+          jackpot: tags?.Jackpot,
+          tax_rate: tags?.['Tax-Rate'],
+          round: tags.Round,
+          lucky_numbers: tags?.['Lucky-Number'],
+          reward_type : tags?.['Reward-Type'],
+          timestamp : node?.block?.timestamp,
+          created : tags['Created'],
+          cursor
+        })
+      })
+    }
+    // console.log(bets)
+    return rewards
+  } catch (error) {
+    console.error("fetch user rewards faild.", error)
+    return null
+  }
+}
+
+
+
+export async function fetchPlayerDividends([{player_id,pool_id},{size,cursor}],{refetching}){
+  console.log("fetchPlayerDividends",player_id)
+
+  if(!player_id) return null
+
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          recipients: ["${player_id}"],
+          first: ${size||100},
+          after: "${cursor?cursor:''}",
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "Action",
+              values: ["Win-Notice"]
+            },{
+              name: "From-Process",
+              values: ["${pool_id}"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp
+              }
+            }
+          }
+        }
+      }
+    `
+    console.log(query_str)
+    const res = await ao.query(query_str)
+    console.log("res",res)
+    let rewards
+    if(res?.length > 0){
+      rewards = res.map(({node,cursor})=>{
+        const tags = {}
+        for (const {name,value} of node.tags) {
+          tags[name] = value
+        }
+        return({
+          id: node.id,
+          prize: tags?.Prize,
+          tax: tags?.Tax,
+          token: tags?.Token,
+          ticker: tags?.Ticker,
+          denomination: tags?.Denomination,
+          jackpot: tags?.Jackpot,
+          tax_rate: tags?.['Tax-Rate'],
+          round: tags.Round,
+          lucky_numbers: tags?.['Lucky-Number'],
+          reward_type : tags?.['Reward-Type'],
+          timestamp : node?.block?.timestamp,
+          created : tags['Created'],
+          cursor
+        })
+      })
+    }
+    // console.log(bets)
+    return rewards
+  } catch (error) {
+    console.error("fetch user rewards faild.", error)
+    return null
+  }
+}
+
+
+export async function fetchPlayerCliams([{player_id,pool_id},{size,cursor}],{refetching}){
+  console.log("fetchPlayerDividends",player_id)
+
+  if(!player_id) return null
+
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          recipients: ["${player_id}"],
+          first: ${size||100},
+          after: "${cursor?cursor:''}",
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "Action",
+              values: ["Win-Notice"]
+            },{
+              name: "From-Process",
+              values: ["${pool_id}"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp
+              }
+            }
+          }
+        }
+      }
+    `
+    console.log(query_str)
+    const res = await ao.query(query_str)
+    console.log("res",res)
+    let rewards
+    if(res?.length > 0){
+      rewards = res.map(({node,cursor})=>{
+        const tags = {}
+        for (const {name,value} of node.tags) {
+          tags[name] = value
+        }
+        return({
+          id: node.id,
+          prize: tags?.Prize,
+          tax: tags?.Tax,
+          token: tags?.Token,
+          ticker: tags?.Ticker,
+          denomination: tags?.Denomination,
+          jackpot: tags?.Jackpot,
+          tax_rate: tags?.['Tax-Rate'],
+          round: tags.Round,
+          lucky_numbers: tags?.['Lucky-Number'],
+          reward_type : tags?.['Reward-Type'],
+          timestamp : node?.block?.timestamp,
+          created : tags['Created'],
+          cursor
+        })
+      })
+    }
+    // console.log(bets)
+    return rewards
+  } catch (error) {
+    console.error("fetch user rewards faild.", error)
     return null
   }
 }
