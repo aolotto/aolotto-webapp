@@ -22,8 +22,8 @@ export default props => {
           🏆 <span class="text-current/50">{shortStr(item.id,8)}</span>
           </div>
           <div class="col-span-full lg:col-span-9 flex items-center justify-between">
-            {/* <div><span class="text-current/50">Bet</span> $1.00 <span class="text-current/50">with</span> <Xnumbers value={item.x_numbers+"*"+item.count}/> <span class="text-current/50">on</span> Round-{item.round} <Show when={item.mining}><Icon icon="iconoir:arrow-right" class="text-current/50"/> {toBalanceValue(item.mining?.[0],item.mining?.[2],2)} <Ticker class="text-current/50">{item?.mining?.[1]}</Ticker></Show></div>
-            <div><Moment ts={Number(item.created)}/></div> */}
+            {/* <div><span class="text-current/50">Bet</span> $1.00 <span class="text-current/50">with</span> <Xnumbers value={item.x_numbers+"*"+item.count}/> <span class="text-current/50">on</span> Round-{item.round} <Show when={item.mining}><Icon icon="iconoir:arrow-right" class="text-current/50"/> {toBalanceValue(item.mining?.[0],item.mining?.[2],2)} <Ticker class="text-current/50">{item?.mining?.[1]}</Ticker></Show></div> */}
+            <div><Moment ts={Number(item.created)}/></div>
           </div>
         </div>}
       </For>
