@@ -60,7 +60,7 @@ export default props => {
           <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pool.denomination || 6,2)}</Show></div>
           <div class="pt-4">
             <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Realized Revenue:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
-            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Distributed:</span> <span>${toBalanceValue(stats()?.taxation?.[2]*0.1,pool.denomination || 6,2)}</span></div>
+            <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Distributed:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
             <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total</span><span>2</span><span class="text-current/50">$LOTTO holders</span></div>
           </div>
           

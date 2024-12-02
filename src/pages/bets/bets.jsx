@@ -2,15 +2,14 @@ import Avatar from "../../components/avatar"
 import { Xnumbers } from "../../components/xnumber"
 import Ticker from "../../components/ticker"
 import { Icon } from "@iconify-icon/solid"
-import { createEffect, For, Show, Suspense, splitProps, createMemo } from "solid-js"
-import { createPages } from "../../lib/page"
-import { fetchActiveBets } from "../../api/pool"
+import { For, Show, Suspense, createMemo } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import tooltip from "../../components/tooltip"
 import { Moment } from "../../components/moment"
 import { app } from "../../signals/global"
 import Spinner from "../../components/spinner"
-import { bets } from "../../signals/pool"
+import { bets,hasMore,loadMore,loadingMore } from "../../signals/pool"
+import Loadmore from "../../components/loadmore"
 
 const BetItem = props => {
   const item = () => props.value
@@ -68,6 +67,9 @@ export default props => {
             return <BetItem value={item} onXNumberClick={props?.onXNumberClick}/>
           }}
         </For>
+        <Show when={hasMore()}>
+          <Loadmore loadMore={loadMore} loading={loadingMore()}/>
+        </Show>
       </Suspense>
     </section>
   )

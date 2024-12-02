@@ -2,7 +2,9 @@ import { InfoItem } from "../../components/infoitem"
 import { shortStr } from "../../lib/tool"
 import { ShareToSocial } from "../../components/share"
 import { Icon } from "@iconify-icon/solid"
-// import Draws from "./draws"
+import { Suspense } from "solid-js"
+import Spinner from "../../components/spinner"
+import Draws from "./draws"
 export default props => {
   return (
     <div class="container flex-col flex gap-12 py-16 min-h-lvh/2">
@@ -23,10 +25,12 @@ export default props => {
         </div>
         
       </section>
+      <Suspense fallback={<Spinner/>}>
+        <Draws/>
+      </Suspense>
+      
 
-      {/* <Draws/> */}
-
-      <section class="response_cols border-y border-current/20 py-12 px-1">
+      {/* <section class="response_cols border-y border-current/20 py-12 px-1">
         <div class="col-span-full lg:col-span-2">
           <span class="text-2xl">R2</span>
         </div>
@@ -59,7 +63,7 @@ export default props => {
         <span>1 2 3</span>
         <iconify-icon icon="iconoir:arrow-right"></iconify-icon>
         </div>
-      </section>
+      </section> */}
 
     </div>
   )

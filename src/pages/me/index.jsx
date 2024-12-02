@@ -3,21 +3,26 @@ import Avatar from "../../components/avatar"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { Tabs } from "../../components/tabs"
-import { createEffect, createMemo, createSignal, Match, Show, Suspense, Switch } from "solid-js"
+import { batch, createEffect, createMemo, createSignal, Match, Show, Suspense, Switch } from "solid-js"
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
 import { pool,currency,agent } from "../../signals/global"
-import { createPlayerAccount,balances } from "../../signals/player"
+import { createPlayerAccount,balances,refetchUserBalances } from "../../signals/player"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"
 import Rewards from "./rewards"
+import Claims from "./claims"
+import Dividends from "./dividends"
 import Spinner from "../../components/spinner"
+import { Claimer } from "../../components/claimer"
+import toast from "solid-toast"
 
 
 
 export default props=>{
-  const [account] = createPlayerAccount(()=>({player:address(),pool:pool.id}))
+  let _claimer
+  const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),pool:pool.id}))
 
   const subMenus = createMemo(()=>[{
     label:"Tickets",
@@ -51,11 +56,12 @@ export default props=>{
           <div class="flex gap-4 items-center">
             {/* <span class="text-current/50 text-sm">Join at : 2024/11/13</span> */}
             <button 
-              class="btn btn-icon rounded-full" 
+              class="btn btn-icon rounded-full btn-ghost" 
               use:tooltip="top" 
               title="Disconnect"
               onClick={handleDisconnection}
-            ><Icon icon="solar:logout-outline"></Icon>
+            >
+              <Icon icon="solar:logout-outline"></Icon>
             </button>
           </div>
         </div>
@@ -79,7 +85,13 @@ export default props=>{
               <span><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[0]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></span>
             </div>
             <div>
-              <button class="btn btn-primary rounded-full" disabled={account()&&Number(account()?.win?.[0])<=0}>Claim</button>
+              <button 
+                class="btn btn-primary rounded-full" 
+                disabled={account()&&Number(account()?.win?.[0])<=0}
+                onClick={()=>_claimer.open()}
+              >
+                Claim
+              </button>
             </div>
           </div>
           <div class="py-6 flex flex-col gap-4 border-t border-current/10">
@@ -117,12 +129,42 @@ export default props=>{
       <Suspense fallback={<Spinner/>}>
         <Switch>
           <Match when={tab()?.key=="tickets"}><Tickets/></Match>
-          <Match when={tab()?.key=="dividends"}><div>dividends</div></Match>
+          <Match when={tab()?.key=="dividends"}><Dividends/></Match>
           <Match when={tab()?.key=="rewards"}><Rewards/></Match>
-          <Match when={tab()?.key=="claims"}><div>claims</div></Match>
+          <Match when={tab()?.key=="claims"}><Claims/></Match>
         </Switch>
       </Suspense>
-      
+      <Claimer 
+        ref={_claimer}
+        rewards={account()?.win?.[1]}
+        tax={account()?.tax?.[0]}
+        user={address()}
+        onClaimed ={(e)=>{
+          
+          toast.success("Claimed!")
+          batch(()=>{
+            refetchUserBalances()
+            refetchAccount()
+          })
+          // toast.promise(new Promise((resolve, reject) => {
+            
+          // }),{
+          //   loading: 'Querying Claiming Result...',
+          //   success: (val) => {
+          //     const mined = val.x_mined&&val.x_mined.split(",")
+          //     return (
+          //       <div>
+          //         Successfully bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={val.x_mined}> and get mining reward: {toBalanceValue(mined[0],mined[2],2)} ${mined[1]}</Show>! 
+          //         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
+          //           <Icon icon="ei:external-link"></Icon>
+          //         </a>
+          //       </div>
+          //     )
+          //   },
+          //   error: "Querying faild."
+          // })
+        }}
+      />
     </main>
   </Show>
   )

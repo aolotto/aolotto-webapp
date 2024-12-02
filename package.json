@@ -16,7 +16,7 @@
     "@solid-primitives/i18n": "^2.1.1",
     "@solid-primitives/pagination": "^0.3.0",
     "@solid-primitives/share": "^2.0.6",
-    "@solidjs/router": "^0.14.3",
+    "@solidjs/router": "^0.15.1",
     "arweave": "^1.15.5",
     "arweave-wallet-connector": "^1.0.2",
     "color-hash": "^2.0.2",

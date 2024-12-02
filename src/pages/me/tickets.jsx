@@ -1,4 +1,4 @@
-import { createPlayerTickets } from "../../signals/player"
+import { createUserTickets } from "../../signals/player"
 import { connected,address } from "../../components/arwallet"
 import { pool } from "../../signals/global"
 import { createEffect, Match, Show, Switch } from "solid-js"
@@ -7,9 +7,10 @@ import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Moment } from "../../components/moment"
 import { Icon } from "@iconify-icon/solid"
 import Ticker from "../../components/ticker"
+import Loadmore from "../../components/loadmore"
 
 export default props => {
-  const [tickets,{hasMore}] = createPlayerTickets(()=>connected()&&{player_id:address(),pool_id:pool.id})
+  const [tickets,{hasMore,loadMore,loadingMore}] = createUserTickets(()=>connected()&&{player_id:address(),pool_id:pool.id})
   createEffect(()=>console.log(tickets()))
   return(
     <section 
@@ -27,6 +28,9 @@ export default props => {
           </div>
         </div>}
       </For>
+      <Show when={hasMore()}>
+        <Loadmore loadMore={loadMore} loading={loadingMore()}/>
+      </Show>
     </section>
   )
 }

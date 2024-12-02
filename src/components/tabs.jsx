@@ -46,7 +46,7 @@ export const Tabs = (props) => {
       <Index each={props.items}>
         {(item, index) => (
           <button 
-            className="text-base-content/70 hover:text-base-content h-[2.8em] flex items-center justify-center px-[0.4em] cursor-pointer transition-all" 
+            className="text-base-content/70 hover:text-base-content h-[2.8em] flex items-center justify-center px-[0.4em] cursor-pointer text-lg transition-all" 
             classList={{
               "text-base-content/70 border-b-1 border-b-base-content/0": item() !== selectedItem(),
               "text-base-content text-bold border-b-1 border-b-base-content border-box": item() === selectedItem(),

@@ -13,7 +13,7 @@ import { toBalanceValue, generateRange } from "../../lib/tool"
 import { pool,app,agent, currency } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
-import Numbers from "./numbers"
+
 
 
 export default props => {
@@ -72,7 +72,7 @@ export default props => {
             <InfoItem label={"Participation"}>
               <div class="flex gap-2">
                 <span><Show when={!state.loading} fallback="...">{state()?.players}</Show></span>
-                <span class="text-current/50">player</span>
+                <span class="text-current/50">player{state()?.players>1&&"s"}</span>
                 <span class="text-current/50">/</span>
                 <span><Show when={!state.loading} fallback="...">{state()?.bet?.[2]}</Show></span>
                 <span class="text-current/50">tickets</span>

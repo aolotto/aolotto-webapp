@@ -1,8 +1,11 @@
 import { createResource, createRoot } from "solid-js";
-import { fetchPlayerTickets,fetchPlayerAccount,fetchUserTokenBalances,fetchPlayerRewards} from "../api/player";
-import { pool,currency,agent } from "./global";
+import { fetchPlayerTickets,fetchPlayerAccount,fetchUserTokenBalances,fetchPlayerRewards,fetchPlayerCliams,fetchPlayerDividends} from "../api/player";
+import { currency,agent } from "./global";
 import { address,connected } from "../components/arwallet";
-import { createPages } from "../lib/page";
+import { createPagination } from "../lib/page";
+import { createStore } from "solid-js/store";
+
+const [store,setStore] = createStore({})
 
 export const createPlayerAccount = (signal) => createResource(signal, fetchPlayerAccount)
 
@@ -12,7 +15,33 @@ export const [balances,{refetch:refetchUserBalances}] = createRoot(()=>createRes
   }
 },fetchUserTokenBalances))
 
-export const createPlayerTickets = (signal) => createPages(signal,fetchPlayerTickets,{size:100})
-export const createPlayerRewards = (signal) => createPages(signal,fetchPlayerRewards,{size:100})
+
+export const createUserTickets = (signal) => {
+  if(!store.tickets){
+    setStore("tickets",createPagination(signal,fetchPlayerTickets,{size:100}))
+  }
+  return store.tickets
+}
+
+export const createUserRewards = (signal) => {
+  if(!store.rewards){
+    setStore("rewards",createPagination(signal,fetchPlayerRewards,{size:100}))
+  }
+  return store.rewards
+}
 
 
+export const createUserClaims = (signal) => {
+  if(!store.claims){
+    setStore("claims",createPagination(signal,fetchPlayerRewards,{size:100}))
+  }
+  return store.claims
+}
+
+
+export const createUserDividends = (signal) => {
+  if(!store.dividends){
+    setStore("dividends",createPagination(signal,fetchPlayerDividends,{size:100}))
+  }
+  return store.dividends
+}

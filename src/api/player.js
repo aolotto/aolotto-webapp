@@ -286,7 +286,7 @@ export async function fetchPlayerRewards([{player_id,pool_id},{size,cursor}],{re
 
 
 
-export async function fetchPlayerDividends([{player_id,pool_id},{size,cursor}],{refetching}){
+export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id},{size,cursor}],{refetching}){
   console.log("fetchPlayerDividends",player_id)
 
   if(!player_id) return null
@@ -308,10 +308,16 @@ export async function fetchPlayerDividends([{player_id,pool_id},{size,cursor}],{
               name: "Type", 
               values: ["Message"]
             },{
-              name: "Action",
-              values: ["Win-Notice"]
+              name: "X-Transfer-Type",
+              values: ["Distribution"]
             },{
               name: "From-Process",
+              values: ["${token_id}"]
+            },{
+              name: "Sender",
+              values: ["${agent_id}"]
+            },{
+              name: "X-Distribution-From",
               values: ["${pool_id}"]
             }]
         ) {
@@ -343,18 +349,12 @@ export async function fetchPlayerDividends([{player_id,pool_id},{size,cursor}],{
         }
         return({
           id: node.id,
-          prize: tags?.Prize,
-          tax: tags?.Tax,
-          token: tags?.Token,
-          ticker: tags?.Ticker,
-          denomination: tags?.Denomination,
-          jackpot: tags?.Jackpot,
-          tax_rate: tags?.['Tax-Rate'],
-          round: tags.Round,
-          lucky_numbers: tags?.['Lucky-Number'],
-          reward_type : tags?.['Reward-Type'],
+          distribute_id: tags?.['X-Distribution-Id'],
+          distribute_from: tags?.['X-Distribution-From'],
+          amount: tags?.['X-Amount'],
+          distribute_unit: tags?.['X-Unit-Share'],
           timestamp : node?.block?.timestamp,
-          created : tags['Created'],
+          token: tags?.['From-Process'],
           cursor
         })
       })
@@ -368,7 +368,7 @@ export async function fetchPlayerDividends([{player_id,pool_id},{size,cursor}],{
 }
 
 
-export async function fetchPlayerCliams([{player_id,pool_id},{size,cursor}],{refetching}){
+export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cursor}],{refetching}){
   console.log("fetchPlayerDividends",player_id)
 
   if(!player_id) return null
@@ -390,11 +390,14 @@ export async function fetchPlayerCliams([{player_id,pool_id},{size,cursor}],{ref
               name: "Type", 
               values: ["Message"]
             },{
-              name: "Action",
-              values: ["Win-Notice"]
+              name: "X-Transfer-Type",
+              values: ["Claim-Notice"]
             },{
               name: "From-Process",
-              values: ["${pool_id}"]
+              values: ["${token_id}"]
+            },{
+              name: "Sender",
+              values: ["${agent_id}"]
             }]
         ) {
           edges {
@@ -413,36 +416,30 @@ export async function fetchPlayerCliams([{player_id,pool_id},{size,cursor}],{ref
         }
       }
     `
-    console.log(query_str)
     const res = await ao.query(query_str)
     console.log("res",res)
-    let rewards
+    let claims
     if(res?.length > 0){
-      rewards = res.map(({node,cursor})=>{
+      claims = res.map(({node,cursor})=>{
         const tags = {}
         for (const {name,value} of node.tags) {
           tags[name] = value
         }
         return({
           id: node.id,
-          prize: tags?.Prize,
-          tax: tags?.Tax,
-          token: tags?.Token,
-          ticker: tags?.Ticker,
-          denomination: tags?.Denomination,
-          jackpot: tags?.Jackpot,
-          tax_rate: tags?.['Tax-Rate'],
-          round: tags.Round,
-          lucky_numbers: tags?.['Lucky-Number'],
-          reward_type : tags?.['Reward-Type'],
+          quantity: tags?.Quantity,
+          tax: tags?.['X-Tax'],
+          amount: tags?.['X-Amount'],
+          claim_id: tags?.['X-Claim-Id'],
+          sender: tags?.Sender,
+          pool: tags?.['X-Pool'],
           timestamp : node?.block?.timestamp,
-          created : tags['Created'],
           cursor
         })
       })
     }
     // console.log(bets)
-    return rewards
+    return claims
   } catch (error) {
     console.error("fetch user rewards faild.", error)
     return null
