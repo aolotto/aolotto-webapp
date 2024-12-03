@@ -14,7 +14,7 @@ import Home from './pages/home';
 import Bets from './pages/bets';
 import Draws from './pages/draws';
 import Ranks from './pages/ranks';
-import Alt from './pages/alt';
+import Token from './pages/token';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
 import Test from './pages/test'
@@ -79,7 +79,7 @@ render(() => (
     <Route path={["/bets/*"]} component={Bets} />
     <Route path={["/draws/*"]} component={Draws} />
     <Route path={["/ranks/*"]} component={Ranks} />
-    <Route path={["/alt/*"]} component={Alt} />
+    <Route path={["/lotto/*"]} component={Token} />
     <Route path={["/me/*"]} component={Me} />
     <Route path={["/test/*"]} component={Test}/>
     <Route path="*paramName" component={Notfound} />

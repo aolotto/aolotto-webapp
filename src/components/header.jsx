@@ -21,7 +21,7 @@ export default props => {
     "nav.bets": "Bets",
     "nav.draws":"Draws",
     "nav.ranks":"Ranks",
-    "nav.alt": "$LOTTO",
+    "nav.lotto": "$LOTTO",
     "nav.docs":"Docs"
   })
 
@@ -29,7 +29,7 @@ export default props => {
     "nav.bets": "投注",
     "nav.draws":"开奖",
     "nav.ranks":"排行",
-    "nav.alt": "$LOTTO",
+    "nav.lotto": "$LOTTO",
     "nav.docs":"文档"
   })
 
@@ -45,8 +45,8 @@ export default props => {
     name: "ranks",
     path: "/ranks"
   },{
-    name: "alt",
-    path: "/alt"
+    name: "lotto",
+    path: "/lotto"
   },{
     name: "docs",
     path: "https://docs.aolotto.com/en",

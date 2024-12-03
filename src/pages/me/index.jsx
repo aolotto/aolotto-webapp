@@ -74,7 +74,7 @@ export default props=>{
           <InfoItem label={"Total Bet"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
           <InfoItem label={"Total Win"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
           <InfoItem label={"Total Mine"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mine||0,agent.denomination||12,4)}</Show> <Ticker class="text-current/50">{agent.ticker}</Ticker></InfoItem>
-          <InfoItem label={"Dividends"}>0.00 <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
+          <InfoItem label={"Dividends"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.div||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
           
         </div>
 
