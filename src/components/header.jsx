@@ -21,7 +21,7 @@ export default props => {
     "nav.bets": "Bets",
     "nav.draws":"Draws",
     "nav.ranks":"Ranks",
-    "nav.lotto": "$LOTTO",
+    "nav.alt": "$ALT",
     "nav.docs":"Docs"
   })
 
@@ -29,7 +29,7 @@ export default props => {
     "nav.bets": "投注",
     "nav.draws":"开奖",
     "nav.ranks":"排行",
-    "nav.lotto": "$LOTTO",
+    "nav.alt": "$ALT",
     "nav.docs":"文档"
   })
 
@@ -45,8 +45,8 @@ export default props => {
     name: "ranks",
     path: "/ranks"
   },{
-    name: "lotto",
-    path: "/lotto"
+    name: "alt",
+    path: "/alt"
   },{
     name: "docs",
     path: "https://docs.aolotto.com/en",
@@ -63,7 +63,6 @@ export default props => {
     window.onscroll = null
   })
 
-  createEffect(()=>console.log(app))
 
   return(
     <header

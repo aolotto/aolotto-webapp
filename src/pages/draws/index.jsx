@@ -9,6 +9,7 @@ import { stats } from "../../signals/pool"
 import { currency } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 
+
 export default props => {
   createEffect(()=>console.log(stats()))
   return (

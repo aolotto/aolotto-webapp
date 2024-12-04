@@ -1,4 +1,6 @@
+import { message } from "@permaweb/aoconnect"
 import { AO } from "../lib/ao"
+import { app } from "../signals/global"
 let ao = new AO()
 
 
@@ -82,6 +84,17 @@ export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
     return draws
   } catch (error) {
     console.error("fetch minings faild.", error)
+    return null
+  }
+}
+
+export async function fetchDrawsDetail(id){
+  try {
+    const result = await ao.data(id,{cache:"force-cache"})
+    console.log(result)
+    return result
+  } catch (error) {
+    console.error("fetchDrawsDetail faild.", error)
     return null
   }
 }

@@ -14,7 +14,7 @@ import Home from './pages/home';
 import Bets from './pages/bets';
 import Draws from './pages/draws';
 import Ranks from './pages/ranks';
-import Token from './pages/token';
+import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
 import Test from './pages/test'
@@ -36,7 +36,8 @@ const App = props => {
       }),
       initApp({
         name: import.meta.env.VITE_APP_NAME || "Aolotto",
-        ar_host: import.meta.env.VITE_APP_HOST || "https://aolotto.com",
+        app_host: import.meta.env.VITE_APP_HOST || "https://aolotto.com",
+        ar_getway: import.meta.env.VITE_GATEWAY_URL || "https://arweave.net",
         version: import.meta.env.VITE_APP_VERSION || "beta",
         mode: import.meta.env.MODE || "dev",
         pool_id: import.meta.env.VITE_POOL_PROCESS,
@@ -79,7 +80,7 @@ render(() => (
     <Route path={["/bets/*"]} component={Bets} />
     <Route path={["/draws/*"]} component={Draws} />
     <Route path={["/ranks/*"]} component={Ranks} />
-    <Route path={["/lotto/*"]} component={Token} />
+    <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
     <Route path={["/test/*"]} component={Test}/>
     <Route path="*paramName" component={Notfound} />

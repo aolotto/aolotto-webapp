@@ -166,5 +166,10 @@ export class AO {
     return res?.data?.transactions?.edges
   }
 
+  data = async function (id,options) {
+    const getway = options?.gateWayUrl || this.gateWayUrl
+    return await fetch(getway+"/"+id+"/data",{cache:options?.cache || "no-cache"}).then(res => res.json())
+  }
+
 }
 
