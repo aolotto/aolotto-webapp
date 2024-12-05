@@ -355,6 +355,7 @@ export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id
           distribute_unit: tags?.['X-Unit-Share'],
           timestamp : node?.block?.timestamp,
           token: tags?.['From-Process'],
+          quantity: tags?.Quantity,
           cursor
         })
       })

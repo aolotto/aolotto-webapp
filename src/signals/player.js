@@ -33,7 +33,7 @@ export const createUserRewards = (signal) => {
 
 export const createUserClaims = (signal) => {
   if(!store.claims){
-    setStore("claims",createPagination(signal,fetchPlayerRewards,{size:100}))
+    setStore("claims",createPagination(signal,fetchPlayerCliams,{size:100}))
   }
   return store.claims
 }

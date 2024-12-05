@@ -3,7 +3,7 @@ import Avatar from "../../components/avatar"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { Tabs } from "../../components/tabs"
-import { batch, createEffect, createMemo, createSignal, Match, Show, Suspense, Switch } from "solid-js"
+import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
@@ -17,19 +17,20 @@ import Dividends from "./dividends"
 import Spinner from "../../components/spinner"
 import { Claimer } from "../../components/claimer"
 import toast from "solid-toast"
+import { useSearchParams } from "@solidjs/router"
 
 
 
 export default props=>{
   let _claimer
   const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),pool:pool.id}))
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const subMenus = createMemo(()=>[{
     label:"Tickets",
     key:"tickets"
   },{
-    label:"Rewards",
-    key:"rewards"
+    label:"Winnings",
+    key:"winnings"
   },{
     label:"Dividends",
     key:"dividends"
@@ -40,12 +41,17 @@ export default props=>{
 
   const [tab,setTab] = createSignal(subMenus()?.[0])
 
-  
+  onMount(()=>{
+    if(searchParams?.tab&&subMenus()){
+      const idx = subMenus().findIndex((item)=>item.key===searchParams.tab)
+      setTab(subMenus()?.[Math.max(idx,0)])
+    }
+  })
 
   return(
   <Show when={connected()} fallback={<main class="container">welcome</main>}>
     <main class="container">
-      <section class="response_cols pt-12">
+      <section class="response_cols py-8 border-b border-current/10 ">
         <div class="col-span-full flex justify-between">
           <div class="inline-flex items-center gap-4">
             <Avatar username={address()} class="size-8"></Avatar>
@@ -79,10 +85,10 @@ export default props=>{
         </div>
 
         <div class="col-span-full lg:col-span-4 lg:col-end-13">
-          <div class="flex justify-between pb-4">
-            <div class="flex flex-col">
-              <span class="text-current/50 uppercase">Unclaimed</span>
-              <span><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[0]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></span>
+          <div class="flex items-center justify-between pb-4">
+            <div class="flex items-center gap-4">
+              <span class="text-3xl">🏆</span>
+              <Show when={!account.loading} fallback="..."><span classList={{"text-current/50": account()?.win?.[0] == 0}}>${toBalanceValue(account()?.win?.[0]||0,currency.denomination||6,2)} </span></Show>
             </div>
             <div>
               <button 
@@ -94,7 +100,7 @@ export default props=>{
               </button>
             </div>
           </div>
-          <div class="py-6 flex flex-col gap-4 border-t border-current/10">
+          <div class="py-6 flex flex-col gap-4 ">
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
@@ -102,7 +108,7 @@ export default props=>{
                 <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[currency.id]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="#">Depoist<Icon icon="ei:external-link"></Icon></a>
+                <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">Depoist<Icon icon="ei:external-link"></Icon></a>
               </div>
             </div>
             <div class="flex items-center gap-2 justify-between">
@@ -124,13 +130,16 @@ export default props=>{
         class="mt-0"
         items={subMenus()}
         current={tab()||subMenus()?.[0]}
-        onSelected={({index,item})=>setTab(item)}
+        onSelected={({index,item})=>{
+          setSearchParams({tab:item.key})
+          setTab(item)
+        }}
       />
       <Suspense fallback={<Spinner/>}>
         <Switch>
           <Match when={tab()?.key=="tickets"}><Tickets/></Match>
           <Match when={tab()?.key=="dividends"}><Dividends/></Match>
-          <Match when={tab()?.key=="rewards"}><Rewards/></Match>
+          <Match when={tab()?.key=="winnings"}><Rewards/></Match>
           <Match when={tab()?.key=="claims"}><Claims/></Match>
         </Switch>
       </Suspense>

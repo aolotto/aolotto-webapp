@@ -30,6 +30,9 @@ export async function fetchLottoMinings([{pool_id,agent_id},{size,cursor}],{refe
             },{
               name: "X-Mined",
               values: []
+            },{
+              name:"Action",
+              values: ["Save-Lotto"]
             }]
         ) {
           edges {
@@ -69,7 +72,8 @@ export async function fetchLottoMinings([{pool_id,agent_id},{size,cursor}],{refe
           ticker: mined?.[1],
           denomination: mined?.[2],
           token: mined?.[3],
-          cursor
+          cursor,
+          timestamp: node.block.timestamp
         })
       })
     }

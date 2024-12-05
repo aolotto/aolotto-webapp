@@ -13,12 +13,13 @@ import { fetchDrawsDetail } from "../../api/draws"
 
 
 const DrawItem = props => {
-  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination}},rest] = splitProps(props,["item"])
+  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination,bet}},rest] = splitProps(props,["item"])
 
   return (
-    <section class="response_cols border-b border-current/20 first:border-t py-10  px-4 hover:bg-current/2">
+    <section class="response_cols py-8  px-8 bg-current/5 rounded-2xl">
         <div class="col-span-full lg:col-span-2">
-          <span class="text-2xl">Round-{round}</span>
+          <div class="text-current/50 uppercase pt-1">Round</div>
+          <div class="text-3xl">{round}</div>
         </div>
         <div class="col-span-full lg:col-span-6 flex flex-col gap-2">
           <InfoItem label={"Winning Numbers"}>
@@ -34,7 +35,7 @@ const DrawItem = props => {
           <InfoItem label={"Matched Bets"}><span classList={{
             "text-current/50" : matched<=0,
             "text-current" : matched>0
-          }}>{matched}</span> <span class="text-current/50">/ 2000</span></InfoItem>
+          }}>{matched}</span> <span class="text-current/50">/ {bet?.[0] || 0}</span></InfoItem>
           <InfoItem label={"Drawing Time"}><Datetime ts={Number(created)}/></InfoItem>
           <InfoItem label={"Taxation / Rate"}>{toBalanceValue(taxation,denomination||6,2)} <span class="text-current/50">${ticker}</span> / {taxation/jackpot}</InfoItem>
           <InfoItem label={"Drawing Id"}><a href={app.ao_link_url+"#/message/"+id} target="_blank" class="inline-flex items-center gap-2">{shortStr(id,6)} <Icon icon="ei:external-link"></Icon></a></InfoItem>
@@ -58,10 +59,10 @@ const DrawItem = props => {
                 <span>{winners} </span><span class="text-current/50">{winners>1?"Winners shared":"Winner takes"}</span>
               </button>  
             </div>
-            <div class="flex gap-2 px-1">
+            {/* <div class="flex gap-2 px-1">
               <Icon icon="proicons:info" />
               <span class="text-xs text-current/50">No matching bets this round, the last bettor takes the entire prize.</span>
-            </div>
+            </div> */}
           </div>
           <ShareToSocial/>
         </div>
@@ -75,7 +76,7 @@ export default props => {
   createEffect(()=>console.log("draws",draws()))
   return (
     <>
-      <section class="flex flex-col py-8 ">
+      <section class="flex flex-col py-8 gap-8">
         <For each={draws()}>
           {item=>{
             return <DrawItem item={item} onClickWinner={(id)=>{

@@ -18,7 +18,7 @@ export default props => {
             {(item,index)=>{
               const [i] = Object.entries(item)
               return(
-                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 py-2 rounded-md">
+                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 p-4 rounded-md bg-current/5">
                   <div 
                     class="text-current/50 size-6 text-sm rounded-full flex items-center justify-center"
                     classList={{

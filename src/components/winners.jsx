@@ -54,14 +54,17 @@ export default props => {
                     <div class="flex items-center gap-4" use:tooltip={["top",item?.[0]]}>
                       <span class="text-current/50">{index()+1}</span>
                       <Avatar class="size-6" username={item?.[0]}/>
-                      <a href={app.ao_link_url+"/#/entity/"+item?.[0]} target="_blank" class="inline-flex items-center gap-2">{shortStr(item?.[0],4)}<Icon icon="ei:external-link"></Icon></a>
+                      <a href={app.ao_link_url+"/#/entity/"+item?.[0]} target="_blank" class="inline-flex items-center gap-2 text-base-content/50">{shortStr(item?.[0],4)}<Icon icon="ei:external-link"></Icon></a>
                     </div>
                     <span>${toBalanceValue(item?.[1]||0,token()?.denomination||6,2)}</span>
                   </div>
                 )}
               </For>
             </div>
-            <div class="text-sm text-current/50 p-4">No matching bets this round, the last bettor takes the entire prize.</div>
+            <div class="text-sm text-current/50 py-4 flex gap-4 px-1">
+              <Icon icon="proicons:info" />
+              <p>No matching bets this round, the last bettor takes the entire prize.</p>
+            </div>
           </Show>
         </div>
       </ModalContainer>
