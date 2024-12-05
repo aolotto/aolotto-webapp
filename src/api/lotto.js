@@ -89,7 +89,7 @@ export async function fetchLottoMinings([{pool_id,agent_id},{size,cursor}],{refe
 export async function fetchLottoDividends([{pool_id,agent_id,token_id},{size,cursor}],{refetching}){
   console.log("fetchLottoDividends",agent_id)
 
-  if(!pool_id||!agent_id||!token_id) return null
+  if(!pool_id||!agent_id) return null
 
   try {
     const query_str =  `
@@ -151,6 +151,7 @@ export async function fetchLottoDividends([{pool_id,agent_id,token_id},{size,cur
           denomination: tags?.Denomination,
           token: tags?.Token,
           ticker: tags?.Ticker,
+          timestamp: node.block.timestamp,
           cursor
         })
       })

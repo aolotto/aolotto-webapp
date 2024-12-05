@@ -12,14 +12,12 @@ export default props => {
 
   const [minings,{loadMore,loadingMore,hasMore}] = createMinings(()=>({agent_id:agent.id,pool_id:pool.id}))
 
-  createEffect(()=>console.log(minings()))
-
   return(
     <div class="py-8">
       <For each={minings()} fallback={"no minings"}>
         {(item)=>(
           <div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md ">
-            <div class="flex items-center gap-2 col-span-full lg:col-span-4">
+            <div class="flex items-center gap-4 col-span-full lg:col-span-4">
               <Avatar username={item.address} class="size-7"/>
               <div><span class="text-current/50">{shortStr(item.address||"",8)}</span></div>
             </div>
