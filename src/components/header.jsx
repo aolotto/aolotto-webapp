@@ -20,7 +20,7 @@ export default props => {
   setDictionarys("en",{
     "nav.bets": "Bets",
     "nav.draws":"Draws",
-    "nav.ranks":"Ranks",
+    "nav.stats":"Stats",
     "nav.alt": "$ALT",
     "nav.docs":"Docs"
   })
@@ -28,7 +28,7 @@ export default props => {
   setDictionarys("zh",{
     "nav.bets": "投注",
     "nav.draws":"开奖",
-    "nav.ranks":"排行",
+    "nav.stats":"统计",
     "nav.alt": "$ALT",
     "nav.docs":"文档"
   })
@@ -42,8 +42,8 @@ export default props => {
     name: "draws",
     path: "/draws"
   },{
-    name: "ranks",
-    path: "/ranks"
+    name: "stats",
+    path: "/stats"
   },{
     name: "alt",
     path: "/alt"
@@ -67,7 +67,7 @@ export default props => {
   return(
     <header
       ref={_header}
-      className="h-16 flex items-center gap-4 px-4 justify-between sticky top-0 w-full"
+      className="h-16 flex items-center gap-4 px-4 justify-between sticky top-0 w-full z-1"
       classList={{
         "bg-base-0/100 shadow-gray-1000/5 shadow-xs":stickied(),
       }}

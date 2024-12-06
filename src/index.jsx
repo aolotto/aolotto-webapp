@@ -13,7 +13,7 @@ import Footer from './components/footer';
 import Home from './pages/home';
 import Bets from './pages/bets';
 import Draws from './pages/draws';
-import Ranks from './pages/ranks';
+import Stats from './pages/stats';
 import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
@@ -79,7 +79,7 @@ render(() => (
     <Route path={["/", "/home"]} component={Home} />
     <Route path={["/bets/*"]} component={Bets} />
     <Route path={["/draws/*"]} component={Draws} />
-    <Route path={["/ranks/*"]} component={Ranks} />
+    <Route path={["/stats/*"]} component={Stats} />
     <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
     <Route path={["/test/*"]} component={Test}/>
