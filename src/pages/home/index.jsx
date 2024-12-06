@@ -58,17 +58,17 @@ export default props => {
           </div>
         </div>
         <div class="col-span-full flex items-center justify-center gap-2 pt-8">
-          <Aox class="opacity-50 h-6"/>
-          <Everpay class="opacity-50 h-6"/>
-          <Aolink class="opacity-50 h-6"/>
-          <Typr class="opacity-50 h-6"/>
-          <Seagull class="opacity-50 h-6"/>
+          <Aox class="opacity-50 h-8"/>
+          <Everpay class="opacity-50 h-8"/>
+          <Aolink class="opacity-50 h-8"/>
+          <Typr class="opacity-50 h-8"/>
+          <Seagull class="opacity-50 h-8"/>
         </div>
 
 
       </section>
 
-      <section class="pt-8 pb-24 response_cols  px-2">
+      <section class="py-16 border-y border-current/10 response_cols  px-2">
         <div class="col-span-full lg:col-span-4">
           <div class="uppercase text-current/50">total sold</div>
           <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pool.denomination || 6,2)}</Show></div>
@@ -87,9 +87,7 @@ export default props => {
       </section>
 
   
-      <section class="py-16 response_cols px-2  border-t border-current/10">
-        
-        
+      <section class="py-16 response_cols px-2 ">
         <div class="col-span-full px-16 text-center flex flex-col justify-center items-center gap-4">
           <div class="flex items-center gap-2">
           <Show when={pool?.id}>
