@@ -189,7 +189,7 @@ export default props => {
         </section>
 
       <section class="flex justify-center flex-col items-center gap-8  p-16  text-center ">
-        <p class="text-2xl ">More than just a lottery, It's a gambling ecosystem driven by the $ALT community and running permanently.</p>
+        <p class="text-2xl ">More than just a lottery, It's a LottoFi ecosystem driven by the $ALT community and running permanently.</p>
         <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />Let's build together</button>
         <p class="text-current/50">Developers are welcome to join us in creating more games and applications based on $ALT. With its dividend feature, $ALT allows developers to enjoy continuous and sustainable profits.</p>
       </section>
