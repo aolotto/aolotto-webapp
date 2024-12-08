@@ -13,6 +13,7 @@ import Aolink from "./partners/aolink"
 import Typr from "./partners/typr"
 import Seagull from "./partners/seagull"
 import Pattern from "../../components/pattern"
+import Altlogo from "../../components/altlogo"
 
 
 
@@ -99,9 +100,9 @@ export default props => {
               </span>
             </div>
             <div class="flex flex-col items-center justify-center gap-4">
-              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">Start betting to WIN <iconify-icon icon="iconoir:arrow-right"></iconify-icon></A>
+              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">Start betting to WIN <Icon icon="iconoir:arrow-right"/></A>
               <Show when={!state.loading} fallback="...">
-                <span class="text-current/50">Round-{state()?.round || 1} is ongoing</span>
+                <span class="text-current/50">Round-{state()?.round || 1} , $1 on-chain betting</span>
               </Show>
             </div>
           </div>
@@ -133,8 +134,10 @@ export default props => {
           </div>
           <div class="col-span-full lg:col-span-7 lg:col-end-13">
             <div class="text-current/50 uppercase">#Bet2Earn</div>
-            <h2 class="text-3xl pb-6 text-balance leading-10">Sharing profits by holding $ALT</h2>
-            <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $ALT allows you to continuously share in the profits. 70% of the total supply of 210 million will be earned for free through the #Bet2Earn mechanism.</p>
+            <h2 class="text-3xl pb-6 text-balance leading-10 flex items-center gap-2">
+              Sharing profits by holding $ALT<Altlogo class="size-4"/>
+            </h2>
+            <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $ALT allows you to continuously share in the profits. 70% of the total supply of 210 million will be earned for free through the #Bet2Earn mechanism. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
           </div>
         </section>
 
