@@ -129,17 +129,18 @@ export default props => {
               <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Profits:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
               <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Dividends:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
               <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Circulation:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Circulating Supply:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div> */}
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Holders:</span> <span>23</span></div>
               {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Burned</span><span>2</span><span class="text-current/50">$ALT holders</span></div> */}
             </div>
             
           </div>
           <div class="col-span-full lg:col-span-7 lg:col-end-13">
             {/* <div class="text-current/50 uppercase">#Bet2Earn<Altlogo class="size-4"/></div> */}
-            <h2 class="text-3xl pb-6  leading-10 flex items-center gap-2">
+            <h2 class="text-2xl pb-6  leading-10 flex items-center gap-2">
             Unlock Continuous Dividends from $ALT, Fairly Issued via Bet2Mint.
             </h2>
-            <p class="text-sm text-current/50">The jackpot winners are required to pay taxes, and 100% of the tax revenue will be distributed to the community. Holding $ALT allows you to continuously share in the profits. 70% of the total supply of 210 million $ALT will be minted via the #Bet2Earn mechanism.. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
+            <p class="text-md text-current/50">The jackpot winners are required to pay taxes, and 100% of the tax revenue will be distributed to $ALT holders. 70% of the total supply (210 million) of $ALT will be issued via the #Bet2Mint mechanism. </p>
+            <p class=""><a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
           </div>
         </section>
 
@@ -191,9 +192,16 @@ export default props => {
         </section>
 
       <section class="flex justify-center flex-col items-center gap-8  p-16  text-center ">
-        <p class="text-2xl ">More than just a lottery, It's a LottoFi ecosystem driven by the $ALT community and running permanently.</p>
+        <p class="flex items-center gap-2">
+        <Icon icon="arcticons:apps" />
+        <Icon icon="arcticons:games-2" />
+        <Icon icon="arcticons:bookshelf" />
+        <Icon icon="arcticons:leafpic" />
+        </p>
+        <p class="text-2xl ">Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT token economy.</p>
         <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />Let's build together</button>
-        <p class="text-current/50">Developers are welcome to join us in creating more games and applications based on $ALT. With its dividend feature, $ALT allows developers to enjoy continuous and sustainable profits.</p>
+        <p class="text-current/50">LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators earn dividend rewards. With the global lottery market projected to surpass $450 billion by 2025, we aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.</p>
+     
       </section>
       <div class="absolute bottom-0 scale-105 left-0 w-full -z-1">
         <Pattern class="w-full"/>
