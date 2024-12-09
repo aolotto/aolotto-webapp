@@ -145,7 +145,7 @@ export default props=>{
       </Suspense>
       <Claimer 
         ref={_claimer}
-        rewards={account()?.win?.[1]}
+        rewards={account()?.win?.[0]}
         tax={account()?.tax?.[0]}
         user={address()}
         onClaimed ={(e)=>{

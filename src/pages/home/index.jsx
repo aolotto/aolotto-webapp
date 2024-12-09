@@ -100,7 +100,7 @@ export default props => {
               </span>
             </div>
             <div class="flex flex-col items-center justify-center gap-4">
-              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">Start betting to WIN <Icon icon="iconoir:arrow-right"/></A>
+              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">Let's bet to WIN <Icon icon="iconoir:arrow-right"/></A>
               <Show when={!state.loading} fallback="...">
                 <span class="text-current/50">Round-{state()?.round || 1} , $1 on-chain betting</span>
               </Show>
@@ -126,18 +126,20 @@ export default props => {
             <div class="uppercase text-current/50">total sold</div>
             <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pool.denomination || 6,2)}</Show></div>
             <div class="pt-4">
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Realized Revenue:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Distributed:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total</span><span>2</span><span class="text-current/50">$ALT holders</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Profits:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Dividends:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Circulation:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
+              {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Circulating Supply:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div> */}
+              {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Burned</span><span>2</span><span class="text-current/50">$ALT holders</span></div> */}
             </div>
             
           </div>
           <div class="col-span-full lg:col-span-7 lg:col-end-13">
-            <div class="text-current/50 uppercase">#Bet2Earn</div>
-            <h2 class="text-3xl pb-6 text-balance leading-10 flex items-center gap-2">
-              Sharing profits by holding $ALT<Altlogo class="size-4"/>
+            {/* <div class="text-current/50 uppercase">#Bet2Earn<Altlogo class="size-4"/></div> */}
+            <h2 class="text-3xl pb-6  leading-10 flex items-center gap-2">
+            Unlock Continuous Dividends from $ALT, Fairly Issued via Bet2Mint.
             </h2>
-            <p class="text-sm text-current/50">The jackpot is taxed, and all tax revenue is regularly distributed to the community. Holding $ALT allows you to continuously share in the profits. 70% of the total supply of 210 million will be earned for free through the #Bet2Earn mechanism. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
+            <p class="text-sm text-current/50">The jackpot winners are required to pay taxes, and 100% of the tax revenue will be distributed to the community. Holding $ALT allows you to continuously share in the profits. 70% of the total supply of 210 million $ALT will be minted via the #Bet2Earn mechanism.. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
           </div>
         </section>
 
