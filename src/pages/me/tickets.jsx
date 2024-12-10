@@ -25,7 +25,7 @@ export default props => {
           <span class="text-current/50" use:tooltip={["top",item.ticket]}>{shortStr(item.ticket,8)}</span>
           </div>
           <div class="col-span-full lg:col-span-9 flex items-center justify-between">
-            <div><span class="text-current/50">Bet</span> $1.00 <span class="text-current/50">with</span> <Xnumbers value={item.x_numbers+"*"+item.count}/> <span class="text-current/50">in</span> Round-{item.round} <Show when={item.mining}><Icon icon="iconoir:arrow-right" class="text-current/50"/> {toBalanceValue(item.mining?.[0],item.mining?.[2],2)} <Ticker class="text-current/50">{item?.mining?.[1]}</Ticker></Show></div>
+            <div><span class="text-current/50">Bet</span> ${toBalanceValue(item.amount,6,2)} <span class="text-current/50">with</span> <Xnumbers value={item.x_numbers+"*"+item.count}/> <span class="text-current/50">in</span> Round-{item.round} <Show when={item.mining}><Icon icon="iconoir:arrow-right" class="text-current/50"/> {toBalanceValue(item.mining?.[0],item.mining?.[2],2)} <Ticker class="text-current/50">{item?.mining?.[1]}</Ticker></Show></div>
             <div class="flex items-center gap-4">
               <span class="text-current/50"><Moment ts={Number(item.created)}/></span>
               <a href={`${app.ao_link_url}/#/message/${item?.ticket}`} target="_blank"><Icon icon="ei:external-link"></Icon></a>

@@ -117,7 +117,7 @@ const DrawItem = props => {
                   props.onClickWinner(id)
                 }
               }}
-            > <Icon icon="solar:user-linear" /> {winners}
+            > 🏆 {winners}
             </button>
           </div>
         </div>

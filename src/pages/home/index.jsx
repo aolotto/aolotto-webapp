@@ -128,8 +128,8 @@ export default props => {
             <div class="pt-4">
               <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Profits:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
               <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Dividends:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Circulation:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Holders:</span> <span>23</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Buyback & Burned:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Current Circulation:</span> <span>23</span></div>
               {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Burned</span><span>2</span><span class="text-current/50">$ALT holders</span></div> */}
             </div>
             
@@ -137,10 +137,9 @@ export default props => {
           <div class="col-span-full lg:col-span-7 lg:col-end-13">
             {/* <div class="text-current/50 uppercase">#Bet2Earn<Altlogo class="size-4"/></div> */}
             <h2 class="text-2xl pb-6  leading-10 flex items-center gap-2">
-            Unlock Continuous Dividends from $ALT, Fairly Issued via Bet2Mint.
+            LottoFi - Unlock Continuous Dividends from $ALT, Fairly Issued via Bet2Mint.
             </h2>
-            <p class="text-md text-current/50">The jackpot winners are required to pay taxes, and 100% of the tax revenue will be distributed to $ALT holders. 70% of the total supply (210 million) of $ALT will be issued via the #Bet2Mint mechanism. </p>
-            <p class=""><a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
+            <p class="text-md text-current/50">LottoFi's value is primarily driven by jackpot taxes, with 100% of profits returned to $ALT holders through dividends and buyback-to-burn. The total supply of $ALT is capped at 210 million, and anyone can earn it through the Bet2Mint mechanism. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
           </div>
         </section>
 
@@ -198,9 +197,9 @@ export default props => {
         <Icon icon="arcticons:bookshelf" />
         <Icon icon="arcticons:leafpic" />
         </p>
-        <p class="text-2xl ">Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT token economy.</p>
+        <p class="text-2xl ">Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT community.</p>
         <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />Let's build together</button>
-        <p class="text-current/50">LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators earn dividend rewards. With the global lottery market projected to surpass $450 billion by 2025, we aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.</p>
+        <p class="text-current/50">LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators or developers earn dividend rewards. With the global lottery market projected to surpass $450 billion by 2025, we aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.</p>
      
       </section>
       <div class="absolute bottom-0 scale-105 left-0 w-full -z-1">

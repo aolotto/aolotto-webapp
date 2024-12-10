@@ -135,7 +135,6 @@ export default props => {
           "opacity-100":!isPending()
         }}
         onXNumberClick={(v)=>{
-          console.log(v)
           if(v?.length == pool.digits){
             _numpicker.open(v)
           }

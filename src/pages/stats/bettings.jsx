@@ -9,7 +9,6 @@ import Ticker from "../../components/ticker"
 
 export default props => {
   const bettings = createMemo(()=>ranks()?.bettings)
-  createEffect(()=>console.log("bettings",bettings()))
   return(
     <div class="response_cols gap-2 py-8">
       <Switch fallback={<span class="col-span-full">no rankings</span>}>
