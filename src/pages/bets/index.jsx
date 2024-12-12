@@ -62,13 +62,13 @@ export default props => {
           <div class="h-16 flex items-center gap-4 w-fit">
             <span class=" border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center" use:tooltip={["bottom",()=>("Round "+state().round)]}><Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show></span>
             <span class="text-current/50 uppercase text-sm"><Show when={!state.loading} fallback="..."> Started at <Datetime ts={state()?.ts_round_start} display={"date"}/></Show></span>
-            {/* <ShareToSocial titie="$1 to win $2000.00, Aolotto Round-5 is ongoing"/> */}
+       
             <button 
               className="btn btn-icon btn-ghost rounded-full btn-sm"
               onClick={()=>{
                 setShareData({
-                  title: ` $1 to win $${toBalanceValue(state()?.jackpot||0,pool?.denomination||6,0)} 🏆, Last bettor takes at least 50% extra odds. #Aolotto Round-${state()?.round} is about to draw!`,
-                  url: "https://aolotto.com/#/bets"
+                  title: `$1 to win $${toBalanceValue(state()?.jackpot||0,pool?.denomination||6,0)}, last bettor takes at least a 50% higher chance to win on #Aolotto , Round-${state()?.round} is about to draw! 🏆`,
+                  url: "https://aolotto.com"
                 })
                 share(TWITTER)
               }}
@@ -118,7 +118,7 @@ export default props => {
               
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
-            <div class="text-current/50 text-sm">New bets extend the draw by <b class="text-base-content">24</b> hours until the wagers hit <b class="text-base-content">${toBalanceValue(state()?.wager_limit,6,1)}</b>. Matching bets share the reward. If no match, the last bettor takes all. <a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
+            <div class="text-current/50 text-sm">New bets extend the draw by <b class="text-base-content">24</b> hours from the time placed, until the wagers reach <b class="text-base-content">${toBalanceValue(state()?.wager_limit,6,1)}</b>. Matching bets share the reward. If no match, the last bettor takes all. <a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
             <div>
               <button 
                 class="btn btn-xl btn-primary"

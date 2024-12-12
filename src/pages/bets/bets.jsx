@@ -18,6 +18,7 @@ const BetItem = props => {
   const sponsor = createMemo(()=>item()?.sponsor?.split(","))
 
   return (
+    
     <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none">
         <div class="col-span-full lg:col-span-3">
           <div class="flex items-center gap-4">
@@ -75,6 +76,9 @@ export default props => {
       classList={props?.classList}
     >
       <Suspense fallback={<Spinner/>}>
+        <Show when={bets()?.length>0}>
+          <div class="w-full flex items-center justify-center pb-4">👇 The last bettor below gets at least a 50% higher chance to win. Bet now to take the spot.</div>
+        </Show>
         <For each={bets()} fallback={<div class="w-full items-center justify-center text-current/20 text-center">no bets</div>}>
           {(item)=>{
             return <BetItem value={item} onXNumberClick={props?.onXNumberClick}/>

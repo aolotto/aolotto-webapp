@@ -140,7 +140,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
               values: ["Message"]
             },{
               name: "Action",
-              values: ["Lotto-Notice"]
+              values: ["Lotto-Notice","Lotto-Ticket"]
             },{
               name: "From-Process",
               values: ["${pool_id}"]
