@@ -1,5 +1,5 @@
 export function toBalanceValue(balance: number, precision: number, len?: number): string {
-  const n = (balance / Math.pow(10, precision)).toFixed(len || precision);
+  const n = (balance / Math.pow(10, precision)).toFixed(len || 0);
   const regexp = /(?:\.0*|(\.\d+?)0+)$/;
   return n
 }

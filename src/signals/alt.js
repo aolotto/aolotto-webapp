@@ -1,7 +1,9 @@
 
 import { createPagination } from "../lib/page";
-import { fetchLottoMinings,fetchLottoDividends } from "../api/lotto";
+import { fetchLottoMinings,fetchLottoDividends,fetchTotalTokenHodlers,fetchTokenSupply } from "../api/lotto";
 import { createStore } from "solid-js/store";
+import { createResource,createRoot } from "solid-js";
+import { app } from "./global";
 
 
 const [store,setStore] = createStore({})
@@ -22,3 +24,6 @@ export const createDividends = (signal,fetcher,options)=>{
   return store.dividends
 }
 
+
+export const [holders,{refetch:refetchHodlers}] = createRoot(()=>createResource(()=>app.agent_id,fetchTotalTokenHodlers))
+export const [supply,{refetch:refetchSupply}] = createRoot(()=>createResource(()=>app.agent_id,fetchTokenSupply))

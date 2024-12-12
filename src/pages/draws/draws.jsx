@@ -71,9 +71,9 @@ import { fetchDrawsDetail } from "../../api/draws"
 // }
 
 const DrawItem = props => {
-  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination,bet}},rest] = splitProps(props,["item"])
+  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination,bet,block_height}},rest] = splitProps(props,["item"])
   return(
-    <section class="response_cols border-b border-current/10 py-12 px-4">
+    <section class="response_cols border-b border-current/10 py-12 px-2">
       <div class="col-span-full lg:col-span-3 flex flex-col justify-between gap-4">
         <div>
           <div class="text-current/50 uppercase">Round</div>
@@ -86,7 +86,7 @@ const DrawItem = props => {
             </For>
           </div>
           <div class="text-xs pt-4">
-            <span class="text-current/50">The lucky number was generated at block-Height </span><span>21344</span><span class="text-current/50">,it can be verifiable.</span> <a>Proof of Generation</a>
+            <span class="text-current/50">The lucky number was generated at block-Height </span><span>{block_height}</span><span class="text-current/50">,it can be verifiable.</span> <a>Proof of Generation</a>
           </div>
         </div>
       </div>

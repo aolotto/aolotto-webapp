@@ -1,4 +1,4 @@
-import { createDividends } from "../../signals/lotto"
+import { createDividends } from "../../signals/alt"
 import { agent,pool } from "../../signals/global"
 import { createEffect, For } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"

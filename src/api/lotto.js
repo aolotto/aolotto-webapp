@@ -51,7 +51,7 @@ export async function fetchLottoMinings([{pool_id,agent_id},{size,cursor}],{refe
         }
       }
     `
-    console.log(query_str)
+    // console.log(query_str)
     const res = await ao.query(query_str)
     // console.log(res)
     let minings
@@ -73,7 +73,7 @@ export async function fetchLottoMinings([{pool_id,agent_id},{size,cursor}],{refe
           denomination: mined?.[2],
           token: mined?.[3],
           cursor,
-          timestamp: node.block.timestamp
+          timestamp: node?.block?.timestamp
         })
       })
     }
@@ -161,5 +161,33 @@ export async function fetchLottoDividends([{pool_id,agent_id,token_id},{size,cur
   } catch (error) {
     console.error("fetch minings faild.", error)
     return null
+  }
+}
+
+
+export const fetchTotalTokenHodlers = async(id,{refetching}) => {
+  if(!id) {
+    throw Error("missed id")
+  }
+  const { Messages } = await ao.dryrun({
+    process: id,
+    tags: {Action:"Holders"}
+  })
+  console.log("fetchTotalTokenHodlers",Messages)
+  if(Messages?.length>0&&Messages[0]){
+    return JSON.parse(Messages[0]?.Data)
+  }
+}
+
+export const fetchTokenSupply = async(id,{refetching}) => {
+  if(!id) {
+    throw Error("missed id")
+  }
+  const { Messages } = await ao.dryrun({
+    process: id,
+    tags: {Action:"Total-Supply"}
+  })
+  if(Messages?.length>0&&Messages[0]){
+    return JSON.parse(Messages[0]?.Data)
   }
 }

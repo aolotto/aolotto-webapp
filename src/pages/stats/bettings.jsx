@@ -5,6 +5,7 @@ import { ranks } from "../../signals/pool"
 import { pool } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import Ticker from "../../components/ticker"
+import { app } from "../../signals/global"
 
 
 export default props => {
@@ -17,9 +18,9 @@ export default props => {
             {(item,index)=>{
               const [i] = Object.entries(item)
               return(
-                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 p-4 rounded-md bg-current/5">
+                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 px-1 py-2 rounded-md overflow-visible">
                   <div 
-                    class="text-current/50 size-6 text-sm rounded-full flex items-center justify-center"
+                    class="text-current/50 size-6 text-sm rounded-full flex items-center justify-center -ml-2 overflow-visible mr-6"
                     classList={{
                       "text-primary": index()==0,
                       "text-secondary": index()==1,
@@ -28,10 +29,10 @@ export default props => {
                   >
                     {index()+1}
                   </div>
-                  <div class="flex gap-8 items-center flex-1"><Avatar class="size-6" username={i?.[0]||"aolotto"}/> {i?.[0]} </div>
+                  <div class="flex gap-8 items-center flex-1"><Avatar class="size-6" username={i?.[0]||"aolotto"}/> <span class='text-current/50'>{i?.[0]}</span> </div>
                   <div class="w-80 flex items-center justify-between">
                     <span>{toBalanceValue(i?.[1]||0,pool.denomination||6,4)} <Ticker class="text-current/50">{pool.ticker}</Ticker></span>
-                    <Icon icon="ei:external-link"></Icon>
+                    <a href={app.ao_link_url+`/`+i?.[0]} target="_blank"><Icon icon="ei:external-link"></Icon></a>
                   </div>
                 </div>
               )

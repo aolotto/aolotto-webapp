@@ -7,19 +7,21 @@ import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/arwallet"
 import { state,mine,refetchPoolState,refetchBets,refetchPoolStats,refetchMine } from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount } from "solid-js"
+import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
 import { pool,app,agent, currency } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
 
+import { createSocialShare, TWITTER }  from "@solid-primitives/share";
+
 
 
 export default props => {
   let _numpicker
 
-  
+ 
 
   const draw_locker = createMemo(()=>{
     // if(state()&&pool()){
@@ -32,6 +34,12 @@ export default props => {
 
   const [isPending, start] = useTransition();
   const price = createMemo(()=>pool && Number(pool?.price))
+  const [shareData,setShareData] = createSignal({
+    title: `Aolotto`,
+    url: "https://aolotto.com",
+  })
+
+  const [share, close] = createSocialShare(() => shareData());
 
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
@@ -42,7 +50,7 @@ export default props => {
     });
   })
 
-  createEffect(()=>console.log(mine()))
+  // createEffect(()=>console.log(mine()))
 
 
   return(
@@ -54,7 +62,19 @@ export default props => {
           <div class="h-16 flex items-center gap-4 w-fit">
             <span class=" border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center" use:tooltip={["bottom",()=>("Round "+state().round)]}><Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show></span>
             <span class="text-current/50 uppercase text-sm"><Show when={!state.loading} fallback="..."> Started at <Datetime ts={state()?.ts_round_start} display={"date"}/></Show></span>
-            <ShareToSocial/>
+            {/* <ShareToSocial titie="$1 to win $2000.00, Aolotto Round-5 is ongoing"/> */}
+            <button 
+              className="btn btn-icon btn-ghost rounded-full btn-sm"
+              onClick={()=>{
+                setShareData({
+                  title: ` $1 to win $${toBalanceValue(state()?.jackpot||0,pool?.denomination||6,0)} 🏆, Last bettor takes at least 50% extra odds. #Aolotto Round-${state()?.round} is about to draw!`,
+                  url: "https://aolotto.com/#/bets"
+                })
+                share(TWITTER)
+              }}
+            >
+              <Icon icon="iconoir:share-android"></Icon>
+            </button>
           </div>
           <div class="flex flex-col gap-2">
             <InfoItem label={"Progressive Jackpot"}>

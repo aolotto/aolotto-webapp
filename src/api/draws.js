@@ -42,7 +42,8 @@ export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
                 value
               }
               block {
-                timestamp
+                timestamp,
+                height
               }
             }
           }
@@ -77,7 +78,8 @@ export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
           matched : tags?.Matched,
           players : tags?.Players,
           bet: tags?.Bet?.split(","),
-          cursor
+          cursor,
+          block_height: node.block.height
         })
       })
     }

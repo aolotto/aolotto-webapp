@@ -36,7 +36,7 @@ export default props => {
   })
 
   return (
-    <Modal ref={_winner}>
+    <Modal ref={_winner} mask={true}>
       <ModalHeader title="🏆 Rewards Detail"/>
       <ModalContainer class="w-96">
         

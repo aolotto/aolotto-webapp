@@ -1,4 +1,4 @@
-import { createMinings } from "../../signals/lotto"
+import { createMinings } from "../../signals/alt"
 import { agent,pool } from "../../signals/global"
 import { createEffect, For, Show,createRoot } from "solid-js"
 import Loadmore from "../../components/loadmore"
