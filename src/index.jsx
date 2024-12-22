@@ -2,15 +2,10 @@
 import './index.css'
 import { render } from 'solid-js/web'
 import { HashRouter, Route } from "@solidjs/router";
-import { Show, createSignal, onMount, createMemo } from "solid-js"
+import { Show, createSignal, onMount } from "solid-js"
 import { Toaster } from 'solid-toast';
 import { initwallet } from './components/arwallet';
 import { initApp,initProtocols } from './signals/global';
-import { ArweaveWalletKit } from '@arweave-wallet-kit/react';
-import ArConnectStrategy from "@arweave-wallet-kit/arconnect-strategy";
-import OthentStrategy from "@arweave-wallet-kit/othent-strategy";
-import BrowserWalletStrategy from "@arweave-wallet-kit/browser-wallet-strategy";
-import WebWalletStrategy from "@arweave-wallet-kit/webwallet-strategy";
 
 // components
 import Header from './components/header';
