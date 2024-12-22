@@ -12,7 +12,7 @@ import { setDictionarys,t } from "../../i18n"
 
 
 export default props => {
-  pay_i = protocols?.details[protocols.pay_id]
+  const pay_i = protocols?.details[protocols?.pay_id]
   setDictionarys("en",{
     "label.total_draws" : "Total Draws",
     "label.total_rewarded" : "Total Rewarded",
