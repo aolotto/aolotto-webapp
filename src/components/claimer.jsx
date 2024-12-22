@@ -1,20 +1,19 @@
 import { Modal,ModalContainer } from "./popup"
 import { createEffect, createMemo, createSignal, Match, onMount, Show, Switch } from "solid-js"
-import { currency } from "../signals/global"
 import { toBalanceValue,shortStr } from "../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { address,walletConnectionCheck,connected } from "./arwallet"
 import tooltip from "./tooltip"
 import { claim } from "../api/cliam"
 import toast from "solid-toast"
-import { pool } from "../signals/global"
+import { protocols} from "../signals/global"
 import Spinner from "./spinner"
 
 
 
 export const Claimer = props => {
   let _claimer
-  
+  const pay_i = protocols?.details[protocols.pay_id]
   const rewards = createMemo(()=>props?.rewards||0)
   const tax = createMemo(()=>props?.tax||0)
   const quantity = createMemo(()=>(props?.rewards||0)-(props?.tax||0))
@@ -40,7 +39,7 @@ export const Claimer = props => {
         <div className="text-current/50">📥 Claim your reward</div>
         <div className="flex flex-col items-center w-full">
           <span className="text-3xl">{toBalanceValue(rewards()||0,6,3)}</span>
-          <span className="text-current/50">${currency.ticker}</span>
+          <span className="text-current/50">${pay_i?.Ticker}</span>
         </div>
         <div className="text-sm text-center flex flex-col items-center gap-2">
           
@@ -80,7 +79,7 @@ export const Claimer = props => {
             disabled={claiming()||editing()}
             use:walletConnectionCheck={()=>{
               setClaiming(true)
-              claim(pool.id,recipient()||user())
+              claim(protocols?.agent_id,recipient()||user())
               .then(res=>{
                 console.log(res)
                 _claimer.close()

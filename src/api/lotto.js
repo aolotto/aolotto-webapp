@@ -246,7 +246,6 @@ export const fetchTotalTokenHodlers = async(id,{refetching}) => {
     let count = 0
     const balances = JSON.parse(Messages[0]?.Data)
     for (const key in balances) {
-      console.log(key)
       if(balances[key]>0){
         count++
       }

@@ -1,6 +1,6 @@
 import { createResource, createRoot } from "solid-js";
 import { fetchPlayerTickets,fetchPlayerAccount,fetchUserTokenBalances,fetchPlayerRewards,fetchPlayerCliams,fetchPlayerDividends,fetchPlayerMintings} from "../api/player";
-import { currency,agent } from "./global";
+import { protocols } from "./global";
 import { address,connected } from "../components/arwallet";
 import { createPagination } from "../lib/page";
 import { createStore } from "solid-js/store";
@@ -11,7 +11,7 @@ export const createPlayerAccount = (signal) => createResource(signal, fetchPlaye
 
 export const [balances,{refetch:refetchUserBalances}] = createRoot(()=>createResource(()=>{
   if(connected()){
-    return {player_id:address(),token_ids:[currency.id,agent.id]}
+    return {player_id:address(),token_ids:[protocols?.pay_id,protocols?.agent_id]}
   }
 },fetchUserTokenBalances))
 

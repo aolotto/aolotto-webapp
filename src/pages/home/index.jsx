@@ -2,7 +2,7 @@ import { Icon } from "@iconify-icon/solid"
 import { A } from "@solidjs/router"
 import { shortStr } from "../../lib/tool"
 import { createEffect, createMemo, For, Show } from "solid-js"
-import { pool,app,protocols } from "../../signals/global"
+import { app,protocols } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import { state,stats } from "../../signals/pool"
 import { toBalanceValue } from "../../lib/tool"
@@ -190,15 +190,15 @@ export default props => {
         <section class="py-16 response_cols px-2 ">
           <div class="col-span-full px-16 text-center flex flex-col justify-center items-center gap-4">
             <div class="flex items-center gap-2">
-            <Show when={pool?.id}>
+            <Show when={protocols?.pool_id}>
             <Icon icon="iconoir:component" />
                 <a 
                   class="inline-flex items-center text-base-content/50" 
-                  use:tooltip={["top-overlap",()=>pool.id]}
+                  use:tooltip={["top-overlap",()=>protocols?.pool_id]}
                   target="_blank"
-                  href={`${app.ao_link_url}/#/entity/${pool.id}`}
+                  href={`${app.ao_link_url}/#/entity/${protocols?.pool_id}`}
                 >
-                  {shortStr(pool.id,6)} <Icon icon="ei:external-link"></Icon>
+                  {shortStr(protocols?.pool_id,6)} <Icon icon="ei:external-link"></Icon>
                 </a>
               </Show>
             </div>

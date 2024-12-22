@@ -5,7 +5,12 @@ import { HashRouter, Route } from "@solidjs/router";
 import { Show, createSignal, onMount, createMemo } from "solid-js"
 import { Toaster } from 'solid-toast';
 import { initwallet } from './components/arwallet';
-import { initApp,initPool,initAgent,initCurrency,initProtocols } from './signals/global';
+import { initApp,initProtocols } from './signals/global';
+import { ArweaveWalletKit } from '@arweave-wallet-kit/react';
+import ArConnectStrategy from "@arweave-wallet-kit/arconnect-strategy";
+import OthentStrategy from "@arweave-wallet-kit/othent-strategy";
+import BrowserWalletStrategy from "@arweave-wallet-kit/browser-wallet-strategy";
+import WebWalletStrategy from "@arweave-wallet-kit/webwallet-strategy";
 
 // components
 import Header from './components/header';
@@ -49,14 +54,7 @@ const App = props => {
         ao_link_url: import.meta.env.VITE_AO_LINK
       })
       initProtocols(import.meta.env.VITE_AGENT_PROCESS)
-      .then((protocols)=>Promise.all([
-        initPool(protocols?.pool_id),
-        initAgent(protocols?.agent_id),
-        initCurrency(protocols?.pay_id)
-      ])
-      .then(()=>{
-        setInitialized(true)
-      }))
+      .then((protocols)=>setInitialized(true))
     } catch (error) {
       console.log(error)
     }

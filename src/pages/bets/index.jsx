@@ -6,11 +6,11 @@ import { ShareToSocial } from "../../components/share"
 import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/arwallet"
-import { state,mine,refetchPoolState,refetchBets,refetchStats,refetchMine } from "../../signals/pool"
+import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks} from "../../signals/pool"
 import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
-import { pool,protocols,agent, app } from "../../signals/global"
+import { protocols, app } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
@@ -195,13 +195,13 @@ export default props => {
       </Show>
       
       <Bets 
-        id={pool.id}
+        id={protocols?.pool_id}
         classList={{
           "opacity-20":isPending(),
           "opacity-100":!isPending()
         }}
         onXNumberClick={(v)=>{
-          if(v?.length == pool.digits){
+          if(v?.length == Number(pool_i?.Digits)){
             _numpicker.open(v)
           }
         }}
@@ -217,7 +217,7 @@ export default props => {
         batch(()=>{
           refetchPoolState()
           refetchStats()
-          refetchMine()
+          refetchPoolRanks()
         })
         start(()=>refetchBets())
       }}

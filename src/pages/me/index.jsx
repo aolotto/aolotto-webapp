@@ -7,7 +7,7 @@ import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Su
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
-import { pool,currency,agent,protocols } from "../../signals/global"
+import { protocols } from "../../signals/global"
 import { createPlayerAccount,balances,refetchUserBalances } from "../../signals/player"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"

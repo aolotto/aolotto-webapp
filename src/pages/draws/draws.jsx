@@ -1,7 +1,7 @@
 import { createEffect, createMemo, For, Show, splitProps } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { createDraws } from "../../signals/draws"
-import { agent, app, pool,protocols } from "../../signals/global"
+import { app, protocols } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import { Datetime } from "../../components/moment"
 import { InfoItem } from "../../components/infoitem"

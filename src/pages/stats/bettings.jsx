@@ -2,14 +2,14 @@ import { createEffect, createMemo, For, Match, Show, Suspense, Switch } from "so
 import Avatar from "../../components/avatar"
 import { Icon } from "@iconify-icon/solid"
 import { ranks } from "../../signals/pool"
-import { pool } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import Ticker from "../../components/ticker"
-import { app } from "../../signals/global"
+import { app,protocols } from "../../signals/global"
 import Empty from "../../components/empty"
 
 
 export default props => {
+  const pay_i = protocols?.details[protocols.pay_id]
   const bettings = createMemo(()=>ranks()?.bettings)
   return(
     <div class="response_cols gap-2 py-8">
@@ -32,7 +32,7 @@ export default props => {
                   </div>
                   <div class="flex gap-8 items-center flex-1"><Avatar class="size-6" username={i?.[0]||"aolotto"}/> <span class='text-current/50'>{i?.[0]}</span> </div>
                   <div class="w-80 flex items-center justify-between">
-                    <span>{toBalanceValue(i?.[1]||0,pool.denomination||6,4)} <Ticker class="text-current/50">{pool.ticker}</Ticker></span>
+                    <span>{toBalanceValue(i?.[1]||0,pay_i?.Denomination||6,4)} <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></span>
                     <a href={app.ao_link_url+`/`+i?.[0]} target="_blank"><Icon icon="ei:external-link"></Icon></a>
                   </div>
                 </div>

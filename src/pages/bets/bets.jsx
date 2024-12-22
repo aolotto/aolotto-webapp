@@ -95,7 +95,10 @@ export default props => {
       classList={props?.classList}
     >
       <Suspense fallback={<Spinner/>}>
-        <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+        <Show when={bets()?.length > 0}>
+         <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+        </Show>
+        
         <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
           {(item)=>{
             return <BetItem value={item} onXNumberClick={props?.onXNumberClick}/>

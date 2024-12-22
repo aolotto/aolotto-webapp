@@ -2,12 +2,13 @@ import { createEffect, createMemo, For, Match, Show, Suspense, Switch } from "so
 import Avatar from "../../components/avatar"
 import { Icon } from "@iconify-icon/solid"
 import { ranks } from "../../signals/pool"
-import { agent } from "../../signals/global"
+import { protocols } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import Ticker from "../../components/ticker"
 import Empty from "../../components/empty"
 
 export default props => {
+  const agent_i = protocols?.details[protocols.agent_id]
   const minings = createMemo(()=>ranks()?.mintings)
   return(
     <div class="response_cols gap-2 py-8">
@@ -30,7 +31,7 @@ export default props => {
                   </div>
                   <div class="flex gap-8 items-center flex-1"><Avatar class="size-6" username={i?.[0]||"aolotto"}/> {i?.[0]} </div>
                   <div class="w-80 flex items-center justify-between">
-                    <span>{toBalanceValue(i?.[1]||0,agent.denomination||12,4)} <Ticker class="text-current/50">{agent.ticker}</Ticker></span>
+                    <span>{toBalanceValue(i?.[1]||0,agent_i?.Denomination||12,4)} <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></span>
                     <Icon icon="ei:external-link"></Icon>
                   </div>
                 </div>

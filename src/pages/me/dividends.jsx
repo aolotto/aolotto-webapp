@@ -6,12 +6,12 @@ import { Xnumbers } from "../../components/xnumber"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Moment } from "../../components/moment"
 import { Icon } from "@iconify-icon/solid"
-import { currency } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Loadmore from "../../components/loadmore"
 import Empty from "../../components/empty"
 
 export default props => {
+  const pay_i = protocols?.details[protocols.pay_id]
   const [divedends,{hasMore,loadMore,loadingMore}] = createUserDividends(()=>connected()&&{player_id:address(),pool_id:protocols?.pool_id,agent_id:protocols?.agent_id,token_id:protocols?.pay_id})
   createEffect(()=>console.log(divedends()))
   return(
@@ -28,8 +28,8 @@ export default props => {
           <div class="col-span-full lg:col-span-9 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-current/50">Received</span> 
-              <span use:tooltip={["top",()=>toBalanceValue(item.quantity,currency?.denomination||6,currency?.denomination||6)]}>{toBalanceValue(item.quantity,currency?.denomination||6,4)}</span> 
-              <span class="text-current/50">${currency.ticker}</span> 
+              <span use:tooltip={["top",()=>toBalanceValue(item.quantity,pay_i?.Denomination||6,6)]}>{toBalanceValue(item.quantity,pay_i?.Denomination||6,4)}</span> 
+              <span class="text-current/50">${pay_i?.Ticker}</span> 
               <span class="text-current/50" use:tooltip={["top",item.distribute_from]}>From {shortStr(item.distribute_from,6)}</span> </div>
             <div class="flex items-center gap-4">
               <span class="text-current/50"><Moment ts={Number(item.timestamp*1000)}/></span>

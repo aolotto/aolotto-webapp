@@ -1,6 +1,5 @@
 import { AO } from "../lib/ao"
-import { cache } from "../lib/cache"
-import { pool } from "../signals/global"
+
 let ao = new AO()
 export const fetchPoolState = async(id,{refetch}) => {
   console.log('fetchPoolState',refetch)
