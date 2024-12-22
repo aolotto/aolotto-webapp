@@ -1,6 +1,6 @@
 
 import { createPagination } from "../lib/page";
-import { fetchLottoMinings,fetchLottoDividends,fetchTotalTokenHodlers,fetchTokenSupply } from "../api/lotto";
+import { fetchAltMinings,fetchAltDividends,fetchTotalTokenHodlers,fetchTokenSupply,fetchAltBuybacks } from "../api/lotto";
 import { createStore } from "solid-js/store";
 import { createResource,createRoot } from "solid-js";
 import { app } from "./global";
@@ -10,7 +10,7 @@ const [store,setStore] = createStore({})
 
 export const createMinings = (signal,fetcher,options) => {
   if(!store.minings){
-    const res = createPagination(signal,fetcher||fetchLottoMinings,{size:options?.size||50})
+    const res = createPagination(signal,fetcher||fetchAltMinings,{size:options?.size||50})
     setStore("minings",res)
   }
   return store.minings
@@ -18,10 +18,18 @@ export const createMinings = (signal,fetcher,options) => {
 
 export const createDividends = (signal,fetcher,options)=>{
   if(!store.dividends){
-    const res = createPagination(signal,fetcher||fetchLottoDividends,{size:options?.size||50})
+    const res = createPagination(signal,fetcher||fetchAltDividends,{size:options?.size||50})
     setStore("dividends",res)
   }
   return store.dividends
+}
+
+export const createBuybacks = (signal,fetcher,options)=>{
+  if(!store.buybacks){
+    const res = createPagination(signal,fetcher||fetchAltBuybacks,{size:options?.size||50})
+    setStore("buybacks",res)
+  }
+  return store.buybacks
 }
 
 

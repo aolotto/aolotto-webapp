@@ -2,18 +2,53 @@ import { createSignal,createEffect,createMemo,on,onMount, Show } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { InfoItem } from "./infoitem"
 import { shortStr, toBalanceValue } from "../lib/tool"
-import { pool,app,agent,currency } from "../signals/global"
+import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
 import { balances,refetchUserBalances } from "../signals/player"
 import { address,wallet } from "./arwallet"
 import { AO } from "../lib/ao"
 import Spinner from "./spinner"
+import { setDictionarys,t } from "../i18n"
 
 // components
 import { Modal, ModalHeader, ModalContainer, ModalFooter } from "./popup"
 import toast from "solid-toast"
 
+setDictionarys("en",{
+  "np.title" : (v)=> "Bet on Round-"+v,
+  "np.account" : "Account",
+  "np.pick_tip" : "Picks a 3-digit number",
+  "price" : "Price",
+  "multiplier" : "Multiplier",
+  "np.bets" : "Bets",
+  "cost" : "Cost",
+  "random" : "Random",
+  "balance" : "Balance",
+  "deposit" : "Deposit",
+  "np.pay_button" : "Pay",
+  "mint" : "Mint",
+  "np.pay_token" : "Pay Token",
+  "picked" : "Picked",
+  "np.minting_reward" : "Minting Reward"
+})
+setDictionarys("zh",{
+  "np.title" : (v)=> "投注到第"+v+"轮",
+  "np.account" : "账户",
+  "np.pick_tip" : "從下面選擇3位數號碼",
+  "price" : "单价",
+  "multiplier" : "倍数",
+  "cost" : "总价",
+  "random": "随机",
+  "balance" : "余额",
+  "deposit" : "储值",
+  "np.pay_button" : "支付",
+  "mint" : "铸币",
+  "np.pay_token" : "支付代币",
+  "picked" : "选中",
+  "np.bets" : "投注数量",
+  "np.minting_reward" : "铸币奖励"
+})
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
   for (let i = 0; i < digits; i++) {
@@ -40,9 +75,9 @@ const submitBets = ({
       tags: {
         Action: "Transfer",
         Quantity: String(cost),
-        Recipient: agent_id || app.agent_id,
+        Recipient: agent_id || protocols.agent_id,
         ['X-Numbers']: xnumber,
-        ['X-Pool']: pool_id || app.pool_id
+        ['X-Pool']: pool_id || protocols.pool_id
       }
     })
     if(!msg){reject("Send message error")}
@@ -64,16 +99,19 @@ const submitBets = ({
 
 export default props => {
   let _number_picker
+  const pay_i = protocols.details[protocols?.pay_id]
+  const pool_i = protocols.details[protocols?.pool_id]
+  const agent_i = protocols.details[protocols?.agent_id]
   const [picked, setPicked] = createSignal([])
   const [quantity, setQuantity] = createSignal()
   const enableMultiplier = createMemo(() => picked()?.join('').length >= 3)
   const [submiting,setSubmiting] = createSignal(false)
   const balance = createMemo(()=>{
     if(address()){
-      return balances()?.[currency?.id]
+      return balances()?.[protocols?.pay_id]
     }
   })
-  const cost = createMemo(()=>quantity()*pool?.price)
+  const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
   const enableSubmit = createMemo(()=>balance()>=cost()&&picked())
   createEffect(()=>{
     if(picked()?.length>=3){
@@ -107,7 +145,7 @@ export default props => {
       <ModalHeader>
         <div class="flex items-start justify-between text-xl w-full px-[1em] py-4">
        
-          <h2 class="px-2 py-1">Betting on Round {props?.state?.round}</h2>
+          <h2 class="px-2 py-1">{t("np.title",props?.state?.round||1)}</h2>
           <button 
             class="cursor-pointer"
             onClick={()=>{_number_picker.close()}}
@@ -119,7 +157,15 @@ export default props => {
       </ModalHeader>
       <ModalContainer className="sm:px-4 w-full overflow-y-scroll">
         <div class="p-3 border-t border-current/20">
-          <InfoItem label={"Player"}><Show when={address()}>{shortStr(address(),6)}</Show></InfoItem>
+          <InfoItem label={t("np.account")}><Show when={address()}>{shortStr(address(),6)}</Show></InfoItem>
+          <InfoItem class="py-[0.1em]" label={t("np.pay_token")} value={<div class="flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-2">
+              <image src={`https://arweave.net/${pay_i?.Logo}`} class="w-4 h-4"/> 
+              <span class="text-current/50">{pay_i?.Ticker}</span>
+            </span>
+            
+            <a href="https://aox.xyz/#/cex-deposit/USDC/1" target="_blank" class="inline-flex items-center">{t("deposit")}<Icon icon="ei:external-link"></Icon></a>
+          </div>}/>
         </div>
         <section class="border-t border-current/20 last:border-b py-4 flex flex-col gap-6">
           <div class="px-3  flex gap-2 items-center w-full justify-between">
@@ -127,10 +173,10 @@ export default props => {
               <Show 
                 when={picked()?.join("").length>=3} 
                 fallback={
-                  <span class="text-current/50">Pick 3-digit numbers below</span>
+                  <span class="text-current/50">{t("np.pick_tip")}</span>
               }>
                 <span>
-                  <span class="text-current/50">Picked:</span> {picked()} 
+                  <span class="text-current/50">{t("picked")}:</span> {picked()} 
                   <button class="btn btn-ghost btn-xs rounded-full btn-icon" onClick={()=>setPicked(generateRandomNumber(3))}>
                     <Icon icon="iconoir:shuffle"></Icon></button>
                 </span>
@@ -141,7 +187,7 @@ export default props => {
               <button class="btn btn-primary btn-xs rounded-full gap-[0.5em]" onClick={()=>{
                 setPicked(generateRandomNumber(3))
               }}>
-                <Icon icon="iconoir:shuffle"></Icon>Random
+                <Icon icon="iconoir:shuffle"></Icon>{t("random")}
               </button>
             }>
               <Multiplier 
@@ -189,23 +235,19 @@ export default props => {
           </div>
 
           <div class="px-3">
-            <InfoItem class="py-[0.1em]" label={"Price"} value={<span>{toBalanceValue(pool?.price,pool?.asset_bet?.[1]||6,1)} <span class="text-current/50"><Ticker>{pool?.asset_bet?.[0]}</Ticker></span> </span>}/>
-            <InfoItem class="py-[0.1em]" label={"Multiplier"} value={<Show when={quantity()&&quantity()>0} fallback="-">× {quantity()}</Show>}/>
-            <InfoItem class="py-[0.1em]" label={"Cost"} value={<Show when={cost()&&quantity()>0} fallback="-">
-              {toBalanceValue(cost() ,pool?.asset_bet?.[1]||6,1)} <span class="text-current/50"><Ticker>{pool?.asset_bet?.[0]}</Ticker></span>
+            <InfoItem class="py-[0.1em]" label={t("price")} value={<span>{toBalanceValue(pool_i?.Price,pay_i?.Denomination||6,1)} <span class="text-current/50"><Ticker>{pay_i?.Ticker}</Ticker></span> </span>}/>
+            <InfoItem class="py-[0.1em]" label={t("np.bets")} value={<Show when={quantity()&&quantity()>0} fallback="-">× {quantity()}</Show>}/>
+            <InfoItem class="py-[0.1em]" label={t("cost")} value={<Show when={cost()&&quantity()>0} fallback="-">
+              {toBalanceValue(cost() ,pay_i?.Denomination||6,1)} <span class="text-current/50"><Ticker>{pay_i?.Ticker}</Ticker></span>
             </Show>}/>
-            {/* <InfoItem label={"Cost"} value={<Show when={quantity()&&quantity()>0&&pool?.price} fallback="-">
-              {toBalanceValue(cost() ,pool?.asset_bet?.[1]||6,1)} <span class="text-current/50"><Ticker>{pool?.asset_bet?.[0]}</Ticker></span>
-            </Show>}/> */}
         </div>
         </section>
         
-        <Show when={props?.state?.mining_quota}>
+        <Show when={props?.minting}>
           <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-              <span class="text-current/50"><Icon icon="ph:arrow-elbow-down-right-light" /> Mining Reward(Est):</span> <Show when={quantity()&&props?.state?.mining_quota} fallback="...">{toBalanceValue(Number(props?.state?.mining_quota[0])/2100*quantity(),12,3)}<Ticker class="text-current/50">{agent.ticker}</Ticker></Show>
-            </div>
-            
+              <InfoItem label={t("np.minting_reward")} value={<div>
+                <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(Number(props?.minting?.per_reward)*quantity(),agent_i.Denomination,3)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
+              </div>}/>            
           </div>
         </Show>
         
@@ -214,8 +256,8 @@ export default props => {
       <ModalFooter class="px-4">
         <div class="py-6 px-2 flex justify-between items-center border-t border-current/20">
           <div class="px-1 flex flex-col flex-1">
-            <span class="text-current/50">Balance:</span>
-            <span class=""><Show when={balances.state=="ready"} fallback="...">{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pool.ticker}</Ticker></Show> - <a>deposit</a></span>
+            <span class="text-current/50">{t("balance")}:</span>
+            <span class=""><Show when={balances.state=="ready"} fallback="...">{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
           </div>
           <button
             disabled={balance.loading||!enableSubmit()||submiting()}
@@ -229,9 +271,9 @@ export default props => {
                 return
               }
               submitBets({
-                token_id: currency.id || app.token_id,
-                agent_id: agent.id || app.agent_id,
-                pool_id: pool.id || app.pool_id,
+                token_id: protocols.pay_id,
+                agent_id: protocols.agent_id,
+                pool_id: protocols.pool_id,
                 numbers: picked(),
                 cost: cost()
               })
@@ -243,7 +285,7 @@ export default props => {
                 _number_picker.close()
                 toast.promise(new Promise((resolve, reject) => {
                   new AO().dryrun({
-                    process: pool.id || app.pool_id,
+                    process: protocols.pool_id,
                     tags : {
                       Action : "Query",
                       Table : "Bets",
@@ -261,10 +303,10 @@ export default props => {
                 }),{
                   loading: 'Querying Betting Result...',
                   success: (val) => {
-                    const mined = val.x_mined&&val.x_mined.split(",")
+                    const mint = val.mint
                     return (
                       <div>
-                        Successfully bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={val.x_mined}> and get mining reward: {toBalanceValue(mined[0],mined[2],2)} ${mined[1]}</Show>! 
+                        Successfully bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.amount,mint.denomination,2)} ${mint.ticker}</Show>! 
                         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
                           <Icon icon="ei:external-link"></Icon>
                         </a>
@@ -280,7 +322,7 @@ export default props => {
               .finally(()=>setSubmiting(false))
             }}
           >
-            {submiting()?<Spinner/>:"Pay"}
+            {submiting()?<Spinner/>:t("np.pay_button")}
           </button>
         </div>
         

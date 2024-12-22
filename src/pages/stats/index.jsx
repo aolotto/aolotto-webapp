@@ -7,6 +7,7 @@ import Dividends from "./dividends"
 import { createSignal, Match, onMount, Suspense, Switch } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { InfoItem } from "../../components/infoitem"
+import Spinner from "../../components/spinner"
 
 export default props => {
   const tabs = [{
@@ -27,8 +28,8 @@ export default props => {
     setTab(tabs[0])
   })
   return(
-    <main class="container">
-      <section class="response_cols py-12">
+    <main class="container py-16">
+      {/* <section class="response_cols py-12">
         <div class="col-span-3 bg-current/5 p-6 gap-2 flex-col flex rounded-xl">
           <div class="text-current/50 uppercase">Bettings ($wUSDC)</div>
           <div class="text-2xl">2345.00</div>
@@ -49,8 +50,8 @@ export default props => {
           <div class="text-2xl">2345.00</div>
           <div class="text-current/50 text-sm">200 Holders</div>
         </div>
-      </section>
-      <section class="response_cols">
+      </section> */}
+      <section class="response_cols ">
         <div class="col-span-full">
           <Tabs 
             items={tabs}
@@ -60,7 +61,7 @@ export default props => {
         </div>
       </section>
       <div>
-      <Suspense fallback="loading...">
+      <Suspense fallback={<div className="w-full h-40 flex flex-col items-center justify-center"><Spinner/></div>}>
         <Switch>
           <Match when={tab()?.key == "bet"}><Bettings/></Match>
           <Match when={tab()?.key == "win"}><Winnings/></Match>

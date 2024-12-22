@@ -1,4 +1,4 @@
-import { createUserTickets } from "../../signals/player"
+import { createUserMintings } from "../../signals/player"
 import { connected,address } from "../../components/arwallet"
 import { app,protocols } from "../../signals/global"
 import { createEffect, Match, Show, Switch } from "solid-js"
@@ -13,23 +13,31 @@ import Empty from "../../components/empty"
 import { setDictionarys,t } from "../../i18n"
 
 export default props => {
-  const [tickets,{hasMore,loadMore,loadingMore}] = createUserTickets(()=>connected()&&{player_id:address(),pool_id:protocols?.pool_id})
-  createEffect(()=>console.log("Tickets",tickets()))
+  const [mintings,{hasMore,loadMore,loadingMore}] = createUserMintings(()=>connected()&&{player_id:address(),pool_id:protocols?.pool_id,agent_id:protocols?.agent_id})
+  createEffect(()=>console.log("Tickets",mintings()))
+  setDictionarys("en",{
+    "minted":"Minted",
+    "received":"Received",
+  })
+  setDictionarys("zh",{
+    "minted":"铸造",
+    "received":"收到",
+  })
   return(
     <section 
       class=" py-10 flex flex-col gap-4 "
       classList={props?.classList}
     >
-      <For each={tickets()} fallback={<Empty tips="No bets yet"/>}>
+      <For each={mintings()} fallback={<Empty tips="No bets yet"/>}>
         {(item,index)=><div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md">
           <div class="col-span-full lg:col-span-3 flex items-center gap-2">
-          <span>🎟️</span> 
+          <span>🪙</span> 
           <span class="text-current/50" use:tooltip={["top",item?.id]}>{shortStr(item?.id,8)}</span>
           </div>
           <div class="col-span-full lg:col-span-9 flex items-center justify-between">
-            <div><span class="text-current/50">Bet</span> ${toBalanceValue(item?.amount,6,2)} <span class="text-current/50">with</span> <Xnumbers value={item.x_numbers+"*"+item.count}/> <span class="text-current/50">in</span> Round-{item.round} <Show when={item.mining}><Icon icon="iconoir:arrow-right" class="text-current/50"/> {toBalanceValue(item.mining?.[0],item.mining?.[2],2)} <Ticker class="text-current/50">{item?.mining?.[1]}</Ticker></Show></div>
+            <div><span class="text-current/50">{t("minted")} 23.00 , {t("received")} 20.00 $ALT</span></div>
             <div class="flex items-center gap-4">
-              <span class="text-current/50"><Moment ts={Number(item?.created)}/></span>
+              <span class="text-current/50"><Moment ts={Number(item?.timestamp * 1000)}/></span>
               <a href={`${app.ao_link_url}/#/message/${item?.ticket}`} target="_blank"><Icon icon="ei:external-link"></Icon></a>
             </div>
           </div>

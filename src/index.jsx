@@ -5,7 +5,8 @@ import { HashRouter, Route } from "@solidjs/router";
 import { Show, createSignal, onMount, createMemo } from "solid-js"
 import { Toaster } from 'solid-toast';
 import { initwallet } from './components/arwallet';
-import { initApp,initPool,initAgent,initCurrency } from './signals/global';
+import { initApp,initPool,initAgent,initCurrency,initProtocols } from './signals/global';
+
 // components
 import Header from './components/header';
 import Footer from './components/footer';
@@ -32,7 +33,8 @@ const App = props => {
           host: import.meta.env.VITE_GATEWAY || "arweave.net",
           port: 443,
           protocol: "https"
-        }
+        },
+        gqlEndpoint: import.meta.env.VITE_GQL_ENDPOINT || "https://arweave-search.goldsky.com/graphql"
       }),
       initApp({
         name: import.meta.env.VITE_APP_NAME || "Aolotto",
@@ -46,15 +48,15 @@ const App = props => {
         env: import.meta.env,
         ao_link_url: import.meta.env.VITE_AO_LINK
       })
-      Promise.all([
-        initPool(import.meta.env.VITE_POOL_PROCESS),
-        initAgent(import.meta.env.VITE_AGENT_PROCESS),
-        initCurrency(import.meta.env.VITE_TOKEN_PROCESS)
+      initProtocols(import.meta.env.VITE_AGENT_PROCESS)
+      .then((protocols)=>Promise.all([
+        initPool(protocols?.pool_id),
+        initAgent(protocols?.agent_id),
+        initCurrency(protocols?.pay_id)
       ])
       .then(()=>{
         setInitialized(true)
-      })
-      
+      }))
     } catch (error) {
       console.log(error)
     }

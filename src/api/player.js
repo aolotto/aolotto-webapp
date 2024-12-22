@@ -1,3 +1,4 @@
+import ticker from "../components/ticker"
 import { AO } from "../lib/ao"
 let ao = new AO()
 
@@ -38,14 +39,14 @@ export async function fetchTokenBalance(params,{value,refetching}){
 }
 
 
-export async function fetchPlayerAccount({player,pool},{refetching}){
+export async function fetchPlayerAccount({player,id},{refetching}){
   try {
-    if(!player||!pool) return
-    let key ='AOLOTTO-ACCOUNT-'+pool+player
+    if(!player||!id) return
+    let key ='AOLOTTO-ACCOUNT-'+id+player
     let localData = sessionStorage.getItem(key)
     if(!localData || refetching){
       return await ao.dryrun({
-        process: pool,
+        process: id,
         tags: { Action: "Get-Player", Player: player }
       })
       .then(({ Messages,Errors }) => {
@@ -118,7 +119,7 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
 
 
 export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{refetching}){
-  console.log("fetchPlayerTickets",player_id)
+  console.log("fetchPlayerTickets",player_id,pool_id)
 
   if(!player_id) return null
 
@@ -140,7 +141,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
               values: ["Message"]
             },{
               name: "Action",
-              values: ["Lotto-Notice","Lotto-Ticket"]
+              values: ["Lotto-Ticket"]
             },{
               name: "From-Process",
               values: ["${pool_id}"]
@@ -162,6 +163,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
         }
       }
     `
+ 
     const res = await ao.query(query_str)
     let bets
     if(res?.length > 0){
@@ -171,32 +173,115 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
         for (const {name,value} of node.tags) {
           tags[name] = value
         }
-        const mining = tags["X-Mined"]?.split(",")
+        const mint = tags?.["X-Mint"]?.split(",")
  
         return({
           id: node.id,
           ticket: tags?.['Pushed-For'],
-          pool: tags?.Pool,
           token: tags?.Token,
-          currency: tags?.Currency?.split(","),
+          ticker: tags?.Ticker,
+          denomination: tags?.Denomination,
           count: tags?.Count&&Number(tags?.Count),
           amount: tags?.Amount,
-          store: tags.Store,
           round: tags.Round,
           x_numbers: tags['X-Numbers'],
           price : tags.Price,
           timestamp : node?.block?.timestamp,
           created : tags['Created'],
           round : tags['Round'],
-          mining,
+          mint,
           cursor
         })
       })
     }
-    // console.log(bets)
+    console.log(bets)
     return bets
   } catch (error) {
     console.error("fetch user bets faild.", error)
+    return null
+  }
+}
+
+
+export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cursor}],{refetching}){
+  console.log("fetchPlayerMintings",player_id,pool_id)
+
+  if(!player_id||!pool_id||!agent_id) return null
+
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          recipients: ["${pool_id}"],
+          first: ${size||100},
+          after: "${cursor?cursor:''}",
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "Action",
+              values: ["Save-Ticket"]
+            },{
+              name: "From-Process",
+              values: ["${agent_id}"]
+            },{
+              name: "Sender",
+              values: ["${player_id}"]
+            },{
+              name: "Mint",
+              values: ["${agent_id}"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp
+              }
+            }
+          }
+        }
+      }
+    `
+ 
+    const res = await ao.query(query_str)
+    let mints
+    if(res?.length > 0){
+      mints = res.map(({node,cursor})=>{
+
+        const tags = {}
+        for (const {name,value} of node.tags) {
+          tags[name] = value
+        }
+        const mint = tags?.["X-Mint"]?.split(",")
+ 
+        return({
+          id: node.id,
+          total: tags?.['Mint-Total'],
+          buff: tags?.['Mint-Buff'],
+          speed : tags?.['Mint-Speed'],
+          amount: tags?.['Mint-Amount'],
+          minter: tags?.Sender,
+          timestamp : node?.block?.timestamp,
+          cursor
+        })
+      })
+    }
+    console.log(mints)
+    return mints
+  } catch (error) {
+    console.error("fetch user mintings faild.", error)
     return null
   }
 }

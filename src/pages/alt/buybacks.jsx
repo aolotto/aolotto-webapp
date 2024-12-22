@@ -1,35 +1,39 @@
-import { createDividends } from "../../signals/alt"
+import { createBuybacks } from "../../signals/alt"
 import { protocols } from "../../signals/global"
-import { createEffect, For } from "solid-js"
+import { createEffect, For,Show } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Datetime } from "../../components/moment"
 import { app } from "../../signals/global"
 import { Icon } from "@iconify-icon/solid"
 import Empty from "../../components/empty"
+import Loadmore from "../../components/loadmore"
 import { stats } from "../../signals/pool"
 import { setDictionarys,t } from "../../i18n"
-import Loadmore from "../../components/loadmore"
+
 
 export default props => {
-  const [dividends,{hasMore,loadingMore}] = createDividends(()=>({pool_id:protocols?.pool_id,agent_id:protocols?.agent_id}))
+  const [buybacks,{hasMore,loadingMore}] = createBuybacks(()=>({buyback_id:protocols.buybacks_id,agent_id:protocols?.agent_id}))
+  
   setDictionarys("en",{
-    "div.tips": (v)=> <span>A total of <span class="text-base-content">${v.paid}</span> in dividends has been distributed, with <span class="text-base-content">${v.unpaid}</span> remaining.</span>
-  })
-  setDictionarys("zh",{
-    "div.tips": (v)=> <span>累计已分发<span class="text-base-content">${v.paid}</span>的分红，还有<span class="text-base-content">${v.unpaid}</span>待分发。</span>
+    "b.tips": (v)=> <span>A total of <span class="text-base-content">{v.burned}</span> $ALT has been bought back and burned, costing <span class="text-base-content">${v.cost}</span> .</span>
   })
 
-  createEffect(()=>console.log(stats()))
+  setDictionarys("zh",{
+    "b.tips": (v)=> <span>累计已回购销毁<span class="text-base-content">${v.burned}</span> $ALT，花费了<span class="text-base-content">${v.cost}</span>。</span>
+  })
   
   return(
     <div class="flex flex-col gap-8 py-8">
-      <Show when={dividends()?.length > 0}>
+      <Show when={buybacks()?.length >= 0}>
         <div class="w-full items-center flex justify-center text-current/50 text-sm">
-        {t("div.tips",{paid:toBalanceValue(stats()?.dividends?.[2],6,2),unpaid:toBalanceValue(stats()?.dividends?.[0],6,2)})}
+          {t("b.tips",{
+            burned:toBalanceValue(stats()?.total_burned,12,2),
+            cost:toBalanceValue(stats()?.buybacks?.[2],6,2)
+          })}
         </div>
       </Show>
       
-      <For each={dividends()} fallback={<Empty tips="no records yet"/>}>
+      <For each={buybacks()} fallback={<Empty tips="No buybacks yet."/>}>
         {(item)=>(
           <div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md ">
             <div class="flex items-center gap-4 col-span-full lg:col-span-4">

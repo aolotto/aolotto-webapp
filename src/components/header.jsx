@@ -1,7 +1,7 @@
 
 import { A } from "@solidjs/router"
 import { createMemo,createSignal,onMount,onCleanup, createEffect } from "solid-js"
-import { t,setDictionarys,dictionarys } from "../i18n"
+import { t,setDictionarys,locale } from "../i18n"
 import { Icon } from "@iconify-icon/solid"
 // components
 import Logo from "./logo"
@@ -27,8 +27,8 @@ export default props => {
 
   setDictionarys("zh",{
     "nav.bets": "投注",
-    "nav.draws":"开奖",
-    "nav.stats":"统计",
+    "nav.draws":"開獎",
+    "nav.stats":"統計",
     "nav.alt": "$ALT",
     "nav.docs":"文档"
   })
@@ -49,7 +49,7 @@ export default props => {
     path: "/alt"
   },{
     name: "docs",
-    path: "https://docs.aolotto.com/en",
+    path: locale()=="en"?"https://docs.aolotto.com/en":"https://docs.aolotto.com/cn",
     new: true
   }])
 

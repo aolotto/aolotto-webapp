@@ -7,35 +7,78 @@ import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Su
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
-import { pool,currency,agent } from "../../signals/global"
+import { pool,currency,agent,protocols } from "../../signals/global"
 import { createPlayerAccount,balances,refetchUserBalances } from "../../signals/player"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"
 import Rewards from "./rewards"
 import Claims from "./claims"
 import Dividends from "./dividends"
+import Mintings from "./mintings"
 import Spinner from "../../components/spinner"
 import { Claimer } from "../../components/claimer"
 import toast from "solid-toast"
 import { useSearchParams } from "@solidjs/router"
+import { setDictionarys,t } from "../../i18n"
 
 
 
 export default props=>{
   let _claimer
-  const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),pool:pool.id}))
+  
+  const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),id:protocols?.agent_id}))
   const [searchParams, setSearchParams] = useSearchParams();
+  const pay_i = protocols?.details[protocols.pay_id]
+  const agent_i = protocols?.details[protocols.agent_id]
+  
+
+  setDictionarys("en",{
+    "label.tickets" : "Tickets",
+    "label.bet": "Total Bet",
+    "label.win": "Total Win",
+    "label.mint": "Total Mint",
+    "label.dividends": "Dividends",
+    "action.claim": "Claim",
+    "action.disconnect": "Disconnect",
+    "action.deposit": "Deposit",
+    "action.swap": "Swap",
+    "m.bets": "Bets",
+    "m.mints": "Mintings",
+    "m.wins": "Wins",
+    "m.dividends": "Dividends",
+    "m.claims": "Claims"
+  })
+  setDictionarys("zh",{
+    "label.tickets" : "彩券",
+    "label.bet": "累計投注",
+    "label.win": "累計獲獎",
+    "label.mint": "累計鑄幣",
+    "label.dividends": "分紅",
+    "action.claim": "領獎",
+    "action.disconnect": "斷開",
+    "action.deposit": "儲值",
+    "action.swap": "兌換",
+    "m.bets": "投注",
+    "m.mints": "鑄幣",
+    "m.wins": "獲獎",
+    "m.dividends": "分紅",
+    "m.claims": "領獎"
+  })
+
   const subMenus = createMemo(()=>[{
-    label:"Tickets",
-    key:"tickets"
+    label: ()=>t("m.bets"),
+    key:"bets"
   },{
-    label:"Winnings",
-    key:"winnings"
+    label:()=>t("m.wins"),
+    key:"wins"
   },{
-    label:"Dividends",
+    label:()=>t("m.mints"),
+    key:"mintings"
+  },{
+    label:()=>t("m.dividends"),
     key:"dividends"
   },{
-    label:"Claims",
+    label:()=>t("m.claims"),
     key: "claims"
   }])
 
@@ -47,6 +90,8 @@ export default props=>{
       setTab(subMenus()?.[Math.max(idx,0)])
     }
   })
+  createEffect(()=>console.log("acount",account()))
+  
 
   return(
   <Show when={connected()} fallback={<main class="container">welcome</main>}>
@@ -60,11 +105,9 @@ export default props=>{
             </span>
           </div>
           <div class="flex gap-4 items-center">
-            {/* <span class="text-current/50 text-sm">Join at : 2024/11/13</span> */}
+            <span className="text-current/50">{t("action.disconnect")}</span>
             <button 
-              class="btn btn-icon rounded-full btn-ghost" 
-              use:tooltip="top" 
-              title="Disconnect"
+              class="btn btn-icon rounded-full btn-ghost"
               onClick={handleDisconnection}
             >
               <Icon icon="solar:logout-outline"></Icon>
@@ -76,11 +119,11 @@ export default props=>{
       <section class="response_cols py-8 px-1">
         <div class="col-span-full lg:col-span-7">
 
-          <InfoItem label={"Tickets"}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
-          <InfoItem label={"Total Bet"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
-          <InfoItem label={"Total Win"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
-          <InfoItem label={"Total Mine"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mine||0,agent.denomination||12,4)}</Show> <Ticker class="text-current/50">{agent.ticker}</Ticker></InfoItem>
-          <InfoItem label={"Dividends"}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.div||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.tickets")}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
+          <InfoItem label={t("label.bet")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.win")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.mint")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mint||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.dividends")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.div?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
           
         </div>
 
@@ -88,7 +131,7 @@ export default props=>{
           <div class="flex items-center justify-between pb-4">
             <div class="flex items-center gap-4">
               <span class="text-3xl">🏆</span>
-              <Show when={!account.loading} fallback="..."><span classList={{"text-current/50": account()?.win?.[0] == 0}}>${toBalanceValue(account()?.win?.[0]||0,currency.denomination||6,2)} </span></Show>
+              <Show when={!account.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": account()?.win?.[0] == 0}}>${toBalanceValue(account()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
             </div>
             <div>
               <button 
@@ -96,7 +139,7 @@ export default props=>{
                 disabled={account()&&Number(account()?.win?.[0])<=0}
                 onClick={()=>_claimer.open()}
               >
-                Claim
+                {t("action.claim")}
               </button>
             </div>
           </div>
@@ -104,21 +147,21 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/${currency.logo}`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[currency.id]||0,currency.denomination||6,2)}</Show> <Ticker class="text-current/50">{currency.ticker}</Ticker></span>
+                <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full"/> 
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">Depoist<Icon icon="ei:external-link"></Icon></a>
+                <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">{t("action.deposit")}<Icon icon="ei:external-link"></Icon></a>
               </div>
             </div>
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/3u9Hr7xL02QjVikyY7i3o7ZiRMdoJqr3eQDzT6SOz1s`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[agent.id]||0,agent.denomination||12,2)}</Show>  <Ticker class="text-current/50">{agent.ticker}</Ticker></span>
+                <img src={`https://arweave.net/${agent_i?.Logo}`} class="size-6 rounded-full"/> 
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,2)}</Show>  <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="#">Buy/Sell<Icon icon="ei:external-link"></Icon></a>
+                <a class="inline-flex items-center" href="#">{t("action.swap")}<Icon icon="ei:external-link"></Icon></a>
               </div>
             </div>
           </div>
@@ -135,12 +178,13 @@ export default props=>{
           setTab(item)
         }}
       />
-      <Suspense fallback={<Spinner/>}>
+      <Suspense fallback={<div class="w-full h-40 flex justify-center items-center"><Spinner/></div>}>
         <Switch>
-          <Match when={tab()?.key=="tickets"}><Tickets/></Match>
+          <Match when={tab()?.key=="bets"}><Tickets/></Match>
           <Match when={tab()?.key=="dividends"}><Dividends/></Match>
-          <Match when={tab()?.key=="winnings"}><Rewards/></Match>
+          <Match when={tab()?.key=="wins"}><Rewards/></Match>
           <Match when={tab()?.key=="claims"}><Claims/></Match>
+          <Match when={tab()?.key=="mintings"}><Mintings/></Match>
         </Switch>
       </Suspense>
       <Claimer 
@@ -149,29 +193,11 @@ export default props=>{
         tax={account()?.tax?.[0]}
         user={address()}
         onClaimed ={(e)=>{
-          
           toast.success("Claimed!")
           batch(()=>{
             refetchUserBalances()
             refetchAccount()
           })
-          // toast.promise(new Promise((resolve, reject) => {
-            
-          // }),{
-          //   loading: 'Querying Claiming Result...',
-          //   success: (val) => {
-          //     const mined = val.x_mined&&val.x_mined.split(",")
-          //     return (
-          //       <div>
-          //         Successfully bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={val.x_mined}> and get mining reward: {toBalanceValue(mined[0],mined[2],2)} ${mined[1]}</Show>! 
-          //         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
-          //           <Icon icon="ei:external-link"></Icon>
-          //         </a>
-          //       </div>
-          //     )
-          //   },
-          //   error: "Querying faild."
-          // })
         }}
       />
     </main>

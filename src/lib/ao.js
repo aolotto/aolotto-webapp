@@ -85,6 +85,7 @@ export const findTagItemValues = (keys,arr) =>{
 export class AO {
   constructor(params) {
     this.gateWayUrl = params?.gateWayUrl || import.meta.env.VITE_GATEWAY_URL || "https://arweave.net";
+    this.gqlUrl = import.meta.env.VITE_GQL_ENDPOINT || GQLUrls.arweave || GQLUrls.goldsky
     this.aoconnect = aoconnect.connect({
       MU_URL: params?.cu || import.meta.env.VITE_MU_URL || "https://mu.ao-testnet.xyz",
       CU_URL: params?.mu || import.meta.env.VITE_CU_URL || "https://cu.ao-testnet.xyz",
@@ -161,7 +162,7 @@ export class AO {
   };
 
   query = async function(query,options) {
-    const gql = arGql({endpointUrl:options?.endpoint || (this.gateWayUrl?`${this.gateWayUrl}/graphql`: GQLUrls.arweave)})
+    const gql = arGql({endpointUrl: this.gqlUrl || GQLUrls.goldsky})
     let res = await gql.run(query||'');
     return res?.data?.transactions?.edges
   }

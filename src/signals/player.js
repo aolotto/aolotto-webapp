@@ -1,5 +1,5 @@
 import { createResource, createRoot } from "solid-js";
-import { fetchPlayerTickets,fetchPlayerAccount,fetchUserTokenBalances,fetchPlayerRewards,fetchPlayerCliams,fetchPlayerDividends} from "../api/player";
+import { fetchPlayerTickets,fetchPlayerAccount,fetchUserTokenBalances,fetchPlayerRewards,fetchPlayerCliams,fetchPlayerDividends,fetchPlayerMintings} from "../api/player";
 import { currency,agent } from "./global";
 import { address,connected } from "../components/arwallet";
 import { createPagination } from "../lib/page";
@@ -38,6 +38,12 @@ export const createUserClaims = (signal) => {
   return store.claims
 }
 
+export const createUserMintings = (signal) => {
+  if(!store.mintings){
+    setStore("mintings",createPagination(signal,fetchPlayerMintings,{size:100}))
+  }
+  return store.mintings
+}
 
 export const createUserDividends = (signal) => {
   if(!store.dividends){

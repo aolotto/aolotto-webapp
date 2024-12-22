@@ -11,7 +11,7 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
 
   const locales = {
     en: {name:"English",dict:en},
-    zh: {name:"中文",dict:zh}
+    zh: {name:"繁體中文",dict:zh}
   };
 
   const [locale, setLocale] = createSignal(localStorage.getItem("CURRENT_LOCALE") || lang?.substr(0, 2) || "en");

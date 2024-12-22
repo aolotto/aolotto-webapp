@@ -6,13 +6,14 @@ import { pool } from "../../signals/global"
 import { toBalanceValue } from "../../lib/tool"
 import Ticker from "../../components/ticker"
 import { app } from "../../signals/global"
+import Empty from "../../components/empty"
 
 
 export default props => {
   const bettings = createMemo(()=>ranks()?.bettings)
   return(
     <div class="response_cols gap-2 py-8">
-      <Switch fallback={<span class="col-span-full">no rankings</span>}>
+      <Switch fallback={<span class="col-span-full"><Empty tips="No bettings yet."/></span>}>
         <Match when={bettings()?.length > 0}>
           <For each={bettings()} when={!ranks.loading} fallback="loading...">
             {(item,index)=>{

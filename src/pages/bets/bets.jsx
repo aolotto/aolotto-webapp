@@ -10,12 +10,23 @@ import { app } from "../../signals/global"
 import Spinner from "../../components/spinner"
 import { bets,hasMore,loadMore,loadingMore } from "../../signals/pool"
 import Loadmore from "../../components/loadmore"
+import { setDictionarys,t } from "../../i18n"
+import Empty from "../../components/empty"
+
 
 const BetItem = props => {
   const item = () => props.value
   // const token_bet = createMemo(()=>item()?.currency.split(","))
-  const mined = createMemo(()=>item()?.x_mined?.split(","))
+  const mined = createMemo(()=>item()?.mint)
   const sponsor = createMemo(()=>item()?.sponsor?.split(","))
+  setDictionarys("en",{
+    "i.bet" : "Bet",
+    "i.mint" : "Mint"
+  })
+  setDictionarys("zh",{
+    "i.bet" : "下注",
+    "i.mint" : "鑄幣"
+  })
 
   return (
     
@@ -32,7 +43,7 @@ const BetItem = props => {
         <div class="col-span-full lg:col-span-6 flex items-center gap-4">
           <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
           <div class="inline-flex gap-1">
-            <span class="text-current/50">Bet</span>
+            <span class="text-current/50">{t("i.bet")}</span>
             <span>${toBalanceValue(item()?.amount,item()?.denomination||6,1)}</span>
             {/* <Ticker class="text-current/50">{item()?.ticker}</Ticker> */}
           </div>
@@ -43,11 +54,12 @@ const BetItem = props => {
               </div>
             </Match>
             <Match when={!item()?.sponsor}>
-              <Show when={item()?.x_mined}>
+              <Show when={item()?.mint}>
                 <div class="inline-flex items-center gap-2">
                   <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
-                  <span>{toBalanceValue(mined()?.[0],mined()?.[2]||12,2)}</span> 
-                  <Ticker class="text-current/50">ALT</Ticker>
+                  <span class="text-current/50">{t("i.mint")}</span>
+                  <span>{toBalanceValue(mined().total,mined().denomination||12,2)}</span> 
+                  <Ticker class="text-current/50">{mined().ticker}</Ticker>
                 </div>
               </Show>
             </Match>
@@ -69,17 +81,22 @@ const BetItem = props => {
 }
 
 export default props => {
-  createEffect(()=>console.log("ActiveBets",bets()))
+  setDictionarys("en",{
+    "t.win_rate" : "👇 The last bettor below gets at least a 50% higher chance to win. Bet now to take the spot!",
+    "t.no_bets" : "No bets yet,earlier bets mint more."
+  })
+  setDictionarys("zh",{
+    "t.win_rate" : "👇 下面最後下注玩家的贏獎機率至少高出50%，立即下注替代TA!",
+    "t.no_bets" : "暫無投注,越早投注鑄幣額越高"
+  })
   return(
     <section 
       class="border-t border-current/20 py-10 flex flex-col gap-4 "
       classList={props?.classList}
     >
       <Suspense fallback={<Spinner/>}>
-        <Show when={bets()?.length>0}>
-          <div class="w-full flex items-center justify-center pb-4">👇 The last bettor below gets at least a 50% higher chance to win. Bet now to take the spot.</div>
-        </Show>
-        <For each={bets()} fallback={<div class="w-full items-center justify-center text-current/20 text-center">no bets</div>}>
+        <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+        <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
           {(item)=>{
             return <BetItem value={item} onXNumberClick={props?.onXNumberClick}/>
           }}

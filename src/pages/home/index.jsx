@@ -2,7 +2,7 @@ import { Icon } from "@iconify-icon/solid"
 import { A } from "@solidjs/router"
 import { shortStr } from "../../lib/tool"
 import { createEffect, createMemo, For, Show } from "solid-js"
-import { pool,app } from "../../signals/global"
+import { pool,app,protocols } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import { state,stats } from "../../signals/pool"
 import { toBalanceValue } from "../../lib/tool"
@@ -14,11 +14,52 @@ import Typr from "./partners/typr"
 import Seagull from "./partners/seagull"
 import Pattern from "../../components/pattern"
 import Altlogo from "../../components/altlogo"
+import { t,setDictionarys,dictionarys } from "../../i18n"
 
 
 
 
 export default props => {
+  setDictionarys("en",{
+    "top.slogan": "The $1 on-chain lottery only possible on AO",
+    "top.jackpot_title": "Progressive Jackpot",
+    "top.button_bet": "Let's bet to WIN!",
+    "top.round": "Round-{{round}}",
+    "top.win_tip": "Last bet, higher win rate!",
+    "second.title": "$ALT - fairly issued via Bet2Mint, unlock dividends and LottoFi benefits by holding.",
+    "second.desc": "LottoFi's value is primarily driven by jackpot taxes, with 100% of profits returned to $ALT holders through dividends and buyback-to-burn. The total supply of $ALT is capped at 210 million, and anyone can earn it through the Bet2Mint mechanism.",
+    "second.label_sold":"Total sold",
+    "third.title": "The first decentralized lottery protocol based on AO, Simple, Permissionless and Transparent",
+    "third.second_title": "Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT community",
+    "third.second_desc": "LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators or developers earn dividend rewards. We aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.",
+    "third.build_btn" : "Let's build together",
+    "partners": [
+      "The largest cross-chain bridge in the AO ecosystem, AOX enables seamless payments."
+    ]
+  })
+
+  setDictionarys("zh",{
+    "top.slogan": "$1美元鏈上彩票在AO上成為可能",
+    "top.jackpot_title": "当前累計大獎",
+    "top.button_bet": "立即投注中大獎!",
+    "top.round": "回合-{{round}}",
+    "top.win_tip": "最後下注，贏率更高!",
+    "second.title":"$ALT - 透過Bet2Mint機制公平發行,持有獲得持續性分紅, 享受LottoFi生態紅利",
+    "second.desc": "向贏家徵收大獎稅奠定了LottoFi的價值根基,協議產生的利潤通過分紅和回購銷毀機制100%回饋給$ALT代幣持有者，發行總量上限為2.1億，任何人都可以通過Bet2Mint機制免費取得.",
+    "second.label_sold":"累計銷售",
+    "third.title": "第一個基於AO構建的去中心化彩票協議, 簡單, 無許可且公平透明",
+    "third.second_title": "不只是彩票，一個繁榮的LottoFi生態將在$ALT社區的支持下持續發展",
+    "third.second_desc": "LottoFi 是一個由 $ALT 質押驅動的App、遊戲和內容生態系統。透過質押ALT，用戶可以解鎖免費工具或技能，而創作者或開發者則可以獲得分紅獎勵。我們的目標是將傳統彩券發行機構壟斷的利潤回饋社区，培育優質內容創作，凝聚社區共識。",
+    "third.build_btn" : "让我们一同构建",
+    "partners": [
+      "由AO生态最大的跨链桥AOX提供无缝的支付体验"
+    ]
+  })
+
+  const pool_i = protocols?.details[protocols?.pool_id]
+  const agent_i = protocols?.details[protocols?.agent_id]
+  const pay_i = protocols?.details[protocols?.pay_id]
+
   const partners = createMemo(()=>([{
     tooltip: "The largest cross-chain bridge in the AO ecosystem, AOX enables seamless payments.",
     link: "https://aox.xyz",
@@ -84,31 +125,33 @@ export default props => {
       </div>
     }
   ]))
+
+  createEffect(()=>console.log(stats()))
   return (
     <main>
       <div class="container relative z-0 overflow-visible">
         <section class="py-18 response_cols">
           
           <div class="col-span-full flex items-center justify-center">
-            <span class="text-6xl text-center text-balance leading-18 w-[70%]">The first decentralized <b>lottery</b> game built on AO</span>
+            <span class="text-6xl text-center text-balance leading-18 w-[70%] mt-16">{t("top.slogan")}</span>
           </div>
           <div class="col-span-full flex flex-col gap-8 items-center justify-center">
             <div class="flex flex-col justify-center items-center gap-2">
-              <span class="text-current/50 uppercase">Progressive Jackpot</span>
+              <span class="text-current/50 uppercase">{t("top.jackpot_title")}</span>
               <span class="text-4xl text-third font-bold">
-                <Show when={!state.loading} fallback="...">${toBalanceValue(state()?.jackpot, pool.denomination||6,2)}</Show>
+                <Show when={!state.loading} fallback="...">${toBalanceValue(state()?.jackpot, pay_i?.Denomination||6,2)}</Show>
               </span>
             </div>
             <div class="flex flex-col items-center justify-center gap-4">
-              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">Let's bet to WIN <Icon icon="iconoir:arrow-right"/></A>
+              <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">{t("top.button_bet")} <Icon icon="iconoir:arrow-right"/></A>
               <Show when={!state.loading} fallback="...">
-                <span class="text-current/50">Round-{state()?.round || 1} , $1 on-chain betting</span>
+                <span class="text-current/50">{t("top.round",{round:state()?.round || 1})} , {t("top.win_tip")}</span>
               </Show>
             </div>
           </div>
           <div class="col-span-full flex items-center justify-center gap-2 pt-8">
             <For each={partners()}>
-              {(item)=><a class="text-base-content" href={item.link} target="_blank" use:tooltip={["bottom",item.tooltip]}>{item.element}</a>}
+              {(item,idx)=><a class="text-base-content" href={item.link} target="_blank" use:tooltip={["bottom",t(`partners[${idx()}]`)]}>{item.element}</a>}
             </For>
           </div>
         </section>
@@ -123,13 +166,13 @@ export default props => {
  
         <section class="py-16 border-b border-current/10 response_cols  px-2">
           <div class="col-span-full lg:col-span-4">
-            <div class="uppercase text-current/50">total sold</div>
-            <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pool.denomination || 6,2)}</Show></div>
+            <div class="uppercase text-current/50">{t("second.label_sold")}</div>
+            <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pay_i?.Denomination || 6,2)}</Show></div>
             <div class="pt-4">
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Profits:</span> <span>${toBalanceValue(stats()?.taxation?.[1]+state()?.balance * 0.1,pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Dividends:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Buyback & Burned:</span> <span>${toBalanceValue(stats()?.taxation?.[2],pool.denomination || 6,2)}</span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Current Circulation:</span> <span>23</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Profits:</span> <span>${toBalanceValue(stats()?.total_sales_amount * 0.4,pay_i.Denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Dividends:</span> <span>${toBalanceValue(stats()?.dividends?.[2],pay_i?.Denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Buyback & Burned:</span> <span>${toBalanceValue(stats()?.buybacks?.[2],pay_i?.Denomination || 6,2)}</span></div>
+              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">$ALT Circulation:</span> <span>{toBalanceValue(stats()?.total_supply,12,0)}</span></div>
               {/* <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">Total Burned</span><span>2</span><span class="text-current/50">$ALT holders</span></div> */}
             </div>
             
@@ -137,9 +180,9 @@ export default props => {
           <div class="col-span-full lg:col-span-7 lg:col-end-13">
             {/* <div class="text-current/50 uppercase">#Bet2Earn<Altlogo class="size-4"/></div> */}
             <h2 class="text-2xl pb-6  leading-10 flex items-center gap-2">
-            LottoFi - Unlock Continuous Dividends from $ALT, Fairly Issued via Bet2Mint.
+            {t("second.title")}
             </h2>
-            <p class="text-md text-current/50">LottoFi's value is primarily driven by jackpot taxes, with 100% of profits returned to $ALT holders through dividends and buyback-to-burn. The total supply of $ALT is capped at 210 million, and anyone can earn it through the Bet2Mint mechanism. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
+            <p class="text-md text-current/50">{t("second.desc")}. <a href="#" target="_blank" class="inline-flex items-center gap-2">Learn more <Icon icon="iconoir:arrow-right"/></a></p>
           </div>
         </section>
 
@@ -160,7 +203,7 @@ export default props => {
               </Show>
             </div>
             
-            <div class="text-3xl leading-12 ">$1 On-chain betting and drawing without human control, Simple, Permissionless and Transparent.</div>
+            <div class="text-3xl leading-12 ">{t("third.title")}</div>
           </div>
 
           <div class="col-span-full flex items-center justify-center pt-12">
@@ -197,9 +240,9 @@ export default props => {
         <Icon icon="arcticons:bookshelf" />
         <Icon icon="arcticons:leafpic" />
         </p>
-        <p class="text-2xl ">Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT community.</p>
-        <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />Let's build together</button>
-        <p class="text-current/50">LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators or developers earn dividend rewards. With the global lottery market projected to surpass $450 billion by 2025, we aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.</p>
+        <p class="text-2xl ">{t("third.second_title")}</p>
+        <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</button>
+        <p class="text-current/50">{t("third.second_desc")}</p>
      
       </section>
       <div class="absolute bottom-0 scale-105 left-0 w-full -z-1">

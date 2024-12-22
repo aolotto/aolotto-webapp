@@ -4,16 +4,15 @@ import { app } from "../signals/global"
 let ao = new AO()
 
 
-export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
-  console.log("fetchDraws",cursor)
+export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}){
 
-  if(!pool_id) return null
+  if(!pool_id||!agent_id) return null
 
   try {
     const query_str =  `
       query{
         transactions(
-          recipients: ["${pool_id}"],
+          recipients: ["${agent_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{
@@ -50,7 +49,7 @@ export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
         }
       }
     `
-    console.log(query_str)
+    // console.log(query_str)
     const res = await ao.query(query_str)
     // console.log(res)
     let draws
@@ -83,10 +82,9 @@ export async function fetchDraws([{pool_id},{size,cursor}],{refetching}){
         })
       })
     }
-    // console.log(bets)
     return draws
   } catch (error) {
-    console.error("fetch minings faild.", error)
+    console.error("fetch draws faild.", error)
     return null
   }
 }
