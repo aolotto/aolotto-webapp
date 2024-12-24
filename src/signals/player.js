@@ -7,7 +7,15 @@ import { createStore } from "solid-js/store";
 
 const [store,setStore] = createStore({})
 
+
+
 export const createPlayerAccount = (signal) => createResource(signal, fetchPlayerAccount)
+
+export const [player,{refetch:refetchPlayer}] = createRoot(()=>createResource(()=>{
+  if(connected()){
+    return {player:address(),id:protocols?.agent_id}
+  }
+}, fetchPlayerAccount))
 
 export const [balances,{refetch:refetchUserBalances}] = createRoot(()=>createResource(()=>{
   if(connected()){

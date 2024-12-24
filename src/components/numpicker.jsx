@@ -5,7 +5,7 @@ import { shortStr, toBalanceValue } from "../lib/tool"
 import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
-import { balances,refetchUserBalances } from "../signals/player"
+import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
 import { address,wallet } from "./arwallet"
 import { AO } from "../lib/ao"
 import Spinner from "./spinner"
@@ -117,6 +117,7 @@ export default props => {
     if(picked()?.length>=3){
       setQuantity(quantity()||1)
     }
+    console.log("player",player())
   })
 
   onMount(()=>{
@@ -247,7 +248,8 @@ export default props => {
           <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
               <InfoItem label={t("np.minting_reward")} value={<div>
                 <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(Number(props?.minting?.per_reward)*quantity(),agent_i.Denomination,3)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
-              </div>}/>            
+              </div>}/>
+              <InfoItem label={"Buff"} value={player()?.faucet?.[1]}/>           
           </div>
         </Show>
         

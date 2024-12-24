@@ -17,7 +17,7 @@ export default props => {
   const agent_i = protocols?.details[protocols.agent_id]
   setDictionarys("en",{
     "slogan" : "The glue of the community shapes LottoFi's future",
-    "desc" : "90% of $ALT is issued to the community through the Bet2Mint mechanism, 10% is rewarded to early users via the faucet as minting Buff (ALTb), and 100% of the protocol's profits are used for dividends and buyback.",
+    "desc" : ()=> <span>90% of $ALT is issued to the community via the <a href="https://docs.aolotto.com/en/usdalt#bet2mint" target="_blank" class="inline-flex text-base-content items-center">Bet2Mint<Icon icon="ei:external-link"></Icon></a> mechanism, 10% is rewarded to early users via the <a href="https://docs.aolotto.com/en/faucet" target="_blank" class="inline-flex text-base-content items-center">faucet<Icon icon="ei:external-link"></Icon></a> as minting Buff (ALTb), and 100% of the protocol's profits are used for dividends and buyback.</span>,
     "l.holders" : "Holders",
     "l.circulation" : "Circulation",
     "l.dividends" : "Dividends",
@@ -29,7 +29,7 @@ export default props => {
   })
   setDictionarys("zh",{
     "slogan" : "社區的潤滑劑塑造LottoFi的未來",
-    "desc" : "90%的$ALT透過Bet2Mint機制向社群發行，10%透過水龍頭以鑄幣Buff(ALTb)獎勵早期用戶，協議盈收100%用於分紅和回購銷毀。",
+    "desc" : ()=> <span>90%的$ALT透過<a href="https://docs.aolotto.com/cn/usdalt#bet2mint" target="_blank" class="inline-flex text-base-content items-center">Bet2Mint<Icon icon="ei:external-link"></Icon></a>機制向社群發行，10%透過<a href="https://docs.aolotto.com/cn/usdalt#shui-long-tou" target="_blank" class="inline-flex text-base-content items-center">水龍頭<Icon icon="ei:external-link"></Icon></a>以鑄幣Buff(ALTb)獎勵早期用戶，協議盈收100%用於分紅和回購銷毀。</span>,
     "l.holders" : "持有者",
     "l.circulation" : "循环流通",
     "l.dividends" : "分红",

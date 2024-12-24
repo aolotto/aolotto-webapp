@@ -42,6 +42,7 @@ export async function fetchTokenBalance(params,{value,refetching}){
 export async function fetchPlayerAccount({player,id},{refetching}){
   try {
     if(!player||!id) return
+    console.log("fetchPlayerAccount",player,id)
     let key ='AOLOTTO-ACCOUNT-'+id+player
     let localData = sessionStorage.getItem(key)
     if(!localData || refetching){
@@ -50,6 +51,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
         tags: { Action: "Get-Player", Player: player }
       })
       .then(({ Messages,Errors }) => {
+        console.log("fetchPlayerAccount-Result",Messages,Errors)
         if (Messages?.length >= 1&& Messages[0].Data) {
           const data = JSON.parse(Messages[0].Data)
           if(data){
@@ -288,10 +290,10 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
 
 
 
-export async function fetchPlayerRewards([{player_id,pool_id},{size,cursor}],{refetching}){
+export async function fetchPlayerRewards([{player_id,agent_id},{size,cursor}],{refetching}){
   console.log("fetchPlayerRewards",player_id)
 
-  if(!player_id) return null
+  if(!player_id||!agent_id) return null
 
   try {
     const query_str =  `
@@ -314,7 +316,7 @@ export async function fetchPlayerRewards([{player_id,pool_id},{size,cursor}],{re
               values: ["Win-Notice"]
             },{
               name: "From-Process",
-              values: ["${pool_id}"]
+              values: ["${agent_id}"]
             }]
         ) {
           edges {
@@ -484,6 +486,9 @@ export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cur
             },{
               name: "Sender",
               values: ["${agent_id}"]
+            },{
+              name: "Action",
+              values: ["Credit-Notice"]
             }]
         ) {
           edges {

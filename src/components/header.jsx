@@ -8,7 +8,7 @@ import Logo from "./logo"
 import Avatar from "./avatar"
 import Langpicker from "./langpicker"
 import tooltip from "./tooltip"
-import { connected, address,handleConnection } from "./arwallet"
+import { connected, address,handleConnection,connecting } from "./arwallet"
 import { shortStr } from "../lib/tool"
 import { app } from "../signals/global"
 
@@ -110,6 +110,7 @@ export default props => {
               <button 
                 class="btn rounded-full"
                 onClick={handleConnection}
+                disabled={connecting()}
               >
                 Connect
               </button>

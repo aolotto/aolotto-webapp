@@ -12,14 +12,15 @@ export default props => {
   const pay_i = protocols?.details[protocols.pay_id]
   const bettings = createMemo(()=>ranks()?.bettings)
   return(
-    <div class="response_cols gap-2 py-8">
+    <div class="response_cols gap-2 py-4">
       <Switch fallback={<span class="col-span-full"><Empty tips="No bettings yet."/></span>}>
         <Match when={bettings()?.length > 0}>
+          <h2 class="text-current/50 uppercase col-span-full py-4 my-4"><span class="size-6 inline-flex mr-6">🎲</span> top Bettings</h2>
           <For each={bettings()} when={!ranks.loading} fallback="loading...">
             {(item,index)=>{
               const [i] = Object.entries(item)
               return(
-                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 px-1 py-2 rounded-md overflow-visible">
+                <div class=" col-span-full flex items-center justify-between gap-4 hover:bg-current/5 px-1 py-1 rounded-md overflow-visible">
                   <div 
                     class="text-current/50 size-6 text-sm rounded-full flex items-center justify-center -ml-2 overflow-visible mr-6"
                     classList={{

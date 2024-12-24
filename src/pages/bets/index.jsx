@@ -69,11 +69,12 @@ export default props => {
     "s.participation" : "Participation",
     "s.picked" : "Picked",
     "s.countdown" : "Count to the draw",
-    "s.draw_tip" : ({time,wager})=><span>New bets extend the draw by <b class="text-base-content">{time}</b> hours from the time placed, until the wagers reach <b>${wager}</b>. Matching bets share the jackpot; If no match, the last bettor takes all.</span>,
+    "s.draw_tip" : ({time,wager})=><span>New bets extend the draw by <b class="text-base-content">{time}</b> hours from the time placed, until the wagers reach <b class="text-base-content">${wager}</b>. Matching bets share the jackpot; If no match, the last bettor takes all.</span>,
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
-    "d.minting" : (v)=><span className="text-current/50">The minting balance this round is <span className="text-base-content">{v.balance}</span>/{v.total}$ALT, with a reward of <span className="text-base-content">{v.reward}</span> $ALT per bet.</span>
+    "d.minting" : (v)=><span className="text-current/50">The minting balance this round is <span className="text-base-content">{v.balance}</span>/{v.total}$ALT, with a reward of <span className="text-base-content">{v.reward}</span> $ALT per bet.</span>,
+    "learn_more" : "Learn more"
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -87,7 +88,8 @@ export default props => {
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
-    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣餘額為 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，單筆投注的鑄幣獎勵為：<span className="text-base-content">{v.reward}</span> $ALT</span>
+    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣餘額為 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，單筆投注的鑄幣獎勵為：<span className="text-base-content">{v.reward}</span> $ALT</span>,
+    "learn_more" : "了解更多"
   })
 
   createEffect(()=>console.log(state()))
@@ -160,7 +162,7 @@ export default props => {
               
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
-            <div class="text-current/50 text-sm">{t("s.draw_tip",{time:"24",wager:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})}<a target="_blank" href="https://docs.aolotto.com/en" class="inline-flex items-center">Learn more<Icon icon="ei:external-link"></Icon></a></div>
+            <div class="text-current/50 text-sm">{t("s.draw_tip",{time:"24",wager:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})}<a target="_blank" href="https://docs.aolotto.com/en/draw-and-rules" class="inline-flex items-center">{t("learn_more")}<Icon icon="ei:external-link"></Icon></a></div>
             <div>
               <button 
                 class="btn btn-xl btn-primary"

@@ -39,9 +39,11 @@ const BetItem = props => {
             </span>
           </div>
         </div>
-
-        <div class="col-span-full lg:col-span-6 flex items-center gap-4">
-          <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
+        <div class="col-span-full lg:col-span-1 flex items-center justify-end">
+        <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
+        </div>
+        <div class="col-span-full lg:col-span-5 flex items-center gap-4">
+          
           <div class="inline-flex gap-1">
             <span class="text-current/50">{t("i.bet")}</span>
             <span>${toBalanceValue(item()?.amount,item()?.denomination||6,1)}</span>

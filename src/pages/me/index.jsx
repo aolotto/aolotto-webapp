@@ -122,7 +122,7 @@ export default props=>{
           <InfoItem label={t("label.tickets")}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
           <InfoItem label={t("label.bet")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
           <InfoItem label={t("label.win")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.mint")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mint||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.mint")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mint / 0.8||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
           <InfoItem label={t("label.dividends")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.div?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
           
         </div>

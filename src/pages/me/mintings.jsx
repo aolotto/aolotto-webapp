@@ -13,6 +13,7 @@ import Empty from "../../components/empty"
 import { setDictionarys,t } from "../../i18n"
 
 export default props => {
+  const agent_i = protocols?.details[protocols.agent_id]
   const [mintings,{hasMore,loadMore,loadingMore}] = createUserMintings(()=>connected()&&{player_id:address(),pool_id:protocols?.pool_id,agent_id:protocols?.agent_id})
   createEffect(()=>console.log("Tickets",mintings()))
   setDictionarys("en",{
@@ -21,7 +22,7 @@ export default props => {
   })
   setDictionarys("zh",{
     "minted":"铸造",
-    "received":"收到",
+    "received":"到账",
   })
   return(
     <section 
@@ -35,7 +36,7 @@ export default props => {
           <span class="text-current/50" use:tooltip={["top",item?.id]}>{shortStr(item?.id,8)}</span>
           </div>
           <div class="col-span-full lg:col-span-9 flex items-center justify-between">
-            <div><span class="text-current/50">{t("minted")} 23.00 , {t("received")} 20.00 $ALT</span></div>
+            <div><span class="text-current/50">{t("minted")} <span class="text-base-content">{toBalanceValue(item.total,agent_i?.Denomination||12,2)}</span> , {t("received")} <span class="text-base-content">{toBalanceValue(item.amount,agent_i?.Denomination||12,2)}</span> $ALT</span></div>
             <div class="flex items-center gap-4">
               <span class="text-current/50"><Moment ts={Number(item?.timestamp * 1000)}/></span>
               <a href={`${app.ao_link_url}/#/message/${item?.ticket}`} target="_blank"><Icon icon="ei:external-link"></Icon></a>

@@ -49,9 +49,7 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
         }
       }
     `
-    // console.log(query_str)
     const res = await ao.query(query_str)
-    // console.log(res)
     let draws
     if(res?.length > 0){
       draws = res.map(({node,cursor})=>{

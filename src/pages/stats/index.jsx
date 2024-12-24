@@ -28,7 +28,7 @@ export default props => {
     setTab(tabs[0])
   })
   return(
-    <main class="container py-16">
+    <main class="container py-8">
       {/* <section class="response_cols py-12">
         <div class="col-span-3 bg-current/5 p-6 gap-2 flex-col flex rounded-xl">
           <div class="text-current/50 uppercase">Bettings ($wUSDC)</div>
@@ -51,24 +51,32 @@ export default props => {
           <div class="text-current/50 text-sm">200 Holders</div>
         </div>
       </section> */}
-      <section class="response_cols ">
+      {/* <section class="response_cols ">
         <div class="col-span-full">
           <Tabs 
+            before={<div class="text-current/50"></div>}
             items={tabs}
             current = {tab()||tabs[0]}
             onSelected={({index,item})=>setTab(item)}
+            after={<div class="text-current/50"></div>}
           />
         </div>
-      </section>
+      </section> */}
       <div>
       <Suspense fallback={<div className="w-full h-40 flex flex-col items-center justify-center"><Spinner/></div>}>
-        <Switch>
+      
+      <Bettings/>
+      {/* <h2 class="text-current/50 uppercase border-b border-current/10 ">top Bettings</h2> */}
+      <Winnings/>
+      {/* <h2 class="text-current/50 uppercase border-b border-current/10 ">top Bettings</h2> */}
+      <Minings/>
+      <Dividends/>
+        {/* <Switch>
           <Match when={tab()?.key == "bet"}><Bettings/></Match>
           <Match when={tab()?.key == "win"}><Winnings/></Match>
           <Match when={tab()?.key == "mine"}><Minings/></Match>
           <Match when={tab()?.key == "div"}><Dividends/></Match>
-          {/* <Match when={tab()?.key == "bet"}><Bettings/></Match> */}
-        </Switch>
+        </Switch> */}
       </Suspense>
         
       </div>
