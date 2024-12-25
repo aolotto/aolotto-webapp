@@ -20,7 +20,7 @@ import { Claimer } from "../../components/claimer"
 import toast from "solid-toast"
 import { useSearchParams } from "@solidjs/router"
 import { setDictionarys,t } from "../../i18n"
-
+import Welcome from "./welcome"
 
 
 export default props=>{
@@ -94,7 +94,7 @@ export default props=>{
   
 
   return(
-  <Show when={connected()} fallback={<main class="container">welcome</main>}>
+  <Show when={connected()} fallback={<main class="container"><Welcome/></main>}>
     <main class="container">
       <section class="response_cols py-8 border-b border-current/10 ">
         <div class="col-span-full flex justify-between">
@@ -117,7 +117,7 @@ export default props=>{
       </section>
       
       <section class="response_cols py-8 px-1">
-        <div class="col-span-full lg:col-span-7">
+        <div class="col-span-full lg:col-span-7 flex flex-col justify-between">
 
           <InfoItem label={t("label.tickets")}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
           <InfoItem label={t("label.bet")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
@@ -128,7 +128,7 @@ export default props=>{
         </div>
 
         <div class="col-span-full lg:col-span-4 lg:col-end-13">
-          <div class="flex items-center justify-between pb-4">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <span class="text-3xl">🏆</span>
               <Show when={!account.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": account()?.win?.[0] == 0}}>${toBalanceValue(account()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
@@ -143,7 +143,7 @@ export default props=>{
               </button>
             </div>
           </div>
-          <div class="py-6 flex flex-col gap-4 ">
+          <div class="pt-6 flex flex-col gap-4 ">
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
@@ -162,6 +162,16 @@ export default props=>{
               </div>
               <div>
                 <a class="inline-flex items-center" href="#">{t("action.swap")}<Icon icon="ei:external-link"></Icon></a>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 justify-between">
+              <div class="flex items-center gap-2">
+                <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
+                <span class="size-6 rounded-full bg-third/50 inline-flex items-center justify-center" use:tooltip={["top","ALTb( ALT Minting Buff )"]}>💧</span>
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(account()?.faucet?.[0],agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(account()?.faucet?.[1],agent_i?.Denomination||12,2)}</span></span>
+              </div>
+              <div>
+                <a class="inline-flex items-center" href="#">{"领取"}<Icon icon="ei:external-link"></Icon></a>
               </div>
             </div>
           </div>

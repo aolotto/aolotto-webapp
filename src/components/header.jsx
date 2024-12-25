@@ -20,7 +20,7 @@ export default props => {
   setDictionarys("en",{
     "nav.bets": "Bets",
     "nav.draws":"Draws",
-    "nav.stats":"Stats",
+    "nav.rank":"Rank",
     "nav.alt": "$ALT",
     "nav.docs":"Docs"
   })
@@ -28,9 +28,9 @@ export default props => {
   setDictionarys("zh",{
     "nav.bets": "投注",
     "nav.draws":"開獎",
-    "nav.stats":"統計",
+    "nav.rank":"排行",
     "nav.alt": "$ALT",
-    "nav.docs":"文档"
+    "nav.docs":"文檔"
   })
 
   const [stickied,setStickied] = createSignal(false)
@@ -42,8 +42,8 @@ export default props => {
     name: "draws",
     path: "/draws"
   },{
-    name: "stats",
-    path: "/stats"
+    name: "rank",
+    path: "/rank"
   },{
     name: "alt",
     path: "/alt"
@@ -112,7 +112,7 @@ export default props => {
                 onClick={handleConnection}
                 disabled={connecting()}
               >
-                Connect
+                {connecting()?"Connecting":"Connect"}
               </button>
             }
           >
