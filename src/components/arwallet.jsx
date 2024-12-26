@@ -36,6 +36,7 @@ export const {
   const [sdk,setSdk] = createSignal()
   const [connecting,setConnecting] = createSignal(false)
   const [address, setAddress] = createSignal(null);
+  const [loadingWallet,setLoadingWallet] = createSignal(false)
   const [enables,setEnables] = createSignal(
     [{
       key : "arconnect",
@@ -255,11 +256,11 @@ export const {
     await setInted(true)
     console.log("initwallet",inited(),enables())
 
-    return "wallet inited"
+    return inited()
   }
 
   onMount(()=>{
-    if(globalThis.arweaveWallet){
+    if(globalThis.arweaveWallet||window.arweaveWallet){
       globalThis.addEventListener("arweaveWalletLoaded",async(e)=>{
         const type = localStorage.getItem("AR-WALLET-TYPE")
         if(type=="arconnect"){

@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/solid"
 import { A } from "@solidjs/router"
 import { shortStr } from "../../lib/tool"
-import { createEffect, createMemo, For, Show } from "solid-js"
+import { createEffect, createMemo, For, Show, Switch } from "solid-js"
 import { app,protocols } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import { state,stats } from "../../signals/pool"
@@ -15,7 +15,7 @@ import Seagull from "./partners/seagull"
 import Pattern from "../../components/pattern"
 import Altlogo from "../../components/altlogo"
 import { t,setDictionarys,dictionarys } from "../../i18n"
-
+import { redirect } from "@solidjs/router"
 
 
 
@@ -126,7 +126,9 @@ export default props => {
     }
   ]))
 
-  createEffect(()=>console.log(stats()))
+  
+ 
+
   return (
     <main>
       <div class="container relative z-0 overflow-visible">
