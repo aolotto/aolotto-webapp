@@ -1,4 +1,4 @@
-import { createSignal,createEffect,createMemo,on,onMount, Show } from "solid-js"
+import { createSignal,createEffect,createMemo,on,onMount, Show, Switch, Match } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { InfoItem } from "./infoitem"
 import { shortStr, toBalanceValue } from "../lib/tool"
@@ -30,7 +30,9 @@ setDictionarys("en",{
   "mint" : "Mint",
   "np.pay_token" : "Pay Token",
   "picked" : "Picked",
-  "np.minting_reward" : "Minting Reward"
+  "np.minting_reward" : "Minting Reward",
+  "np.buff_release" : "ALTb Release",
+  "np.buff_faucet_tip" : ()=> <span>Claim ALTb via <a href="https://docs.aolotto.com/en/faucet" target="_blank">faucet</a></span>
 })
 setDictionarys("zh",{
   "np.title" : (v)=> "投注到第"+v+"轮",
@@ -47,7 +49,9 @@ setDictionarys("zh",{
   "np.pay_token" : "支付代币",
   "picked" : "选中",
   "np.bets" : "投注数量",
-  "np.minting_reward" : "铸币奖励"
+  "np.minting_reward" : "铸币奖励",
+  "np.buff_release" : "ALTb释放",
+  "np.buff_faucet_tip" : ()=> <span>通过<a href="https://docs.aolotto.com/cn/shui-long-tou" target="_blank">水龙头</a>领取ALTb</span>
 })
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
@@ -113,6 +117,7 @@ export default props => {
   })
   const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
   const enableSubmit = createMemo(()=>balance()>=cost()&&picked())
+  
   createEffect(()=>{
     if(picked()?.length>=3){
       setQuantity(quantity()||1)
@@ -246,10 +251,28 @@ export default props => {
         
         <Show when={props?.minting}>
           <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
-              <InfoItem label={t("np.minting_reward")} value={<div>
+              <InfoItem label={t("np.minting_reward")} value={
+              <div>
                 <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(Number(props?.minting?.per_reward)*quantity(),agent_i.Denomination,3)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
               </div>}/>
-              <InfoItem label={"Buff"} value={player()?.faucet?.[1]}/>           
+              <InfoItem label={t("np.buff_release")} value={<span>
+                <span>
+                <Show when={quantity()&&props?.minting} fallback="-">
+                  {toBalanceValue(Math.min(Number(props?.minting?.per_reward)*quantity(),player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} 
+                  <Ticker class="text-current/50 ml-2">{agent_i.Ticker}</Ticker>
+                </Show>
+                </span>
+                <Switch>
+                  <Match when={!player()?.faucet ||player()?.faucet?.[1] <= 0}>
+                  <span class="text-current/50 text-xs"> / {t("np.buff_faucet_tip")}</span>
+                  </Match>
+                  <Match when={player()?.faucet?.[1] > 0}>
+                    <span class="text-current/50"> / {toBalanceValue(player()?.faucet?.[0],agent_i.Denomination||12,2)} </span>
+                  </Match>
+                </Switch>
+                
+              
+              </span>}/>           
           </div>
         </Show>
         
@@ -308,7 +331,7 @@ export default props => {
                     const mint = val.mint
                     return (
                       <div>
-                        Successfully bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.amount,mint.denomination,2)} ${mint.ticker}</Show>! 
+                        Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.amount,mint.denomination,2)} ${mint.ticker}</Show> <Show  when={mint&&mint?.buff>0}>{mint.buff}</Show>! 
                         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
                           <Icon icon="ei:external-link"></Icon>
                         </a>

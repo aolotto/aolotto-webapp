@@ -24,7 +24,9 @@ import Upcomming from './pages/home/upcomming';
 
 const App = props => {
   const launched = createMemo(()=>{
-    return new Date().getTime() > Number(import.meta.env.VITE_LAUNCH_TIME || 0)
+    const launch_tiem = import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):0
+    console.log("launch_tiem",launch_tiem)
+    return new Date().getTime() > launch_tiem
   })
   const [initialized,setInitialized] = createSignal(false)
   
@@ -75,8 +77,7 @@ const App = props => {
       when={initialized()} 
       fallback="initialized aolotto..."
     >
-      <Suspense fallback="loading...">
-        <Switch>
+      <Switch>
           <Match when={!launched()}>{Upcomming}</Match>
           <Match when={launched()}>
           <div class="flex flex-col min-h-screen w-full items-center justify-between">
@@ -86,7 +87,6 @@ const App = props => {
           </div>
           </Match>
         </Switch>
-      </Suspense>
       <Toaster position="bottom-center" gutter={16}/>
     </Show>
     </ErrorBoundary>

@@ -22,7 +22,8 @@ export default props => {
     "nav.draws":"Draws",
     "nav.rank":"Rank",
     "nav.alt": "$ALT",
-    "nav.docs":"Docs"
+    "nav.docs":"Docs",
+    "nav.faucet":"🚰"
   })
 
   setDictionarys("zh",{
@@ -30,7 +31,8 @@ export default props => {
     "nav.draws":"開獎",
     "nav.rank":"排行",
     "nav.alt": "$ALT",
-    "nav.docs":"文檔"
+    "nav.docs":"文檔",
+    "nav.faucet":"🚰"
   })
 
   const [stickied,setStickied] = createSignal(false)
@@ -48,9 +50,14 @@ export default props => {
     name: "alt",
     path: "/alt"
   },{
+    name: "faucet",
+    path: locale()=="en"?"https://docs.aolotto.com/en/faucet":"https://docs.aolotto.com/cn/shui-long-tou",
+    new: true
+  },{
     name: "docs",
     path: locale()=="en"?"https://docs.aolotto.com/en":"https://docs.aolotto.com/cn",
-    new: true
+    new: true,
+    out: true
   }])
 
   onMount(()=>{
@@ -97,7 +104,7 @@ export default props => {
               inactiveClass=""
               class="inline-flex items-center gap-1 text-lg"
               target={`${item().new?"_blank":"_self"}`}>
-                {t(`nav.${item()?.name}`)} {item().new&&<Icon icon="ei:external-link"></Icon>}
+                {t(`nav.${item()?.name}`)} {item().out&&<Icon icon="ei:external-link"></Icon>}
             </A>
           )
           }
