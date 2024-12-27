@@ -72,10 +72,14 @@ const App = props => {
     }
   })
   return(
-    <ErrorBoundary fallback={<div class="text-secondary">Something went wrong</div>}>
+    <ErrorBoundary fallback={(e)=>{
+      console.log("错误类型",typeof(e))
+      console.log(e.message); 
+      return <div class="text-secondary">ERROR: {e.message}</div>
+    }}>
     <Show 
       when={initialized()} 
-      fallback="initialized aolotto..."
+      fallback="Initialized Aolotto..."
     >
       <Switch>
           <Match when={!launched()}>{Upcomming}</Match>
