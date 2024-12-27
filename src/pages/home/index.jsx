@@ -71,7 +71,9 @@ export default props => {
         <li class="list-decimal"><b>Discover More Value</b>: Explore additional exciting use cases over time.</li>
       </ol>
       <p class="pt-4">$ALT is based on the AO standard, with partnerships like PermaSwap. It will soon be listed on DEXs. With its limited supply, $ALT is worth exploring further</p>
-    </>
+    </>,
+     "ft.support": ()=><a href="https://discord.gg/ce9CqZfx" target="_blank" class="inline-flex items-center">Online support <Icon icon="ei:external-link"></Icon></a>,
+     "ft.helpcenter": ()=><a href="https://docs.aolotto.com/cn/" target="_blank" class="inline-flex items-center">Learn more <Icon icon="ei:external-link"></Icon></a>,
   })
 
   setDictionarys("zh",{
@@ -124,8 +126,10 @@ export default props => {
         <li class="list-decimal"><b>慈善参与</b>：质押$ALT支持慈善，赚取专属NFT徽章。</li>
         <li class="list-decimal"><b>发现更多价值</b>：随着时间的推移，探索更多令人兴奋的用例。</li>
       </ol>
-      <p class="pt-4">$ALT是一款复合AO标准的代币，已和PermaSwap达成战略合作。它将很快在DEX上市。由于供应量有限，$ALT值得拥有。</p>
-    </>
+      <p class="pt-4">$ALT是一款遵循AO标准的代币，已和PermaSwap达成战略合作。它将很快在DEX上市。由于供应量有限，$ALT值得拥有。</p>
+    </>,
+    "ft.support": ()=><a href="https://discord.gg/ce9CqZfx" target="_blank" class="inline-flex items-center">在线支持 <Icon icon="ei:external-link"></Icon></a>,
+    "ft.helpcenter": ()=><a href="https://docs.aolotto.com/cn/" target="_blank" class="inline-flex items-center">了解更多 <Icon icon="ei:external-link"></Icon></a>,
   })
 
   const pool_i = protocols?.details[protocols?.pool_id]
@@ -276,9 +280,9 @@ export default props => {
               )}
             </For>
             <div class="inline-flex justify-center items-center p-2 gap-2 mt-2">
-              <a href="dd" class="inline-flex items-center">Online Support<Icon icon="ei:external-link"></Icon></a>
+              {t("ft.support")}
               <span class="text-current/50">or</span>
-              <a href="dd" class="inline-flex items-center">Learn More<Icon icon="ei:external-link"></Icon></a>
+              {t("ft.helpcenter")}
             </div>
             </div>
           
@@ -294,7 +298,7 @@ export default props => {
         <Icon icon="arcticons:leafpic" />
         </p>
         <p class="text-2xl ">{t("third.second_title")}</p>
-        <button class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</button>
+        <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
         <p class="text-current/50">{t("third.second_desc")}</p>
      
       </section>
