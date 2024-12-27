@@ -1,14 +1,14 @@
 
 import { A } from "@solidjs/router"
 import { createMemo,createSignal,onMount,onCleanup, createEffect } from "solid-js"
-import { t,setDictionarys,dictionarys } from "../i18n"
+import { t,setDictionarys,locale } from "../i18n"
 import { Icon } from "@iconify-icon/solid"
 // components
 import Logo from "./logo"
 import Avatar from "./avatar"
 import Langpicker from "./langpicker"
 import tooltip from "./tooltip"
-import { connected, address,handleConnection } from "./arwallet"
+import { connected, address,handleConnection,connecting,inited } from "./arwallet"
 import { shortStr } from "../lib/tool"
 import { app } from "../signals/global"
 
@@ -20,17 +20,19 @@ export default props => {
   setDictionarys("en",{
     "nav.bets": "Bets",
     "nav.draws":"Draws",
-    "nav.ranks":"Ranks",
-    "nav.alt": "$LOTTO",
-    "nav.docs":"Docs"
+    "nav.rank":"Rank",
+    "nav.alt": "$ALT",
+    "nav.docs":"Docs",
+    "nav.faucet":"🚰"
   })
 
   setDictionarys("zh",{
     "nav.bets": "投注",
-    "nav.draws":"开奖",
-    "nav.ranks":"排行",
-    "nav.alt": "$LOTTO",
-    "nav.docs":"文档"
+    "nav.draws":"開獎",
+    "nav.rank":"排行",
+    "nav.alt": "$ALT",
+    "nav.docs":"文檔",
+    "nav.faucet":"🚰"
   })
 
   const [stickied,setStickied] = createSignal(false)
@@ -42,15 +44,20 @@ export default props => {
     name: "draws",
     path: "/draws"
   },{
-    name: "ranks",
-    path: "/ranks"
+    name: "rank",
+    path: "/rank"
   },{
     name: "alt",
     path: "/alt"
   },{
-    name: "docs",
-    path: "https://docs.aolotto.com/en",
+    name: "faucet",
+    path: locale()=="en"?"https://docs.aolotto.com/en/faucet":"https://docs.aolotto.com/cn/shui-long-tou",
     new: true
+  },{
+    name: "docs",
+    path: locale()=="en"?"https://docs.aolotto.com/en":"https://docs.aolotto.com/cn",
+    new: true,
+    out: true
   }])
 
   onMount(()=>{
@@ -63,12 +70,11 @@ export default props => {
     window.onscroll = null
   })
 
-  createEffect(()=>console.log(app))
 
   return(
     <header
       ref={_header}
-      className="h-16 flex items-center gap-4 px-4 justify-between sticky top-0 w-full"
+      className="h-16 flex items-center gap-4 px-4 justify-between sticky top-0 w-full z-1"
       classList={{
         "bg-base-0/100 shadow-gray-1000/5 shadow-xs":stickied(),
       }}
@@ -98,7 +104,7 @@ export default props => {
               inactiveClass=""
               class="inline-flex items-center gap-1 text-lg"
               target={`${item().new?"_blank":"_self"}`}>
-                {t(`nav.${item()?.name}`)} {item().new&&<Icon icon="ei:external-link"></Icon>}
+                {t(`nav.${item()?.name}`)} {item().out&&<Icon icon="ei:external-link"></Icon>}
             </A>
           )
           }
@@ -111,8 +117,9 @@ export default props => {
               <button 
                 class="btn rounded-full"
                 onClick={handleConnection}
+                disabled={connecting()||!inited()}
               >
-                Connect
+                {connecting()?"Connecting":"Connect"}
               </button>
             }
           >

@@ -22,7 +22,7 @@ const fetchRetry = async (
 
 export function arGql(options){
   const defaultOpts = {
-    endpointUrl: 'https://arweave.net/graphql',
+    endpointUrl: 'https://arweave-search.goldsky.com/graphql',
     retries: 0,
     retryMs: 10_000,
   }

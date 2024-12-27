@@ -27,7 +27,8 @@ export const {
   initwallet,
   wallet,
   handleConnection,
-  handleDisconnection
+  handleDisconnection,
+  inited
 } = createRoot(() => {
   let connector
   let disconnector
@@ -35,6 +36,7 @@ export const {
   const [sdk,setSdk] = createSignal()
   const [connecting,setConnecting] = createSignal(false)
   const [address, setAddress] = createSignal(null);
+  const [loadingWallet,setLoadingWallet] = createSignal(false)
   const [enables,setEnables] = createSignal(
     [{
       key : "arconnect",
@@ -43,8 +45,8 @@ export const {
       type: "web3",
       logo: "https://arweave.net/tQUcL4wlNj_NED2VjUGUhfCTJ6pDN9P0e3CbnHo3vUE",
       downlink : "https://www.arconnect.io/download",
-      sdk: globalThis.arweaveWallet,
-      enable: globalThis.arweaveWallet? true: false
+      sdk: globalThis?.arweaveWallet || window?.arweaveWallet,
+      enable: (globalThis?.arweaveWallet || window?.arweaveWallet)? true : false
     },{
       key: "othent",
       name: "Othent",
@@ -88,7 +90,8 @@ export const {
   })
 
   const initwallet = async({appInfo=configs().appInfo,permissions = configs().permissions, gateWay = configs().gateWay})=>{
-   
+    
+  
     <Portal mount={document.body}>
       {/* connect */}
       <Modal
@@ -247,13 +250,17 @@ export const {
       </Modal>
     </Portal>
     
-    setConfigs({appInfo,permissions,gateWay})
+    
+    await setConfigs({appInfo,permissions,gateWay})
+    await setEnables(enables())
+    await setInted(true)
+    console.log("initwallet",inited(),enables())
 
-    return "wallet inited"
+    return inited()
   }
 
   onMount(()=>{
-    if(globalThis.arweaveWallet){
+    if(globalThis.arweaveWallet||window.arweaveWallet){
       globalThis.addEventListener("arweaveWalletLoaded",async(e)=>{
         const type = localStorage.getItem("AR-WALLET-TYPE")
         if(type=="arconnect"){
@@ -422,6 +429,7 @@ export const {
     walletConnectionCheck,
     initwallet,
     wallet,
+    inited,
     handleConnection :()=>{
       setMode("list")
       connector.open()

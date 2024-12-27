@@ -2,9 +2,8 @@ import { Icon } from "@iconify-icon/solid"
 import { createSocialShare, TWITTER } from "@solid-primitives/share";
 export const ShareToSocial = (props)=>{
   const [share, close] = createSocialShare(() => ({
-    title: "Aolotto",
-    url: "https://aolotto.com",
-    description: "Simple and well-behaved reactivity!"
+    title: props?.title || "🏆$1 to win $2000! Last bettor takes at least 50% extra odds. #Aolotto Round-5 is about to draw!",
+    url: props?.url || "https://aolotto.com/#/bets",
   }));
 
 

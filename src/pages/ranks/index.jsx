@@ -1,49 +1,122 @@
-import { Tabs } from "../../components/tabs"
 import tooltip from "../../components/tooltip"
-import Bettings from "./bettings"
-import Winnings from "./winnings"
-import Minings from "./minings"
-import Dividends from "./dividends"
-import { createSignal, Match, onMount, Suspense, Switch } from "solid-js"
+import { createEffect, For, Show, Suspense } from "solid-js"
+import Empty from "../../components/empty"
+import { setDictionarys,t } from "../../i18n"
+import Spinner from "../../components/spinner"
+import { protocols } from "../../signals/global"
+import { ranks } from "../../signals/pool"
+import Rankitem from "./rankitem"
 
 export default props => {
-  const tabs = [{
-    label:"Bettings",
-    key:"bet"
-  },{
-    label:"Winnings",
-    key:"win"
-  },{
-    label:"Minings",
-    key:"mine"
-  },{
-    label:"Dividends",
-    key:"div"
-  }]
-  const [tab,setTab] = createSignal()
-  onMount(()=>{
-    setTab(tabs[0])
+  setDictionarys("en",{
+    "top.bettings": "Top Bettings",
+    "top.mintings": "Top Mintings",
+    "top.winnings": "Top Winnings",
+    "top.dividends": "Top Dividends",
   })
+  setDictionarys("zh",{
+    "top.bettings": "投注排行",
+    "top.mintings": "鑄幣排行",
+    "top.winnings": "獲獎排行",
+    "top.dividends": "分紅排行",
+  })
+
   return(
-    <main class="container">
-      <section class="response_cols">
-        <div class="col-span-full">
-          <Tabs 
-            items={tabs}
-            current = {tab()||tabs[0]}
-            onSelected={({index,item})=>setTab(item)}
-          />
-        </div>
-      </section>
+    <main class="container py-8">
       <div>
-      <Suspense fallback="loading...">
-        <Switch>
-          <Match when={tab()?.key == "bet"}><Bettings/></Match>
-          <Match when={tab()?.key == "win"}><Winnings/></Match>
-          <Match when={tab()?.key == "mine"}><Minings/></Match>
-          <Match when={tab()?.key == "div"}><Dividends/></Match>
-          {/* <Match when={tab()?.key == "bet"}><Bettings/></Match> */}
-        </Switch>
+      <Suspense 
+        fallback={<div className="w-full h-40 flex flex-col items-center justify-center"><Spinner/></div>}>
+        <Show when={ranks()?.bettings?.length == 0 && ranks()?.mintings?.length == 0 && ranks()?.winnings?.length == 0 && ranks()?.dividends?.length == 0}>
+          <Empty tips="No rankings yet."/>
+        </Show>
+        <Show when={ranks()?.bettings?.length > 0}>
+          <section>
+            <h2 class="col-span-full py-4 mt-4">
+              <span class="size-6 inline-flex mr-6 ml-2">🎲</span> 
+              <span class="text-current/50 uppercase">{t("top.bettings")}</span>
+            </h2>
+            <For each={ranks()?.bettings}>
+              {(item,index)=>{
+                const [i] = Object.entries(item)
+                return(
+                  <Rankitem 
+                    index={index}
+                    user={i[0]}
+                    amount={i[1]}
+                    token={protocols?.details[protocols.pay_id]}
+                    key={index()}
+                  />
+                )
+              }}
+            </For>
+          </section>
+        </Show>
+        <Show when={ranks()?.mintings?.length > 0}>
+          <section>
+            <h2 class="col-span-full py-4 mt-4">
+              <span class="size-6 inline-flex mr-6 ml-2">🪙</span> 
+              <span class="text-current/50 uppercase">{t("top.mintings")}</span>
+            </h2>
+            <For each={ranks()?.mintings}>
+              {(item,index)=>{
+                const [i] = Object.entries(item)
+                return(
+                  <Rankitem 
+                    index={index}
+                    user={i[0]}
+                    amount={i[1]}
+                    token={protocols?.details[protocols.agent_id]}
+                    key={index()}
+                  />
+                )
+              }}
+            </For>
+          </section>
+        </Show>
+        <Show when={ranks()?.winnings?.length > 0}>
+          <section>
+            <h2 class="col-span-full py-4 mt-4">
+              <span class="size-6 inline-flex mr-6 ml-2">🏆</span> 
+              <span class="text-current/50 uppercase">{t("top.winnings")}</span>
+            </h2>
+            <For each={ranks()?.winnings}>
+              {(item,index)=>{
+                const [i] = Object.entries(item)
+                return(
+                  <Rankitem 
+                    index={index}
+                    user={i[0]}
+                    amount={i[1]}
+                    token={protocols?.details[protocols.pay_id]}
+                    key={index()}
+                  />
+                )
+              }}
+            </For>
+          </section>
+        </Show>
+        <Show when={ranks()?.dividends?.length > 0}>
+          <section>
+            <h2 class="col-span-full py-4 mt-4">
+              <span class="size-6 inline-flex mr-6 ml-2">💰</span> 
+              <span class="text-current/50 uppercase">{t("top.dividends")}</span>
+            </h2>
+            <For each={ranks()?.dividends}>
+              {(item,index)=>{
+                const [i] = Object.entries(item)
+                return(
+                  <Rankitem 
+                    index={index}
+                    user={i[0]}
+                    amount={i[1]}
+                    token={protocols?.details[protocols.pay_id]}
+                    key={index()}
+                  />
+                )
+              }}
+            </For>
+          </section>
+        </Show>
       </Suspense>
         
       </div>

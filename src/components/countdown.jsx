@@ -8,9 +8,10 @@ export default props => {
     timer = setInterval(()=>{
       const now = new Date().getTime()
       const diff = (end - now) / 1000
-      let hour = Math.floor(diff / 60 / 60).toString().padStart(2, "0");
-      let minute = Math.floor((diff - hour * 60 * 60) / 60).toString().padStart(2, "0");
-      let second = Math.floor(diff - hour * 60 * 60 - minute * 60).toString().padStart(2, "0");
+      let day = Math.floor(diff / 60 / 60 / 24).toString().padStart(2, "0");
+      let hour = Math.floor(diff / 60 / 60 % 24 ).toString().padStart(2, "0");
+      let minute = Math.floor(diff / 60 % 60).toString().padStart(2, "0");
+      let second = Math.floor(diff % 60).toString().padStart(2, "0");
       setCount(`${hour}:${minute}:${second}`)
     },1000)
   })
