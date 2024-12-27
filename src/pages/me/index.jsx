@@ -46,7 +46,9 @@ export default props=>{
     "m.mints": "Mintings",
     "m.wins": "Wins",
     "m.dividends": "Dividends",
-    "m.claims": "Claims"
+    "m.claims": "Claims",
+    "m.get": "Add",
+    "m.getted": "Added"
   })
   setDictionarys("zh",{
     "label.tickets" : "彩券",
@@ -62,7 +64,9 @@ export default props=>{
     "m.mints": "鑄幣",
     "m.wins": "獲獎",
     "m.dividends": "分紅",
-    "m.claims": "領獎"
+    "m.claims": "領獎",
+    "m.get": "添加",
+    "m.getted": "已添加"
   })
 
   const subMenus = createMemo(()=>[{
@@ -171,7 +175,8 @@ export default props=>{
                 <span><Show when={!balances.loading} fallback="...">{toBalanceValue(account()?.faucet?.[0],agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(account()?.faucet?.[1],agent_i?.Denomination||12,2)}</span></span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="#">{"领取"}<Icon icon="ei:external-link"></Icon></a>
+                {account()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" href="#">{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
+                
               </div>
             </div>
           </div>
