@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy:ar": "arkb deploy dist --gateway=https://g8way.io --use-bundler=https://turbo.ardrive.io",
-    "deploy-ar": "vite build && DEPLOY_KEY=$(base64 -i ~/.wallet.json) npx permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
+    "deploy-ar": "vite build && DEPLOY_KEY=$(base64 -i ~/.wallet.json) npx permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14",
+    "deploy-main": "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
     "@othent/kms": "^2.0.0",
