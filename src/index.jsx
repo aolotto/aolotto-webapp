@@ -6,7 +6,6 @@ import { ErrorBoundary, Match, Show, Suspense, Switch, createMemo, createSignal,
 import { Toaster } from 'solid-toast';
 import { initwallet } from './components/arwallet';
 import { initApp,initProtocols } from './signals/global';
-import { stats } from './signals/pool';
 
 // components
 import Header from './components/header';
@@ -19,7 +18,6 @@ import Ranks from './pages/ranks';
 import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
-import Test from './pages/test'
 import Upcomming from './pages/home/upcomming';
 
 const App = props => {
@@ -105,7 +103,6 @@ render(() => (
     <Route path={["/rank/*"]} component={Ranks} />
     <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
-    <Route path={["/test/*"]} component={Test}/>
     <Route path={["/coming/*"]} component={Upcomming}/>
     <Route path="*paramName" component={Notfound} />
   </HashRouter>
