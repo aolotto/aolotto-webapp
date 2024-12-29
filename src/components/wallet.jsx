@@ -27,8 +27,6 @@ let enables = [
 ]
 
 
-
-
 export const {
   connecting,
   connect,
@@ -48,7 +46,7 @@ export const {
   const [inited,setInted] = createSignal(false)
   const [wsdk,setWsdk] = createSignal()
   const [connecting,setConnecting] = createSignal(false)
-  const [address, setAddress] = createSignal(null);
+  const [address, setAddress] = createSignal();
 
   const [error,setError] = createSignal()
 
@@ -78,12 +76,10 @@ export const {
       return false
     }
   })
-  // const wallet = createMemo(()=>{
-  //   if(connected()){return sdk()}
-  // })
+
 
   const createPortal = () => {
-    <Portal mount={document.body}>
+    <Portal mount={document?.body}>
       {/* connect */}
       <Modal
         ref={connector}
@@ -92,7 +88,7 @@ export const {
       >
         <ModalHeader 
           title={title()} 
-          disabled = {mode()&&mode()=="connecting"||connecting()}/>
+          disabled = {(mode()&&mode()=="connecting")||connecting()}/>
         <ModalContainer class="p-[1em]">
         <Switch>
           <Match when={mode()&&mode()=="list"}>
@@ -105,7 +101,7 @@ export const {
                     class="btn h-[3em] rounded-xl  w-full flex justify-between items-center" 
                     onClick={()=>{
                       if(item.key=="arconnect"){
-                        if(!window.arweaveWallet){
+                        if(!window?.arweaveWallet){
                           setTitle("Arconnect not found")
                           setError("Arconnect not found, please install it first.")
                           setMode("error")
@@ -145,15 +141,15 @@ export const {
       
             </div>
           </Match>
-          <Match when={mode()=="connecting"}>
+          <Match when={mode()&&mode()=="connecting"}>
               <div class="flex flex-col items-center gap-2 w-[20em] p-4 justify-center min-h-16">
                 <div class="bg-[#000] border rounded-full size-24 flex items-center justify-center">
-                  <image src={currentConnectingInfo().logo} class="size-10"></image>
+                  <image src={currentConnectingInfo()?.logo} class="size-10"></image>
                 </div>
                 <div><Spinner/></div>
               </div>
           </Match>
-          <Match when={mode()=="error"}>
+          <Match when={mode()&&mode()=="error"}>
               <div class="flex flex-col items-center gap-2 w-[20em] p-4 justify-center min-h-16">
                 {error()}
                 <div class="flex items-center justify-center gap-2">
@@ -193,11 +189,11 @@ export const {
               onClick={()=>{
                 setDisconnecting(true)
                 disconnect()
-                .catch((err)=>console.log(err))
-                .finally(()=>{
-                  setDisconnecting(false)
-                  disconnector.close()
-                })
+                  .catch((err)=>console.log(err))
+                  .finally(()=>{
+                    setDisconnecting(false)
+                    disconnector?.close()
+                  })
               }}
               disabled={disconnecting()}
             >
@@ -205,7 +201,7 @@ export const {
             </button>
             <button 
               className="btn w-full" 
-              onClick={()=>disconnector.close()}
+              onClick={()=>disconnector?.close()}
               disabled={disconnecting()}
             >
               Cancel
@@ -223,7 +219,7 @@ export const {
   })=>{
     setConfigs({appInfo,permissions,gateWay})
     setInted(true)
-    return inited()
+    return true
   }
 
   onMount(()=>{
@@ -236,7 +232,7 @@ export const {
 
           const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
             console.log(err)
-            // window.location.reload();
+            // window.location?.reload();
             return
           })
 
@@ -245,14 +241,14 @@ export const {
             if(address){
               setAddress(address)
               setConnecting(false)
-              setWsdk(window.arweaveWallet)
+              setWsdk(window?.arweaveWallet)
             }
           }
           
         }
       })
       window.addEventListener("walletSwitch",(e)=>{
-        const type = localStorage.getItem("AR-WALLET-TYPE")
+        const type = localStorage?.getItem("AR-WALLET-TYPE")
         if(type=="arconnect"){
           setAddress(e.detail.address)
           setConnecting(false)
@@ -288,14 +284,14 @@ export const {
     switch(type){
       case "arconnect":
       default:
-        await window.arweaveWallet.connect(permissions||["ACCESS_ADDRESS","SIGN_TRANSACTION"],appInfo,gateWay)
+        await window?.arweaveWallet?.connect(permissions||["ACCESS_ADDRESS","SIGN_TRANSACTION"],appInfo,gateWay)
           .then(async(res)=>{
             const address = await window?.arweaveWallet?.getActiveAddress()
             if(address){
               setAddress(address)
               setWsdk(window?.arweaveWallet)
 
-              document.hasStorageAccess().then((hasAccess) => {
+              document?.hasStorageAccess()?.then((hasAccess) => {
                 if (hasAccess) {
                   localStorage.setItem("AR-WALLET-TYPE","arconnect");
                   console.log("已获得 cookie 访问权限");
@@ -314,13 +310,18 @@ export const {
           name: appInfo?.name,
           logo: appInfo?.logo
         })
-        _arweavapp.setUrl("arweave.app")
+        if(!_arweavapp) return
+        _arweavapp?.setUrl("arweave.app")
         
-        await _arweavapp.connect()
+        await _arweavapp?.connect()
           .then((address)=>{
             setAddress(address)
             setWsdk(_arweavapp)
-            localStorage.setItem("AR-WALLET-TYPE","arweaveapp")
+            document?.hasStorageAccess()?.then((hasAccess) => {
+              if (hasAccess) {
+                localStorage.setItem("AR-WALLET-TYPE","arweaveapp");
+              }
+            });
           })
           .catch((err)=>console.log(err))
           .finally(()=>setConnecting(false))
@@ -333,6 +334,9 @@ export const {
   const disconnect = ()=>new Promise(async(resolve, reject) => {
     if(connected()){
       console.log("disconnecting...")
+      if(!wsdk()){
+        reject(false)
+      }
       await wsdk()?.disconnect()
       setAddress(null)
       setConnecting(false)
@@ -366,9 +370,9 @@ export const {
     inited,
     handleConnection :()=>{
       setMode("list")
-      connector.open()
+      connector?.open()
     },
-    handleDisconnection : () => disconnector.open()
+    handleDisconnection : () => disconnector?.open()
   }
 })
 

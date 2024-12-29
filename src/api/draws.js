@@ -76,7 +76,7 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
           players : tags?.Players,
           bet: tags?.Bet?.split(","),
           cursor,
-          block_height: node.block.height
+          block_height: node?.block?.height
         })
       })
     }

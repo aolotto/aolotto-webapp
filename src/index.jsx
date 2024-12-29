@@ -81,11 +81,11 @@ const App = props => {
     }
   })
   return(
-    <ErrorBoundary fallback={(e)=>{
-      console.log("错误类型",typeof(e))
-      console.log(e); 
-      return <div class="text-secondary">ERROR: {e.message}</div>
-    }}>
+    // <ErrorBoundary fallback={(e)=>{
+    //   console.log("错误类型",typeof(e))
+    //   console.log(e); 
+    //   return <div class="text-secondary">ERROR: {e.message}</div>
+    // }}>
 
     <Show 
       when={initialized()} 
@@ -103,7 +103,7 @@ const App = props => {
         </Switch>
       <Toaster position="bottom-center" gutter={16}/>
     </Show>
-    </ErrorBoundary>
+    // </ErrorBoundary>
   )
 }
 

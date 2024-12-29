@@ -1,6 +1,6 @@
 import { createRoot } from "solid-js"
 import { createStore } from "solid-js/store"
-import { AO,findTagItemValues } from "../lib/ao"
+import { AO } from "../lib/ao"
 
 let ao = new AO()
 
@@ -25,6 +25,10 @@ export const {initProtocols,protocols,setProtocols} = createRoot(()=>{
   return ({
     initProtocols : (id)=> new Promise((resolve, reject) => {
       console.log("init Protocols",id)
+      if(!id){
+        reject("Missed agent id")
+        return
+      }
       let cache_key = "AOLOTTO_PROTOCOLS_"+id
       if(localStorage?.getItem(cache_key)){
         setProtocols(JSON.parse(localStorage?.getItem(cache_key)))
@@ -32,16 +36,16 @@ export const {initProtocols,protocols,setProtocols} = createRoot(()=>{
         return
       }
       ao.dryrun({
-        process: id || app.protocol_id,
+        process: id,
         tags: {Action:"Protocols"}
       })
       .then(({Messages,Errors})=>{
         console.log(Errors)
-        if(Messages.length>0&&Messages[0]){
-          const data = JSON.parse(Messages[0]?.Data)
+        if(Messages?.length>0&&Messages?.[0]){
+          const data = JSON.parse(Messages?.[0]?.Data)
           document.hasStorageAccess().then((hasAccess) => {
             if (hasAccess) {
-              localStorage.setItem(cache_key,Messages[0]?.Data)
+              localStorage.setItem(cache_key,Messages?.[0]?.Data)
               console.log("已获得 cookie 访问权限");
             }
           });

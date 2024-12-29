@@ -10,7 +10,7 @@ const [store,setStore] = createStore({})
 
 
 export const [player,{refetch:refetchPlayer}] = createRoot(()=>createResource(()=>{
-  if(connected()){
+  if(connected()&&address()){
     return {player:address(),id:protocols?.agent_id}
   }
 }, fetchPlayerAccount))
