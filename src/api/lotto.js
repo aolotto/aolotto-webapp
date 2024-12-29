@@ -241,7 +241,7 @@ export const fetchTotalTokenHodlers = async(id,{refetching}) => {
     process: id,
     tags: {Action:"Balances"}
   })
-  console.log("fetchTotalTokenHodlers",Messages)
+  // console.log("fetchTotalTokenHodlers",Messages)
   if(Messages?.length>0&&Messages[0]){
     let count = 0
     const balances = JSON.parse(Messages[0]?.Data)

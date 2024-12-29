@@ -2,9 +2,8 @@ import { AO } from "../lib/ao"
 
 let ao = new AO()
 export const fetchPoolState = async(id,{refetch}) => {
-  console.log('fetchPoolState',refetch)
   if(!id) {
-    throw Error("missed id")
+    return
   }
   const { Messages } = await ao.dryrun({
     process: id,
@@ -18,7 +17,7 @@ export const fetchPoolState = async(id,{refetch}) => {
 
 export const fetchStats = async(id,{refetch}) => {
   if(!id) {
-    throw Error("missed id")
+    return
   }
   const { Messages } = await ao.dryrun({
     process: id,
@@ -31,7 +30,7 @@ export const fetchStats = async(id,{refetch}) => {
 
 export const fetchPoolRanks = async(id,{refetch}) => {
   if(!id) {
-    throw Error("missed id")
+    return
   }
   const { Messages } = await ao.dryrun({
     process: id,
@@ -44,7 +43,7 @@ export const fetchPoolRanks = async(id,{refetch}) => {
 
 export const fetchPoolMine = async({pool_id,agent_id},{refetch}) => {
   if(!pool_id||!agent_id) {
-    throw Error("missed pool id or agent id")
+    return
   }
   const { Messages } = await ao.dryrun({
     process: agent_id,
@@ -57,16 +56,23 @@ export const fetchPoolMine = async({pool_id,agent_id},{refetch}) => {
 
 
 export const fetchActiveBets = async([id,{size,cursor}],{value,refetch})=>{
-  console.log("fetchActiveBets",id)
-  if(!id) {
-    throw Error("missed id")
+  try {
+    if(!id) {
+      return
+    }
+    console.log("fetchActiveBets",id)
+    const { Messages } = await ao.dryrun({
+      process: id,
+      tags: {Action:"Get",Table:"Bets",Limit:toString(size),Offset:cursor?toString(cursor):"1"}
+    })
+    // console.log("fetchActiveBets",Messages)
+    if(Messages?.length>0&&Messages[0]){
+      return JSON.parse(Messages[0]?.Data)
+    }
+    
+  } catch (error) {
+    console.log(error)
   }
-  const { Messages } = await ao.dryrun({
-    process: id,
-    tags: {Action:"Get",Table:"Bets",Limit:toString(size),Offset:cursor?toString(cursor):"1"}
-  })
-  if(Messages?.length>0&&Messages[0]){
-    return JSON.parse(Messages[0]?.Data)
-  }
+  
 }
 

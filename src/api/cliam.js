@@ -1,6 +1,5 @@
 import { AO,findTagItemValues } from "../lib/ao"
-import { wallet } from "../components/arwallet"
-import { action } from "@solidjs/router"
+import { wallet } from "../components/wallet"
 
 export const claim =(pool_id,recipient) => new Promise(async(resovle,reject)=>{
   try {

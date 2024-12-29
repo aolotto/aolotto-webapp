@@ -1,5 +1,5 @@
 import { createUserTickets } from "../../signals/player"
-import { connected,address } from "../../components/arwallet"
+import { connected,address } from "../../components/wallet"
 import { app,protocols } from "../../signals/global"
 import { createEffect, Match, Show, Switch } from "solid-js"
 import { Xnumbers } from "../../components/xnumber"
@@ -20,7 +20,7 @@ export default props => {
     "bet.item_desc" : (v)=><span class="text-current/50">投注 <span class="text-base-content">${v.amount}</span> 到第<span class="text-base-content">{v.round}</span>轮 </span>
   })
   const [tickets,{hasMore,loadMore,loadingMore}] = createUserTickets(()=>connected()&&{player_id:address(),pool_id:protocols?.pool_id})
-  createEffect(()=>console.log("Tickets",tickets()))
+
   return(
     <section 
       class=" py-10 flex flex-col gap-4 "

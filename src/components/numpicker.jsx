@@ -6,7 +6,7 @@ import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
 import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
-import { address,wallet } from "./arwallet"
+import { address,wallet } from "./wallet"
 import { AO } from "../lib/ao"
 import Spinner from "./spinner"
 import { setDictionarys,t } from "../i18n"
@@ -161,7 +161,7 @@ export default props => {
           </button>
         </div>
       </ModalHeader>
-      <ModalContainer className="sm:px-4 w-full overflow-y-scroll">
+      <ModalContainer className="sm:px-4 w-full">
         <div class="p-3 border-t border-current/20">
           <InfoItem label={t("np.account")}><Show when={address()}>{shortStr(address(),6)}</Show></InfoItem>
           <InfoItem class="py-[0.1em]" label={t("np.pay_token")} value={<div class="flex items-center justify-between gap-2">
@@ -304,6 +304,7 @@ export default props => {
               })
               .then((msgid)=>{
                 refetchUserBalances()
+                refetchPlayer()
                 if(props?.onSubmitted&&typeof(props?.onSubmitted)=="function"){
                   props.onSubmitted(msgid)
                 }
@@ -331,7 +332,7 @@ export default props => {
                     const mint = val.mint
                     return (
                       <div>
-                        Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.amount,mint.denomination,2)} ${mint.ticker}</Show> <Show  when={mint&&mint?.buff>0}>{mint.buff}</Show>! 
+                        Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>! 
                         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
                           <Icon icon="ei:external-link"></Icon>
                         </a>

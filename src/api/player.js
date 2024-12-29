@@ -196,7 +196,7 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
         })
       })
     }
-    console.log(bets)
+    // console.log(bets)
     return bets
   } catch (error) {
     console.error("fetch user bets faild.", error)

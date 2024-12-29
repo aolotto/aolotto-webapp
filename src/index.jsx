@@ -4,8 +4,9 @@ import { render } from 'solid-js/web'
 import { HashRouter, Route } from "@solidjs/router";
 import { ErrorBoundary, Match, Show, Suspense, Switch, createMemo, createSignal, onMount } from "solid-js"
 import { Toaster } from 'solid-toast';
-import { initwallet } from './components/arwallet';
+import { initwallet } from './components/wallet';
 import { initApp,initProtocols } from './signals/global';
+// import { isMobile } from './lib/ismobile';
 
 // components
 import Header from './components/header';
@@ -23,7 +24,6 @@ import Upcomming from './pages/home/upcomming';
 const App = props => {
   const launched = createMemo(()=>{
     const launch_tiem = import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):0
-    console.log("launch_tiem",launch_tiem)
     return new Date().getTime() > launch_tiem
   })
   const [initialized,setInitialized] = createSignal(false)
@@ -57,7 +57,6 @@ const App = props => {
           ao_link_url: import.meta.env.VITE_AO_LINK
         })
       ]).then((res)=>{
-        console.log(res)
         if(res?.[0] == true && typeof res?.[1] == "object"){
           console.log("wallet initialized")
           initProtocols(import.meta.env.VITE_AGENT_PROCESS)
@@ -72,9 +71,10 @@ const App = props => {
   return(
     <ErrorBoundary fallback={(e)=>{
       console.log("错误类型",typeof(e))
-      console.log(e.message); 
+      console.log(e); 
       return <div class="text-secondary">ERROR: {e.message}</div>
     }}>
+
     <Show 
       when={initialized()} 
       fallback="Initialized Aolotto..."
