@@ -12,14 +12,6 @@
     "deploy-main": "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
-    "@arweave-wallet-kit/arconnect-strategy": "^0.1.0",
-    "@arweave-wallet-kit/browser-wallet-strategy": "^0.1.0",
-    "@arweave-wallet-kit/core": "^0.1.0",
-    "@arweave-wallet-kit/othent-strategy": "^0.1.0",
-    "@arweave-wallet-kit/react": "^0.1.0",
-    "@arweave-wallet-kit/styles": "^0.1.0",
-    "@arweave-wallet-kit/webwallet-strategy": "^0.0.1-beta.4",
-    "@othent/kms": "^2.0.0",
     "@robit-dev/tailwindcss-class-combiner": "^1.0.2",
     "@solid-primitives/i18n": "^2.1.1",
     "@solid-primitives/share": "^2.0.6",

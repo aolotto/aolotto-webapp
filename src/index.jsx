@@ -33,6 +33,7 @@ const App = props => {
     console.log(browser,versions,lowestVersions)
   }
 
+  
   const launched = createMemo(()=>{
     const launch_tiem = import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):0
     return new Date().getTime() > launch_tiem

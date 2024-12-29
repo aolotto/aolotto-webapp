@@ -5,7 +5,7 @@ let ao = new AO()
 export async function fetchTokenBalance(params,{value,refetching}){
   const{player_id,token_id} = params
   if(!player_id || !token_id) return null
-  let localData = sessionStorage.getItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id)
+  let localData = localStorage?.getItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id)
   if(!localData || refetching){
     return await ao.dryrun({
       process: token_id,
@@ -15,7 +15,11 @@ export async function fetchTokenBalance(params,{value,refetching}){
       if (Messages?.length >= 1&& Messages[0].Data) {
         const data = JSON.parse(Messages[0].Data)
         if(data){
-          sessionStorage.setItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id,JSON.stringify(data))
+          document.hasStorageAccess().then((hasAccess) => {
+            if (hasAccess) {
+              localStorage.setItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id,JSON.stringify(data))
+            }
+          })
           return data
         }else{
           return null
@@ -44,7 +48,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
     if(!player||!id) return
     console.log("fetchPlayerAccount",player,id)
     let key ='AOLOTTO-ACCOUNT-'+id+player
-    let localData = sessionStorage.getItem(key)
+    let localData = localStorage?.getItem(key)
     if(!localData || refetching){
       return await ao.dryrun({
         process: id,
@@ -55,7 +59,13 @@ export async function fetchPlayerAccount({player,id},{refetching}){
         if (Messages?.length >= 1&& Messages[0].Data) {
           const data = JSON.parse(Messages[0].Data)
           if(data){
-            sessionStorage.setItem(key,JSON.stringify(data))
+            document.hasStorageAccess().then((hasAccess) => {
+              if (hasAccess) {
+                localStorage.setItem(key,JSON.stringify(data))
+              }
+            })
+
+            
             return data
           }else{
             return null
@@ -88,7 +98,7 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
       reject("Invalid token ID")
     }
     let key = "tk_bal_"+token_id+"_"+player_id
-    let cached = sessionStorage.getItem(key)
+    let cached = localStorage?.getItem(key)
     if(cached && !refetching){
       resolve([token_id,JSON.parse(cached)])
     }else{
@@ -101,7 +111,11 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
         if (Messages?.length >= 1 && Messages[0].Data) {
           const data = JSON.parse(Messages[0].Data)
           if(data){
-            sessionStorage.setItem(key,JSON.stringify(data))
+            document.hasStorageAccess().then((hasAccess) => {
+              if (hasAccess) {
+                localStorage.setItem(key,JSON.stringify(data))
+              }
+            })
             resolve([token_id,data])
           }else{
             resolve([token_id,"0"])
@@ -280,7 +294,7 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
         })
       })
     }
-    console.log(mints)
+    // console.log(mints)
     return mints
   } catch (error) {
     console.error("fetch user mintings faild.", error)
@@ -508,7 +522,7 @@ export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cur
       }
     `
     const res = await ao.query(query_str)
-    console.log("res",res)
+    // console.log("res",res)
     let claims
     if(res?.length > 0){
       claims = res.map(({node,cursor})=>{

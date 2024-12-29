@@ -35,10 +35,10 @@ export const {
   disconnect,
   connected,
   address,
-  sdk,
+  wsdk,
   walletConnectionCheck,
   initwallet,
-  wallet,
+  // wallet,
   handleConnection,
   handleDisconnection,
   inited
@@ -46,7 +46,7 @@ export const {
   let connector
   let disconnector
   const [inited,setInted] = createSignal(false)
-  const [sdk,setSdk] = createSignal()
+  const [wsdk,setWsdk] = createSignal()
   const [connecting,setConnecting] = createSignal(false)
   const [address, setAddress] = createSignal(null);
 
@@ -78,9 +78,9 @@ export const {
       return false
     }
   })
-  const wallet = createMemo(()=>{
-    if(connected()){return sdk()}
-  })
+  // const wallet = createMemo(()=>{
+  //   if(connected()){return sdk()}
+  // })
 
   const createPortal = () => {
     <Portal mount={document.body}>
@@ -231,21 +231,21 @@ export const {
     createPortal()
 
       window.addEventListener("arweaveWalletLoaded",async(e)=>{
-        const type = localStorage.getItem("AR-WALLET-TYPE")
+        const type = localStorage?.getItem("AR-WALLET-TYPE")
         if(type=="arconnect"){
 
-          const permissions = await window.arweaveWallet.getPermissions().catch((err)=>{
+          const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
             console.log(err)
             // window.location.reload();
             return
           })
 
           if(permissions?.length == configs()?.permissions?.length){
-            const address= await window.arweaveWallet.getActiveAddress()
+            const address= await window?.arweaveWallet?.getActiveAddress()
             if(address){
               setAddress(address)
               setConnecting(false)
-              setSdk(window.arweaveWallet)
+              setWsdk(window.arweaveWallet)
             }
           }
           
@@ -256,7 +256,7 @@ export const {
         if(type=="arconnect"){
           setAddress(e.detail.address)
           setConnecting(false)
-          setSdk(window.arweaveWallet)
+          setWsdk(window.arweaveWallet)
         }
       })
     }
@@ -290,11 +290,17 @@ export const {
       default:
         await window.arweaveWallet.connect(permissions||["ACCESS_ADDRESS","SIGN_TRANSACTION"],appInfo,gateWay)
           .then(async(res)=>{
-            const address = await window.arweaveWallet.getActiveAddress()
+            const address = await window?.arweaveWallet?.getActiveAddress()
             if(address){
               setAddress(address)
-              setSdk(window.arweaveWallet)
-              localStorage.setItem("AR-WALLET-TYPE","arconnect")
+              setWsdk(window?.arweaveWallet)
+
+              document.hasStorageAccess().then((hasAccess) => {
+                if (hasAccess) {
+                  localStorage.setItem("AR-WALLET-TYPE","arconnect");
+                  console.log("已获得 cookie 访问权限");
+                }
+              });
             }
           })
           .catch((err)=>{
@@ -313,7 +319,7 @@ export const {
         await _arweavapp.connect()
           .then((address)=>{
             setAddress(address)
-            setSdk(_arweavapp)
+            setWsdk(_arweavapp)
             localStorage.setItem("AR-WALLET-TYPE","arweaveapp")
           })
           .catch((err)=>console.log(err))
@@ -327,10 +333,10 @@ export const {
   const disconnect = ()=>new Promise(async(resolve, reject) => {
     if(connected()){
       console.log("disconnecting...")
-      await sdk()?.disconnect()
+      await wsdk()?.disconnect()
       setAddress(null)
       setConnecting(false)
-      setSdk(null)
+      setWsdk(null)
       resolve(true)
     }else{reject(false)}
   })
@@ -353,10 +359,10 @@ export const {
     disconnect,
     connected,
     address,
-    sdk,
+    wsdk,
     walletConnectionCheck,
     initwallet,
-    wallet,
+    // wallet,
     inited,
     handleConnection :()=>{
       setMode("list")

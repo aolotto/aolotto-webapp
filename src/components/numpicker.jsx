@@ -6,7 +6,8 @@ import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
 import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
-import { address,wallet } from "./wallet"
+
+import { address,wsdk } from "./wallet"
 import { AO } from "../lib/ao"
 import Spinner from "./spinner"
 import { setDictionarys,t } from "../i18n"
@@ -73,7 +74,7 @@ const submitBets = ({
       reject(new Error("Missed token id"))
     }
     const xnumber=numbers.join('')
-    const ao = new AO({wallet:wallet()})
+    const ao = new AO({wallet:wsdk()})
     const msg =  await ao.message({
       process: token_id,
       tags: {

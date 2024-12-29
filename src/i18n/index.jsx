@@ -14,7 +14,7 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
     zh: {name:"繁體中文",dict:zh}
   };
 
-  const [locale, setLocale] = createSignal(localStorage.getItem("CURRENT_LOCALE") || lang?.substr(0, 2) || "en");
+  const [locale, setLocale] = createSignal(localStorage?.getItem("CURRENT_LOCALE") || lang?.substr(0, 2) || "en");
 
   const [dictionarys,setDictionarys] = createStore({zh:{},en:{}})
 
@@ -28,7 +28,11 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
   const t = i18n.translator(dict, i18n.resolveTemplate);
 
   createEffect(()=>{
-    localStorage.setItem("CURRENT_LOCALE",locale())
+    document.hasStorageAccess().then((hasAccess) => {
+      if (hasAccess) {
+        localStorage.setItem("CURRENT_LOCALE",locale())
+      }
+    })
   })
 
   return ({
