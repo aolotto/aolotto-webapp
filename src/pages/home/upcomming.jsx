@@ -88,25 +88,24 @@ export default props => {
           </A>
           </div>
         
-        <div class="flex-1 flex justify-end"> {t("upcoming.title")}</div>
+          <div class="flex-1 flex justify-end"> {t("upcoming.title")}</div>
         </div>
       
-        <div class="response_cols py-4 lg:py-12">
+        <div class="py-4 lg:py-12">
           <div class="col-span-full border-y border-current/20 p-4">
             <Timer class="text-8xl" end={1735689601000}/>
           </div>
         </div>
 
-        <div class="response_cols py-4 lg:py-12">
-        <div class="col-span-full">
-          <ol class="list-decimal pl-10">
-            <li class="p-1">{t("upcoming.desc_1")}</li>
-            <li class="p-1">{t("upcoming.desc_2")}</li>
-            <li class="p-1">{t("upcoming.desc_3")}</li>
-            <li class="p-1">{t("upcoming.desc_4")}</li>
-          </ol>
-        </div>
-          
+        <div class="py-4 lg:py-12">
+          <div class="col-span-full">
+            <ol class="list-decimal pl-10">
+              <li class="p-1">{t("upcoming.desc_1")}</li>
+              <li class="p-1">{t("upcoming.desc_2")}</li>
+              <li class="p-1">{t("upcoming.desc_3")}</li>
+              <li class="p-1">{t("upcoming.desc_4")}</li>
+            </ol>
+          </div>
         </div>
       
 

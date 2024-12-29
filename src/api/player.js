@@ -335,9 +335,9 @@ export async function fetchPlayerRewards([{player_id,agent_id},{size,cursor}],{r
         }
       }
     `
-    console.log(query_str)
+    // console.log(query_str)
     const res = await ao.query(query_str)
-    console.log("res",res)
+    // console.log("res",res)
     let rewards
     if(res?.length > 0){
       rewards = res.map(({node,cursor})=>{

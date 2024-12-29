@@ -235,7 +235,8 @@ export const {
         if(type=="arconnect"){
 
           const permissions = await window.arweaveWallet.getPermissions().catch((err)=>{
-            window.location.reload();
+            console.log(err)
+            // window.location.reload();
             return
           })
 
@@ -331,7 +332,7 @@ export const {
       setConnecting(false)
       setSdk(null)
       resolve(true)
-    }else{reject()}
+    }else{reject(false)}
   })
 
 
