@@ -3,12 +3,12 @@ import Avatar from "../../components/avatar"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { Tabs } from "../../components/tabs"
-import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
+import { batch, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
-import { connected,handleConnection,handleDisconnection,address } from "../../components/arwallet"
+import { connected, handleDisconnection ,address } from "../../components/wallet"
 import { protocols } from "../../signals/global"
-import { createPlayerAccount,balances,refetchUserBalances } from "../../signals/player"
+import { balances,refetchUserBalances,player,refetchPlayer } from "../../signals/player"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"
 import Rewards from "./rewards"
@@ -26,7 +26,7 @@ import Welcome from "./welcome"
 export default props=>{
   let _claimer
   
-  const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),id:protocols?.agent_id}))
+  // const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),id:protocols?.agent_id}))
   const [searchParams, setSearchParams] = useSearchParams();
   const pay_i = protocols?.details[protocols.pay_id]
   const agent_i = protocols?.details[protocols.agent_id]
@@ -94,8 +94,6 @@ export default props=>{
       setTab(subMenus()?.[Math.max(idx,0)])
     }
   })
-  createEffect(()=>console.log("acount",account()))
-  
 
   return(
   <Show when={connected()} fallback={<main class="container"><Welcome/></main>}>
@@ -123,11 +121,11 @@ export default props=>{
       <section class="response_cols py-8 px-1">
         <div class="col-span-full lg:col-span-7 flex flex-col justify-between">
 
-          <InfoItem label={t("label.tickets")}><Show when={!account.loading} fallback="...">{account()?.bet?.[2]||0}</Show></InfoItem>
-          <InfoItem label={t("label.bet")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.win")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.win?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.mint")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.mint / 0.8||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.dividends")}><Show when={!account.loading} fallback="...">{toBalanceValue(account()?.div?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.tickets")}><Show when={!player.loading} fallback="...">{player()?.bet?.[2]||0}</Show></InfoItem>
+          <InfoItem label={t("label.bet")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.win")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.mint")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.dividends")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
           
         </div>
 
@@ -135,12 +133,12 @@ export default props=>{
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <span class="text-3xl">🏆</span>
-              <Show when={!account.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": account()?.win?.[0] == 0}}>${toBalanceValue(account()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
+              <Show when={!player.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": player()?.win?.[0] == 0}}>${toBalanceValue(player()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
             </div>
             <div>
               <button 
                 class="btn btn-primary rounded-full" 
-                disabled={account()&&Number(account()?.win?.[0])<=0}
+                disabled={player()&&Number(player()?.win?.[0])<=0}
                 onClick={()=>_claimer.open()}
               >
                 {t("action.claim")}
@@ -172,10 +170,10 @@ export default props=>{
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
                 <span class="size-6 rounded-full bg-third/50 inline-flex items-center justify-center" use:tooltip={["top","ALTb( ALT Minting Buff )"]}>💧</span>
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(account()?.faucet?.[0],agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(account()?.faucet?.[1],agent_i?.Denomination||12,2)}</span></span>
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(player()?.faucet?.[1]||0,agent_i?.Denomination||12,2)}</span></span>
               </div>
               <div>
-                {account()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" href="#">{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
+                {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" href="#">{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
                 
               </div>
             </div>
@@ -204,14 +202,14 @@ export default props=>{
       </Suspense>
       <Claimer 
         ref={_claimer}
-        rewards={account()?.win?.[0]}
-        tax={account()?.tax?.[0]}
+        rewards={player()?.win?.[0]}
+        tax={player()?.tax?.[0]}
         user={address()}
         onClaimed ={(e)=>{
           toast.success("Claimed!")
           batch(()=>{
             refetchUserBalances()
-            refetchAccount()
+            refetchPlayer()
           })
         }}
       />

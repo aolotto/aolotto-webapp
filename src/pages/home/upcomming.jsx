@@ -41,41 +41,41 @@ export default props => {
     "upcoming.desc_4": ()=><span>2100万$ALT将通过<a href="https://docs.aolotto.com/cn/usdalt#shui-long-tou" target="_blank">铸币Buff</a>（ALTb）奖励给早期用户，通过<a href="https://docs.aolotto.com/cn/shui-long-tou" target="_blank">水龙头</a>免费领取ALTb，越早领取，额度越高;</span>
   })
 
-const Timer = props => {
-  let timer
-  let end = props.end || new Date().getTime()+86400000
-  const [count,setCount] = createSignal()
-  onMount(()=>{
-    timer = setInterval(()=>{
-      const now = new Date().getTime()
-      const diff = (end - now) / 1000
-      let day = Math.floor(diff / 60 / 60 / 24).toString().padStart(2, "0");
-      let hour = Math.floor(diff / 60 / 60 % 24 ).toString().padStart(2, "0");
-      let minute = Math.floor(diff / 60 % 60).toString().padStart(2, "0");
-      let second = Math.floor(diff % 60).toString().padStart(2, "0");
-      setCount({
-        day:day,
-        hour:hour,
-        minute:minute,
-        second:second
-      })
-    },1000)
-  })
-  onCleanup(()=>{
-    clearInterval(timer)
-  })
-  
-  return <div class="flex items-center justify-center gap-8 py-12">
-    <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.day|| "00"}</span><span class="text-xl uppercase text-current/50">day</span></div>
-    <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.hour|| "00"}</span><span class="text-xl uppercase text-current/50">hour</span></div>
-    <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.minute|| "00"}</span><span class="text-xl uppercase text-current/50">minute</span></div>
-    <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.second|| "00"}</span><span class="text-xl uppercase text-current/50">second</span></div>
-  </div>
-}
-  
+  const Timer = props => {
+    let timer
+    let end = props.end || new Date().getTime()+86400000
+    const [count,setCount] = createSignal()
+    onMount(()=>{
+      timer = setInterval(()=>{
+        const now = new Date().getTime()
+        const diff = (end - now) / 1000
+        let day = Math.floor(diff / 60 / 60 / 24).toString().padStart(2, "0");
+        let hour = Math.floor(diff / 60 / 60 % 24 ).toString().padStart(2, "0");
+        let minute = Math.floor(diff / 60 % 60).toString().padStart(2, "0");
+        let second = Math.floor(diff % 60).toString().padStart(2, "0");
+        setCount({
+          day:day,
+          hour:hour,
+          minute:minute,
+          second:second
+        })
+      },1000)
+    })
+    onCleanup(()=>{
+      clearInterval(timer)
+    })
+    
+    return <div class="flex items-center justify-center gap-8 py-12">
+      <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.day|| "00"}</span><span class="text-xl uppercase text-current/50">day</span></div>
+      <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.hour|| "00"}</span><span class="text-xl uppercase text-current/50">hour</span></div>
+      <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.minute|| "00"}</span><span class="text-xl uppercase text-current/50">minute</span></div>
+      <div class="flex flex-col items-center"><span class="text-4xl sm:7xl lg:text-8xl">{count()?.second|| "00"}</span><span class="text-xl uppercase text-current/50">second</span></div>
+    </div>
+  }
+    
   
   return(
-    <div class="w-full z-9999 h-full fixed top-0 left-0 bg-base-0 flex flex-col items-center justify-center ">
+    <div class="">
       <div class="container py-8">
 
         <div class="w-full flex justify-between items-top py-8">

@@ -1,6 +1,6 @@
 
 import { A } from "@solidjs/router"
-import { createMemo,createSignal,onMount,onCleanup, createEffect } from "solid-js"
+import { createMemo,createSignal,onMount,onCleanup } from "solid-js"
 import { t,setDictionarys,locale } from "../i18n"
 import { Icon } from "@iconify-icon/solid"
 // components
@@ -8,7 +8,7 @@ import Logo from "./logo"
 import Avatar from "./avatar"
 import Langpicker from "./langpicker"
 import tooltip from "./tooltip"
-import { connected, address,handleConnection,connecting,inited } from "./arwallet"
+import { connected, address, handleConnection,connecting } from "./wallet"
 import { shortStr } from "../lib/tool"
 import { app } from "../signals/global"
 
@@ -23,7 +23,9 @@ export default props => {
     "nav.rank":"Rank",
     "nav.alt": "$ALT",
     "nav.docs":"Docs",
-    "nav.faucet":"🚰"
+    "nav.faucet":"🚰",
+    "h.connect":"Connect",
+    "h.coneecting":"Connecting"
   })
 
   setDictionarys("zh",{
@@ -32,7 +34,9 @@ export default props => {
     "nav.rank":"排行",
     "nav.alt": "$ALT",
     "nav.docs":"文檔",
-    "nav.faucet":"🚰"
+    "nav.faucet":"🚰",
+    "h.connect":"連接钱包",
+    "h.coneecting":"連接中"
   })
 
   const [stickied,setStickied] = createSignal(false)
@@ -117,9 +121,9 @@ export default props => {
               <button 
                 class="btn rounded-full"
                 onClick={handleConnection}
-                disabled={connecting()||!inited()}
+                disabled={connected()||connecting()}
               >
-                {connecting()?"Connecting":"Connect"}
+                {connecting()?t("h.connecting"):t("h.connect")}
               </button>
             }
           >

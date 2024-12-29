@@ -1,5 +1,5 @@
 import { createUserDividends } from "../../signals/player"
-import { connected,address } from "../../components/arwallet"
+import { connected,address } from "../../components/wallet"
 import { app ,protocols } from "../../signals/global"
 import { createEffect, Match, Show, Switch } from "solid-js"
 import { Xnumbers } from "../../components/xnumber"

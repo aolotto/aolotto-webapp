@@ -2,7 +2,7 @@ import { createStore } from "solid-js/store"
 import { AO,findTagItemValues } from "../lib/ao"
 import { protocols } from "./global"
 import { createResource, createRoot } from "solid-js"
-import { fetchPoolState, fetchStats, fetchActiveBets,fetchPoolMine,fetchPoolRanks } from "../api/pool"
+import { fetchPoolState, fetchStats, fetchActiveBets,fetchPoolRanks } from "../api/pool"
 import { createPagination } from "../lib/page"
 
 

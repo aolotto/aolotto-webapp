@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/solid"
 import { A } from "@solidjs/router"
 import { shortStr } from "../../lib/tool"
-import { createEffect, createMemo, For, Show, Switch } from "solid-js"
+import {  createMemo, For, Show } from "solid-js"
 import { app,protocols } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import { state,stats } from "../../signals/pool"
@@ -13,9 +13,8 @@ import Aolink from "./partners/aolink"
 import Typr from "./partners/typr"
 import Seagull from "./partners/seagull"
 import Pattern from "../../components/pattern"
-import Altlogo from "../../components/altlogo"
-import { t,setDictionarys,dictionarys } from "../../i18n"
-import { redirect } from "@solidjs/router"
+import { t,setDictionarys } from "../../i18n"
+
 
 
 
@@ -137,53 +136,50 @@ export default props => {
   const pay_i = protocols?.details[protocols?.pay_id]
 
   const partners = createMemo(()=>([{
-    tooltip: "The largest cross-chain bridge in the AO ecosystem, AOX enables seamless payments.",
-    link: "https://aox.xyz",
-    element: <Aox class="opacity-50 h-8 hover:opacity-100"/>
-  },{
-    tooltip: "Permaswap is our strategic partner, offering DEX integration.",
-    link: "https://www.permaswap.network",
-    element: <Permaswap class="opacity-50 h-8 hover:opacity-100"/>
-  },{
-    tooltip: "Aolink provides on-chain querying.",
-    link: "https://www.ao.link",
-    element: <Aolink class="opacity-50 h-8 hover:opacity-100"/>
-  },{
-    tooltip: "Typr is our strategic partner, a decentralized information publishing platform like twitter.",
-    link: "https://www.typr.day",
-    element: <Typr class="opacity-50 h-8 hover:opacity-100"/>
-  },{
-    tooltip: "Seagull is a partner of our ecosystem with a focus on GameFi.",
-    link: "https://x.com/happytowngame",
-    element: <Seagull class="opacity-50 h-8 hover:opacity-100"/>
-  }]))
-
-  const faq = createMemo(()=>([{
-    title: t("faq.what_t"),
-    content: <div class="flex flex-col gap-4">{t("faq.what_c")}</div>
-  },
-    {
-      title:t("faq.diff_t"),
-      content:<div class="flex flex-col gap-4">{t("faq.diff_c")}</div>
+      tooltip: "The largest cross-chain bridge in the AO ecosystem, AOX enables seamless payments.",
+      link: "https://aox.xyz",
+      element: <Aox class="opacity-50 h-8 hover:opacity-100"/>
     },{
-      title:t("faq.why_t"),
-      content: <div class="flex flex-col gap-4">{t("faq.why_c")}</div>
+      tooltip: "Permaswap is our strategic partner, offering DEX integration.",
+      link: "https://www.permaswap.network",
+      element: <Permaswap class="opacity-50 h-8 hover:opacity-100"/>
     },{
-      title: t("faq.safe_t"),
-      content: <div class="flex flex-col gap-4">{t("faq.safe_c")}</div>
+      tooltip: "Aolink provides on-chain querying.",
+      link: "https://www.ao.link",
+      element: <Aolink class="opacity-50 h-8 hover:opacity-100"/>
     },{
-      title: t("faq.fair_t"),
-      content: <div class="flex flex-col gap-4">{t("faq.fair_c")}</div>
+      tooltip: "Typr is our strategic partner, a decentralized information publishing platform like twitter.",
+      link: "https://www.typr.day",
+      element: <Typr class="opacity-50 h-8 hover:opacity-100"/>
     },{
-      title: t("faq.alt_t"),
-      content: <div class="flex flex-col gap-4">{t("faq.alt_c")}</div>
-    }
-  ]))
-
+      tooltip: "Seagull is a partner of our ecosystem with a focus on GameFi.",
+      link: "https://x.com/happytowngame",
+      element: <Seagull class="opacity-50 h-8 hover:opacity-100"/>
+    }]))
   
- 
+    const faq = createMemo(()=>([{
+      title: t("faq.what_t"),
+      content: <div class="flex flex-col gap-4">{t("faq.what_c")}</div>
+    },
+      {
+        title:t("faq.diff_t"),
+        content:<div class="flex flex-col gap-4">{t("faq.diff_c")}</div>
+      },{
+        title:t("faq.why_t"),
+        content: <div class="flex flex-col gap-4">{t("faq.why_c")}</div>
+      },{
+        title: t("faq.safe_t"),
+        content: <div class="flex flex-col gap-4">{t("faq.safe_c")}</div>
+      },{
+        title: t("faq.fair_t"),
+        content: <div class="flex flex-col gap-4">{t("faq.fair_c")}</div>
+      },{
+        title: t("faq.alt_t"),
+        content: <div class="flex flex-col gap-4">{t("faq.alt_c")}</div>
+      }
+    ]))
 
-  return (
+  return(
     <main>
       <div class="container relative z-0 overflow-visible">
         <section class="py-18 response_cols">
@@ -216,100 +212,101 @@ export default props => {
         </div>
       </div>
 
-      <div class="w-full bg-linear-to-b from-current/5 to-current/0">
-
-      <div class="container relative z-0 overflow-visible ">
- 
-        <section class="py-16 border-b border-current/10 response_cols  px-2">
-          <div class="col-span-full lg:col-span-4 flex flex-col justify-between items-stretch h-full">
-            <div>
-              <div class="uppercase text-current/50">{t("second.label_sold")}</div>
-              <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pay_i?.Denomination || 6,2)}</Show></div>
-
-            </div>
-            
-            <div class="pt-4 flex-1  flex flex-col justify-end">
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_profit")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount * 0.4,pay_i.Denomination || 6,2)}</Show></span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_dividends")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.dividends?.[2],pay_i?.Denomination || 6,2)}</Show></span></div>
-              <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_buyback")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.buybacks?.[2],pay_i?.Denomination || 6,2)}</Show></span></div>
-            </div>
-            
-          </div>
-          <div class="col-span-full lg:col-span-7 lg:col-end-13">
-            <h2 class="text-2xl pb-6  leading-10 flex items-center gap-2">
-            {t("second.title")}
-            </h2>
-            <p class="text-md text-current/50">{t("second.desc")} <a href="#" target="_blank" class="inline-flex items-center gap-2">{t("learn_more")} <Icon icon="iconoir:arrow-right"/></a></p>
-          </div>
-        </section>
-
-  
-        <section class="py-16 response_cols px-2 ">
-          <div class="col-span-full px-16 text-center flex flex-col justify-center items-center gap-4">
-            <div class="flex items-center gap-2">
-            <Show when={protocols?.pool_id}>
-            <Icon icon="iconoir:component" />
-                <a 
-                  class="inline-flex items-center text-base-content/50" 
-                  use:tooltip={["top-overlap",()=>protocols?.pool_id]}
-                  target="_blank"
-                  href={`${app.ao_link_url}/#/entity/${protocols?.pool_id}`}
-                >
-                  {shortStr(protocols?.pool_id,6)} <Icon icon="ei:external-link"></Icon>
-                </a>
-              </Show>
-            </div>
-            
-            <div class="text-3xl leading-12 ">{t("third.title")}</div>
-          </div>
-
-          <div class="col-span-full flex items-center justify-center pt-12">
-            <div class="max-w-[60em] w-full gap-4 flex flex-col">
-            <For each={faq()}>
-              {({title,content},index)=>(
-                <details class="w-full bg-current/2 hover:bg-current/5 rounded-lg border-current/5 border ">
-                  <summary class="w-full flex justify-between gap-4 p-4 items-center cursor-pointer">
-                    <span class="rounded-full size-6 inline-flex justify-center items-center text-current/50">{index()+1}</span>
-                    <span class="flex-1 text-current">{title}</span>
-                    <span class="text-current/50"><Icon icon="iconoir:arrow-separate-vertical"></Icon></span>
-                  </summary>
-                  <div class="px-6">
-                  <div class="py-4 border-t border-current/10">{content}</div> 
+      <div class="w-full">
+      
+            <div class="container relative z-0 overflow-visible ">
+       
+              <section class="py-16 border-b border-current/10 response_cols  px-2">
+                <div class="col-span-full lg:col-span-4 flex flex-col justify-between items-stretch h-full">
+                  <div>
+                    <div class="uppercase text-current/50">{t("second.label_sold")}</div>
+                    <div class="text-3xl"><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount,pay_i?.Denomination || 6,2)}</Show></div>
+      
                   </div>
-                </details>
-              )}
-            </For>
-            <div class="inline-flex justify-center items-center p-2 gap-2 mt-2">
-              {t("ft.support")}
-              <span class="text-current/50">or</span>
-              {t("ft.helpcenter")}
+                  
+                  <div class="pt-4 flex-1  flex flex-col justify-end">
+                    <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_profit")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.total_sales_amount * 0.4,pay_i.Denomination || 6,2)}</Show></span></div>
+                    <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_dividends")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.dividends?.[2],pay_i?.Denomination || 6,2)}</Show></span></div>
+                    <div class="flex items-center gap-2 h-8"><Icon icon="ph:arrow-elbow-down-right-light"></Icon><span class="text-current/50">{t("second.label_buyback")}:</span> <span><Show when={!stats.loading} fallback="...">${toBalanceValue(stats()?.buybacks?.[2],pay_i?.Denomination || 6,2)}</Show></span></div>
+                  </div>
+                  
+                </div>
+                <div class="col-span-full lg:col-span-7 lg:col-end-13">
+                  <h2 class="text-2xl pb-6  leading-10 flex items-center gap-2">
+                  {t("second.title")}
+                  </h2>
+                  <p class="text-md text-current/50">{t("second.desc")} <a href="#" target="_blank" class="inline-flex items-center gap-2">{t("learn_more")} <Icon icon="iconoir:arrow-right"/></a></p>
+                </div>
+              </section>
+      
+        
+              <section class="py-16 response_cols px-2 ">
+                <div class="col-span-full px-16 text-center flex flex-col justify-center items-center gap-4">
+                  <div class="flex items-center gap-2">
+                  <Show when={protocols?.pool_id}>
+                  <Icon icon="iconoir:component" />
+                      <a 
+                        class="inline-flex items-center text-base-content/50" 
+                        use:tooltip={["top-overlap",()=>protocols?.pool_id]}
+                        target="_blank"
+                        href={`${app.ao_link_url}/#/entity/${protocols?.pool_id}`}
+                      >
+                        {shortStr(protocols?.pool_id,6)} <Icon icon="ei:external-link"></Icon>
+                      </a>
+                    </Show>
+                  </div>
+                  
+                  <div class="text-3xl leading-12 ">{t("third.title")}</div>
+                </div>
+      
+                <div class="col-span-full flex items-center justify-center pt-12">
+                  <div class="max-w-[60em] w-full gap-4 flex flex-col">
+                  <For each={faq()}>
+                    {({title,content},index)=>(
+                      <details class="w-full bg-current/2 hover:bg-current/5 rounded-lg border-current/5 border ">
+                        <summary class="w-full flex justify-between gap-4 p-4 items-center cursor-pointer">
+                          <span class="rounded-full size-6 inline-flex justify-center items-center text-current/50">{index()+1}</span>
+                          <span class="flex-1 text-current">{title}</span>
+                          <span class="text-current/50"><Icon icon="iconoir:arrow-separate-vertical"></Icon></span>
+                        </summary>
+                        <div class="px-6">
+                        <div class="py-4 border-t border-current/10">{content}</div> 
+                        </div>
+                      </details>
+                    )}
+                  </For>
+                  <div class="inline-flex justify-center items-center p-2 gap-2 mt-2">
+                    {t("ft.support")}
+                    <span class="text-current/50">or</span>
+                    {t("ft.helpcenter")}
+                  </div>
+                  </div>
+                
+                </div>
+                
+              </section>
+      
+            <section class="flex justify-center flex-col items-center gap-8  p-16  text-center ">
+              <p class="flex items-center gap-2">
+              <Icon icon="arcticons:apps" />
+              <Icon icon="arcticons:games-2" />
+              <Icon icon="arcticons:bookshelf" />
+              <Icon icon="arcticons:leafpic" />
+              </p>
+              <p class="text-2xl ">{t("third.second_title")}</p>
+              <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
+              <p class="text-current/50">{t("third.second_desc")}</p>
+           
+            </section>
+            <div class="absolute bottom-0 scale-105 left-0 w-full -z-1">
+              <Pattern class="w-full"/>
             </div>
-            </div>
-          
+            
+            
           </div>
-          
-        </section>
+        </div>
 
-      <section class="flex justify-center flex-col items-center gap-8  p-16  text-center ">
-        <p class="flex items-center gap-2">
-        <Icon icon="arcticons:apps" />
-        <Icon icon="arcticons:games-2" />
-        <Icon icon="arcticons:bookshelf" />
-        <Icon icon="arcticons:leafpic" />
-        </p>
-        <p class="text-2xl ">{t("third.second_title")}</p>
-        <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
-        <p class="text-current/50">{t("third.second_desc")}</p>
-     
-      </section>
-      <div class="absolute bottom-0 scale-105 left-0 w-full -z-1">
-        <Pattern class="w-full"/>
-      </div>
       
-      
-    </div>
-    </div>
     </main>
-    
   )
 }
