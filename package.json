@@ -30,12 +30,13 @@
     "generate-avatar": "^1.4.10",
     "solid-js": "^1.8.20",
     "solid-toast": "^0.5.0",
+    "tailwindcss": "^4.0.0-beta.8",
     "warp-arbundles": "^1.0.4"
   },
   "devDependencies": {
     "@iconify-icon/solid": "^2.1.1",
     "@permaweb/aoconnect": "^0.0.59",
-    "@tailwindcss/vite": "^4.0.0-alpha.20",
+    "@tailwindcss/vite": "^4.0.0-beta.8",
     "permaweb-deploy": "^1.1.8",
     "rollup-plugin-visualizer": "^5.12.0",
     "vite": "^5.4.1",

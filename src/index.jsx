@@ -7,6 +7,8 @@ import { Toaster } from 'solid-toast';
 import { initwallet } from './components/wallet';
 import { initApp,initProtocols } from './signals/global';
 // import { isMobile } from './lib/ismobile';
+import { isUpgradeBrowser } from './lib/browser';
+
 
 // components
 import Header from './components/header';
@@ -22,6 +24,15 @@ import Notfound from './pages/notfound';
 import Upcomming from './pages/home/upcomming';
 
 const App = props => {
+  const {isUpdate,browser,versions,lowestVersions=''} = isUpgradeBrowser()
+  if (isUpdate) {
+      // console.log(`您当前${browser}浏览器版本过低(版本${versions}),建议访问网页不低于${lowestVersions}版本,如果出现不能访问页面情况,请您升级浏览器版本在尝试!`)
+      alert(`Your current ${browser} browser version is too low (version ${versions}). It is recommended that you visit a webpage with a version no lower than ${lowestVersions}. If you cannot access the page, please upgrade your browser version and try again!`)
+      return
+  }else{
+    console.log(browser,versions,lowestVersions)
+  }
+
   const launched = createMemo(()=>{
     const launch_tiem = import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):0
     return new Date().getTime() > launch_tiem
