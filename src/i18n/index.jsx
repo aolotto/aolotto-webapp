@@ -9,19 +9,20 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
 
   const lang = navigator.language||navigator.userLanguage
 
+
   const locales = {
     en: {name:"English",dict:en},
     zh: {name:"繁體中文",dict:zh}
   };
 
-  const [locale, setLocale] = createSignal(localStorage?.getItem("CURRENT_LOCALE") || lang?.substr(0, 2) || "en");
+  const [locale, setLocale] = createSignal(localStorage?.getItem("CURRENT_LOCALE") || lang&&(lang?.substr(0, 2)=="zh"?"zh":"en") || "en");
 
   const [dictionarys,setDictionarys] = createStore({zh:{},en:{}})
 
 
   const dict = createMemo(()=>({
-    ...i18n.prefix(i18n.flatten(locales[locale()]?.dict), "common"),
-    ...i18n.flatten(dictionarys[locale()])
+    ...i18n.prefix(i18n.flatten(locales[locale()=="zh"?"zh":"en"]?.dict), "common"),
+    ...i18n.flatten(dictionarys[locale()=="zh"?"zh":"en"])
   }))
 
 
@@ -30,13 +31,13 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
   createEffect(()=>{
     document.hasStorageAccess().then((hasAccess) => {
       if (hasAccess) {
-        localStorage.setItem("CURRENT_LOCALE",locale())
+        localStorage.setItem("CURRENT_LOCALE",locale()=="zh"?"zh":"en")
       }
     })
   })
 
   return ({
-    locale, setLocale, locales,dictionarys,setDictionarys,dict,t
+    locale, setLocale,locales, dictionarys,setDictionarys,dict,t
   })
   
 })
