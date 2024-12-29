@@ -26,6 +26,7 @@
     "generate-avatar": "^1.4.10",
     "solid-js": "^1.8.20",
     "solid-toast": "^0.5.0",
+    "tailwindcss": "^4.0.0-beta.8",
     "vouchdao": "^0.2.6",
     "warp-arbundles": "^1.0.4"
   },
