@@ -1,11 +1,18 @@
 /* @refresh reload */
 import './index.css'
+console.log("s1")
 import { render } from 'solid-js/web'
+console.log("s2")
 import { HashRouter, Route } from "@solidjs/router";
+console.log("s3",HashRouter, Route)
 import {  Match, Show,  Switch, createMemo, createSignal, onMount } from "solid-js"
+console.log("s4")
 import { Toaster } from 'solid-toast';
+console.log("s4",Toaster)
 import { initwallet } from './components/wallet';
+console.log("s5",initwallet)
 import { initApp,initProtocols } from './signals/global';
+console.log("s6",initApp,initProtocols)
 import { isUpgradeBrowser } from './lib/browser';
 
 
