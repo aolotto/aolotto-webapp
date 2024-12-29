@@ -12,8 +12,8 @@ export async function fetchTokenBalance(params,{value,refetching}){
       tags: { Action: "Balance", Recipient: player_id }
     })
     .then(({ Messages }) => {
-      if (Messages?.length >= 1&& Messages[0].Data) {
-        const data = JSON.parse(Messages[0].Data)
+      if (Messages?.length >= 1&& Messages?.[0]?.Data) {
+        const data = JSON.parse(Messages?.[0]?.Data)
         if(data){
           document.hasStorageAccess().then((hasAccess) => {
             if (hasAccess) {
@@ -56,8 +56,8 @@ export async function fetchPlayerAccount({player,id},{refetching}){
       })
       .then(({ Messages,Errors }) => {
         console.log("fetchPlayerAccount-Result",Messages,Errors)
-        if (Messages?.length >= 1&& Messages[0].Data) {
-          const data = JSON.parse(Messages[0].Data)
+        if (Messages?.length >= 1&& Messages?.[0]?.Data) {
+          const data = JSON.parse(Messages?.[0]?.Data)
           if(data){
             document.hasStorageAccess().then((hasAccess) => {
               if (hasAccess) {
@@ -89,8 +89,9 @@ export async function fetchPlayerAccount({player,id},{refetching}){
 
 
 export async function fetchUserTokenBalances({player_id,token_ids},{refetching}){
+  console.log("fetchUserTokenBalances",player_id,token_ids)
   if(!player_id||!token_ids||token_ids?.length<=0) {
-    throw Error("missed player id or token ids")
+    // throw Error("missed player id or token ids")
     return
   }
   return Promise.all(token_ids.map((token_id)=>new Promise((resolve, reject) => {
@@ -108,8 +109,8 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
       })
       .then(({Messages,...rest})=>{
         console.log(rest)
-        if (Messages?.length >= 1 && Messages[0].Data) {
-          const data = JSON.parse(Messages[0].Data)
+        if (Messages?.length >= 1 && Messages?.[0].Data) {
+          const data = JSON.parse(Messages?.[0].Data)
           if(data){
             document.hasStorageAccess().then((hasAccess) => {
               if (hasAccess) {
@@ -128,7 +129,7 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
   })))
   .then((bals)=>{
     const result = {}
-    bals.forEach(([id,balance])=>result[id]=balance)
+    bals?.forEach(([id,balance])=>result[id]=balance)
     return result
   })
 }
@@ -137,7 +138,7 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
 export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{refetching}){
   console.log("fetchPlayerTickets",player_id,pool_id)
 
-  if(!player_id) return null
+  if(!player_id||!pool_id) return null
 
   try {
     const query_str =  `
@@ -199,12 +200,12 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
           denomination: tags?.Denomination,
           count: tags?.Count&&Number(tags?.Count),
           amount: tags?.Amount,
-          round: tags.Round,
-          x_numbers: tags['X-Numbers'],
-          price : tags.Price,
+          round: tags?.Round,
+          x_numbers: tags?.['X-Numbers'],
+          price : tags?.Price,
           timestamp : node?.block?.timestamp,
-          created : tags['Created'],
-          round : tags['Round'],
+          created : tags?.['Created'],
+          round : tags?.['Round'],
           mint,
           cursor
         })
@@ -280,7 +281,7 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
         for (const {name,value} of node.tags) {
           tags[name] = value
         }
-        const mint = tags?.["X-Mint"]?.split(",")
+    
  
         return({
           id: node.id,
