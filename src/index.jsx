@@ -2,11 +2,10 @@
 import './index.css'
 import { render } from 'solid-js/web'
 import { HashRouter, Route } from "@solidjs/router";
-import { ErrorBoundary, Match, Show, Suspense, Switch, createMemo, createSignal, onMount } from "solid-js"
+import {  Match, Show,  Switch, createMemo, createSignal, onMount } from "solid-js"
 import { Toaster } from 'solid-toast';
 import { initwallet } from './components/wallet';
 import { initApp,initProtocols } from './signals/global';
-// import { isMobile } from './lib/ismobile';
 import { isUpgradeBrowser } from './lib/browser';
 
 

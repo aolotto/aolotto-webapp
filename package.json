@@ -12,7 +12,6 @@
     "deploy-main": "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
-    "@othent/kms": "^2.0.0",
     "@robit-dev/tailwindcss-class-combiner": "^1.0.2",
     "@solid-aria/button": "^0.1.3",
     "@solid-primitives/i18n": "^2.1.1",
@@ -26,9 +25,7 @@
     "generate-avatar": "^1.4.10",
     "solid-js": "^1.8.20",
     "solid-toast": "^0.5.0",
-    "tailwindcss": "^4.0.0-beta.8",
-    "vouchdao": "^0.2.6",
-    "warp-arbundles": "^1.0.4"
+    "tailwindcss": "^4.0.0-beta.8"
   },
   "devDependencies": {
     "@iconify-icon/solid": "^2.1.1",
