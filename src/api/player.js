@@ -294,7 +294,7 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
         })
       })
     }
-    console.log(mints)
+    // console.log(mints)
     return mints
   } catch (error) {
     console.error("fetch user mintings faild.", error)
@@ -522,7 +522,7 @@ export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cur
       }
     `
     const res = await ao.query(query_str)
-    console.log("res",res)
+    // console.log("res",res)
     let claims
     if(res?.length > 0){
       claims = res.map(({node,cursor})=>{
