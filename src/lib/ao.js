@@ -1,61 +1,62 @@
 import * as aoconnect  from "@permaweb/aoconnect";
 import { arGql,GQLUrls } from "./argql";
+import { createDataItemSigner } from "@permaweb/aoconnect";
 
-import { Buffer } from "buffer/index.js";
-import * as WarpArBundles from "warp-arbundles";
-if (!globalThis.Buffer) globalThis.Buffer = Buffer;
-const { DataItem } = WarpArBundles;
-const pkg = WarpArBundles.default ? WarpArBundles.default : WarpArBundles;
-const { createData, ArweaveSigner } = pkg;
+// import { Buffer } from "buffer/index.js";
+// import * as WarpArBundles from "warp-arbundles";
+// if (!globalThis.Buffer) globalThis.Buffer = Buffer;
+// const { DataItem } = WarpArBundles;
+// const pkg = WarpArBundles.default ? WarpArBundles.default : WarpArBundles;
+// const { createData, ArweaveSigner } = pkg;
 
 
 
-function createSignerByWallet(arweaveWallet) {
-  console.log("createSignerByWallet",typeof(arweaveWallet),arweaveWallet)
-  const signer = async ({
-    data,
-    tags,
-    target,
-    anchor,
-    createDataItem = (buf) => new DataItem(buf),
-  }) => {
-    const view = await arweaveWallet.signDataItem({
-      data,
-      tags,
-      target,
-      anchor,
-    });
-    const dataItem = createDataItem(Buffer.from(view));
-    return {
-      id: await dataItem.id,
-      raw: await dataItem.getRaw(),
-    };
-  };
-  return signer;
-}
+// function createSignerByWallet(arweaveWallet) {
+//   console.log("createSignerByWallet",typeof(arweaveWallet),arweaveWallet)
+//   const signer = async ({
+//     data,
+//     tags,
+//     target,
+//     anchor,
+//     createDataItem = (buf) => new DataItem(buf),
+//   }) => {
+//     const view = await arweaveWallet.signDataItem({
+//       data,
+//       tags,
+//       target,
+//       anchor,
+//     });
+//     const dataItem = createDataItem(Buffer.from(view));
+//     return {
+//       id: await dataItem.id,
+//       raw: await dataItem.getRaw(),
+//     };
+//   };
+//   return signer;
+// }
 
-function createSignerByJwk(wallet) {
-  const signer = async ({ data, tags, target, anchor }) => {
-    const signer = new ArweaveSigner(wallet);
-    const dataItem = createData(data, signer, { tags, target, anchor });
-    return dataItem.sign(signer).then(async () => ({
-      id: await dataItem.id,
-      raw: await dataItem.getRaw(),
-    }));
-  };
+// function createSignerByJwk(wallet) {
+//   const signer = async ({ data, tags, target, anchor }) => {
+//     const signer = new ArweaveSigner(wallet);
+//     const dataItem = createData(data, signer, { tags, target, anchor });
+//     return dataItem.sign(signer).then(async () => ({
+//       id: await dataItem.id,
+//       raw: await dataItem.getRaw(),
+//     }));
+//   };
 
-  return signer;
-}
+//   return signer;
+// }
 
-function createDataItemSigner(wallet) {
-  let signer
-  if(!wallet["p"]){
-    signer = createSignerByWallet(wallet)
-  }else{
-    signer = createSignerByJwk(wallet)
-  }
-  return signer
-}
+// function createDataItemSigner(wallet) {
+//   let signer
+//   if(!wallet["p"]){
+//     signer = createSignerByWallet(wallet)
+//   }else{
+//     signer = createSignerByJwk(wallet)
+//   }
+//   return signer
+// }
 
 export const formatMessageTags = (tags) =>{
   if(tags instanceof Array){
