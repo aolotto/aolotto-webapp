@@ -231,17 +231,17 @@ export const {
     createPortal()
 
       window.addEventListener("arweaveWalletLoaded",async(e)=>{
-        const type = localStorage.getItem("AR-WALLET-TYPE")
+        const type = localStorage?.getItem("AR-WALLET-TYPE")
         if(type=="arconnect"){
 
-          const permissions = await window.arweaveWallet.getPermissions().catch((err)=>{
+          const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
             console.log(err)
             // window.location.reload();
             return
           })
 
           if(permissions?.length == configs()?.permissions?.length){
-            const address= await window.arweaveWallet.getActiveAddress()
+            const address= await window?.arweaveWallet?.getActiveAddress()
             if(address){
               setAddress(address)
               setConnecting(false)
@@ -290,11 +290,17 @@ export const {
       default:
         await window.arweaveWallet.connect(permissions||["ACCESS_ADDRESS","SIGN_TRANSACTION"],appInfo,gateWay)
           .then(async(res)=>{
-            const address = await window.arweaveWallet.getActiveAddress()
+            const address = await window?.arweaveWallet?.getActiveAddress()
             if(address){
               setAddress(address)
-              setWsdk(window.arweaveWallet)
-              localStorage.setItem("AR-WALLET-TYPE","arconnect")
+              setWsdk(window?.arweaveWallet)
+
+              document.hasStorageAccess().then((hasAccess) => {
+                if (hasAccess) {
+                  localStorage.setItem("AR-WALLET-TYPE","arconnect");
+                  console.log("已获得 cookie 访问权限");
+                }
+              });
             }
           })
           .catch((err)=>{
