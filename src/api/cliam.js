@@ -1,12 +1,12 @@
 import { AO,findTagItemValues } from "../lib/ao"
-import { wallet } from "../components/wallet"
+import { wsdk } from "../components/wallet"
 
 export const claim =(pool_id,recipient) => new Promise(async(resovle,reject)=>{
   try {
     if(!pool_id){reject("Missed store id")}
     if(!recipient){reject("Missed pool id")}
     console.log(pool_id,recipient)
-    const ao = new AO({wallet:wallet()})
+    const ao = new AO({wallet:wsdk()})
     const msg =  await ao.message({
       process: pool_id,
       tags: {
