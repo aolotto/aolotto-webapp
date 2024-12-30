@@ -13,13 +13,19 @@ import Loadmore from "../../components/loadmore"
 export default props => {
   const [dividends,{hasMore,loadingMore}] = createDividends(()=>({pool_id:protocols?.pool_id,agent_id:protocols?.agent_id}))
   setDictionarys("en",{
-    "div.tips": (v)=> <span>A total of <span class="text-base-content">${v.paid}</span> in dividends has been distributed, with <span class="text-base-content">${v.unpaid}</span> remaining.</span>
+    "div.tips": (v)=> <span>A total of <span class="text-base-content">${v.paid}</span> in dividends has been distributed, with <span class="text-base-content">${v.unpaid}</span> remaining.</span>,
+    "div.distributed": "Distributed",
+    "div.to": "to",
+    "div.holders": "Holders"
   })
   setDictionarys("zh",{
-    "div.tips": (v)=> <span>累计已分发<span class="text-base-content">${v.paid}</span>的分红，还有<span class="text-base-content">${v.unpaid}</span>待分发。</span>
+    "div.tips": (v)=> <span>累计已分发<span class="text-base-content">${v.paid}</span>的分红，还有<span class="text-base-content">${v.unpaid}</span>待分发。</span>,
+    "div.distributed": "分发",
+    "div.to": "给",
+    "div.holders": "持有者"
   })
 
-  createEffect(()=>console.log(stats()))
+  createEffect(()=>console.log(dividends()))
   
   return(
     <div class="flex flex-col gap-8 py-8">
@@ -37,11 +43,11 @@ export default props => {
             <span class="text-current/50">{shortStr(item.id,8)}</span>
             </div>
             <div class="flex items-center gap-2 col-span-full lg:col-span-5">
-              <span class="text-current/50">Distributed </span>
+              <span class="text-current/50">{t("div.distributed")} </span>
               <span>${toBalanceValue(item?.amount,6,2)} </span>
-              <span class="text-current/50">to</span>
-              <span>{item.count||"-"} </span>
-              <span class="text-current/50">holders</span>
+              <span class="text-current/50">{t("div.to")}</span>
+              <span>{item?.addresses}</span>
+              <span class="text-current/50">{t("div.holders")}</span>
             </div>
             <div class="flex items-center justify-end gap-2 col-span-full lg:col-span-3">
               <span class="text-current/50 "><Datetime ts={item.timestamp*1000}/></span>

@@ -59,8 +59,6 @@ let defaultTooltipStyle = (
 			background: #282828;
 			border: 1px solid grey;
 			font-size: 0.8rem;
-
-			text-transform: capitalize;
 		`}
 	>
 		{local.currentTitle}

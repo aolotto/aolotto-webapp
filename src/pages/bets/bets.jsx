@@ -14,6 +14,8 @@ import { setDictionarys,t } from "../../i18n"
 import Empty from "../../components/empty"
 
 
+
+
 const BetItem = props => {
   const item = () => props.value
   // const token_bet = createMemo(()=>item()?.currency.split(","))

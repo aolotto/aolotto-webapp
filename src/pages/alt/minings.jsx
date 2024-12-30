@@ -32,12 +32,14 @@ export default props => {
   return(
     <div class="flex flex-col gap-8 py-8">
       <div class="w-full items-center flex justify-center text-current/50 text-sm">
+      <Show when={minings()?.length > 0}>
         {t("m.desc",{
           link:"https://aolotto.org",
-          text:"AolottoFundation",
+          text:"AolottoFoundation",
           ticker: agent_i?.Ticker || "ALT",
           amount:stats()?.total_minted_amount?toBalanceValue(stats()?.total_minted_amount,12,2):0,tax:stats()?.total_minted_amount?toBalanceValue(stats()?.total_minted_amount * 0.2,12,2):0
         })}
+      </Show>
       </div>
       <div class="flex flex-col gap-2">
         <For each={minings()} fallback={<Empty tips="No mintings yet."/>}>
