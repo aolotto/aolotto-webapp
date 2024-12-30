@@ -76,7 +76,7 @@ export default props => {
   
   return(
     <div class="">
-      <div class="container py-8">
+      <div class="container py-4 lg:py-8">
 
         <div class="w-full flex justify-between items-top py-8">
           <div class="w-[10em] pt-2">

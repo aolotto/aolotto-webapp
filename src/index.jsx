@@ -7,6 +7,7 @@ import { Toaster } from 'solid-toast';
 import { initwallet } from './components/wallet';
 import { initApp,initProtocols } from './signals/global';
 import { isUpgradeBrowser } from './lib/browser';
+import { isMobile } from './lib/ismobile';
 
 
 // components
@@ -21,11 +22,11 @@ import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
 import Upcomming from './pages/home/upcomming';
+import Mobile from './pages/home/mobile';
 
 const App = props => {
   const {isUpdate,browser,versions,lowestVersions=''} = isUpgradeBrowser()
   if (isUpdate) {
-      // console.log(`您当前${browser}浏览器版本过低(版本${versions}),建议访问网页不低于${lowestVersions}版本,如果出现不能访问页面情况,请您升级浏览器版本在尝试!`)
       alert(`Your current ${browser} browser version is too low (version ${versions}). It is recommended that you visit a webpage with a version no lower than ${lowestVersions}. If you cannot access the page, please upgrade your browser version and try again!`)
       return
   }else{
@@ -92,6 +93,7 @@ const App = props => {
     >
       <Switch>
           <Match when={!launched()}>{Upcomming}</Match>
+          <Match when={isMobile()}>{Mobile}</Match>
           <Match when={launched()}>
           <div class="flex flex-col min-h-screen w-full items-center justify-between">
             <Header/>
