@@ -67,11 +67,11 @@ function getBrowser() {
 const browserList = [
   {
       browser: 'Edge',
-      versions: 79
+      versions: 78
   },
   {
       browser: 'Firefox',
-      versions: 78
+      versions: 120
   },
   {
       browser: 'Chrome',
