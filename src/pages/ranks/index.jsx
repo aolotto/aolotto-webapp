@@ -29,6 +29,28 @@ export default props => {
         <Show when={ranks()?.bettings?.length == 0 && ranks()?.mintings?.length == 0 && ranks()?.winnings?.length == 0 && ranks()?.dividends?.length == 0}>
           <Empty tips="No rankings yet."/>
         </Show>
+        <Show when={ranks()?.winnings?.length > 0}>
+          <section>
+            <h2 class="col-span-full py-4 mt-4">
+              <span class="size-6 inline-flex mr-6 ml-2">🏆</span> 
+              <span class="text-current/50 uppercase">{t("top.winnings")}</span>
+            </h2>
+            <For each={ranks()?.winnings}>
+              {(item,index)=>{
+                const [i] = Object.entries(item)
+                return(
+                  <Rankitem 
+                    index={index}
+                    user={i[0]}
+                    amount={i[1]}
+                    token={protocols?.details[protocols.pay_id]}
+                    key={index()}
+                  />
+                )
+              }}
+            </For>
+          </section>
+        </Show>
         <Show when={ranks()?.bettings?.length > 0}>
           <section>
             <h2 class="col-span-full py-4 mt-4">
@@ -73,28 +95,7 @@ export default props => {
             </For>
           </section>
         </Show>
-        <Show when={ranks()?.winnings?.length > 0}>
-          <section>
-            <h2 class="col-span-full py-4 mt-4">
-              <span class="size-6 inline-flex mr-6 ml-2">🏆</span> 
-              <span class="text-current/50 uppercase">{t("top.winnings")}</span>
-            </h2>
-            <For each={ranks()?.winnings}>
-              {(item,index)=>{
-                const [i] = Object.entries(item)
-                return(
-                  <Rankitem 
-                    index={index}
-                    user={i[0]}
-                    amount={i[1]}
-                    token={protocols?.details[protocols.pay_id]}
-                    key={index()}
-                  />
-                )
-              }}
-            </For>
-          </section>
-        </Show>
+       
         <Show when={ranks()?.dividends?.length > 0}>
           <section>
             <h2 class="col-span-full py-4 mt-4">

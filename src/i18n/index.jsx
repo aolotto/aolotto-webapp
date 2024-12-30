@@ -29,11 +29,7 @@ export const {locale, setLocale, locales,dictionarys,setDictionarys,dict,t} =  c
   const t = i18n.translator(dict, i18n.resolveTemplate);
 
   createEffect(()=>{
-    document.hasStorageAccess().then((hasAccess) => {
-      if (hasAccess) {
-        localStorage.setItem("CURRENT_LOCALE",locale()=="zh"?"zh":"en")
-      }
-    })
+    localStorage.setItem("CURRENT_LOCALE",locale())
   })
 
   return ({

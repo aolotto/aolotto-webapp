@@ -3,7 +3,7 @@ import Avatar from "../../components/avatar"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import { Tabs } from "../../components/tabs"
-import { batch, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
+import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected, handleDisconnection ,address } from "../../components/wallet"
@@ -94,6 +94,8 @@ export default props=>{
       setTab(subMenus()?.[Math.max(idx,0)])
     }
   })
+
+  createEffect(()=>console.log("player",player()))
 
   return(
   <Show when={connected()} fallback={<main class="container"><Welcome/></main>}>

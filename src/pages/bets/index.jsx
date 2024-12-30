@@ -14,14 +14,18 @@ import { protocols, app } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
+import { tippy, useTippy } from 'solid-tippy';
+import Rules from "../../components/rules"
+
 
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
-import rewards from "../me/rewards"
+
 
 
 
 export default props => {
   let _numpicker
+  let _rules
   const pay_i = protocols?.details?.[protocols.pay_id]
   const pool_i = protocols?.details?.[protocols?.pool_id]
   const agent_i = protocols?.details?.[protocols?.agent_id]
@@ -73,8 +77,9 @@ export default props => {
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
-    "d.minting" : (v)=><span className="text-current/50">The minting balance this round is <span className="text-base-content">{v.balance}</span>/{v.total}$ALT, with a reward of <span className="text-base-content">{v.reward}</span> $ALT per bet.</span>,
-    "learn_more" : "Learn more"
+    "d.minting" : (v)=><span className="text-current/50">The minting cap for this round left <span className="text-base-content">{v.balance}</span> / {v.total} $ALT, with <span className="text-base-content">{v.reward}</span> $ALT rewarded per bet.</span>,
+    "b.learn_more" : "Learn the rules",
+    "tooltop.bet2mint" : ()=>"$ALT is minted through the Bet2Mint (Bet to Mint) mechanism in rounds. At the start of each round, the minting cap is reset to 1/10,000th of the remaining unminted $ALT (out of the total supply of 21 million). As the circulating supply grows, the minting cap gradually decreases. Users participating in the current betting round earn minting rewards based on the order of their bets. The minting reward for each bet is 1/1,000th of the remaining minting cap for that round."
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -88,8 +93,10 @@ export default props => {
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
-    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣餘額為 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，單筆投注的鑄幣獎勵為：<span className="text-base-content">{v.reward}</span> $ALT</span>,
-    "learn_more" : "了解更多"
+    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣配额仅剩 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，單筆投注鑄幣獎勵 <span className="text-base-content">{v.reward}</span> $ALT</span>,
+    "b.learn_more" : "了解规则",
+    "tooltop.bet2mint" : ()=>"$ALT通过Bet2Mint（投注挖矿）机制在轮次中铸造。每轮启动时铸币上限将重置为剩余未铸造的 $ALT 的1/10,000。随着流通供应量的增长，铸币上限逐渐减少。参与当前投注轮次的用户根据其投注顺序获得铸币奖励。每次投注的铸币奖励为该轮铸币上限余额的1/1,000。"
+
   })
 
   createEffect(()=>console.log(state()))
@@ -109,7 +116,7 @@ export default props => {
               onClick={()=>{
                 setShareData({
                   title: `$1 to win $${toBalanceValue(state()?.jackpot||0,pay_i?.Denomination||6,0)}, last bettor takes at least a 50% higher chance to win on #Aolotto , Round-${state()?.round} is about to draw! 🏆`,
-                  url: "https://aolotto.com"
+                  url: "aolotto.com"
                 })
                 share(TWITTER)
               }}
@@ -162,7 +169,13 @@ export default props => {
               
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
-            <div class="text-current/50 text-sm">{t("s.draw_tip",{time:"24",wager:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})}<a target="_blank" href="https://docs.aolotto.com/en/draw-and-rules" class="inline-flex items-center">{t("learn_more")}<Icon icon="ei:external-link"></Icon></a></div>
+            <div class="text-current/50 text-sm">
+              {t("s.draw_tip",{time:"24",wager:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})}
+              <button class="text-primary cursor-pointer" onClick={()=>_rules?.open()}>
+                {t("b.learn_more")}
+              </button>
+              {/* <a target="_blank" href="https://docs.aolotto.com/en/draw-and-rules" class="inline-flex items-center">{t("learn_more")}<Icon icon="ei:external-link"></Icon></a> */}
+            </div>
             <div>
               <button 
                 class="btn btn-xl btn-primary"
@@ -185,7 +198,18 @@ export default props => {
 
       <Show when={minting()}>
         <section class="response_cols py-8 border-t border-current/20 flex justify-center items-center">
-          <span class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1">Bet2Mint<Icon icon="carbon:information"></Icon></span> 
+          <span
+            use:tippy={{
+              allowHTML: true,
+              hidden: true,
+              animation: 'fade',
+              props: {
+                content : ()=><div class="bg-base-100 p-4 rounded-2xl border border-base-200">{t("tooltop.bet2mint")}</div> 
+              }
+            }}
+            class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help">
+              Bet2Mint<Icon icon="carbon:information"></Icon>
+          </span> 
           <span >
           {t("d.minting",{
             balance : <Show when={!state.loading} fallback="...">{toBalanceValue(minting()?.quota?.[0],agent_i?.Denomination||12,2)}</Show>,
@@ -225,7 +249,7 @@ export default props => {
       }}
     />
 
-    {/* <Numbers/> */}
+    <Rules ref={_rules}/>
 
     </>
   )

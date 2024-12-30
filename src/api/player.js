@@ -48,7 +48,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
     if(!player||!id) return
     console.log("fetchPlayerAccount",player,id)
     let key ='AOLOTTO-ACCOUNT-'+id+player
-    let localData = localStorage?.getItem(key)
+    let localData = sessionStorage?.getItem(key)
     if(!localData || refetching){
       return await ao.dryrun({
         process: id,
@@ -61,7 +61,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
           if(data){
             document.hasStorageAccess().then((hasAccess) => {
               if (hasAccess) {
-                localStorage.setItem(key,JSON.stringify(data))
+                sessionStorage.setItem(key,JSON.stringify(data))
               }
             })
 
@@ -411,16 +411,13 @@ export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id
               values: ["Message"]
             },{
               name: "X-Transfer-Type",
-              values: ["Distribution"]
+              values: ["Distributed"]
             },{
               name: "From-Process",
               values: ["${token_id}"]
             },{
               name: "Sender",
               values: ["${agent_id}"]
-            },{
-              name: "X-Distribution-From",
-              values: ["${pool_id}"]
             }]
         ) {
           edges {
@@ -439,7 +436,7 @@ export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id
         }
       }
     `
-    console.log(query_str)
+    // console.log(query_str)
     const res = await ao.query(query_str)
     console.log("res",res)
     let rewards
@@ -452,9 +449,9 @@ export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id
         return({
           id: node.id,
           distribute_id: tags?.['X-Distribution-Id'],
-          distribute_from: tags?.['X-Distribution-From'],
-          amount: tags?.['X-Amount'],
-          distribute_unit: tags?.['X-Unit-Share'],
+          distribute_from: tags?.Sender,
+          amount: tags?.Quantity,
+          distribute_unit: 0,
           timestamp : node?.block?.timestamp,
           token: tags?.['From-Process'],
           quantity: tags?.Quantity,

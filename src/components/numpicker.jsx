@@ -123,7 +123,6 @@ export default props => {
     if(picked()?.length>=3){
       setQuantity(quantity()||1)
     }
-    console.log("player",player())
   })
 
   onMount(()=>{
