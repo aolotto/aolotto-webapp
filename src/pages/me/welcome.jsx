@@ -14,7 +14,7 @@ export default props => {
     "w.connect": "請先連接您的AR錢包",
     "w.download": ()=><span>建議使用ArConnect，<a href="https://www.arconnect.io/download" target="_blank">點擊這裡</a>下載</span>,
     "connect": "链接",
-    "connecting": "连接中..."
+    "conecting": "连接中..."
   })
   return(
     <div class="w-full py-12 flex flex-col items-center justify-center gap-4">

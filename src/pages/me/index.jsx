@@ -21,6 +21,7 @@ import toast from "solid-toast"
 import { useSearchParams } from "@solidjs/router"
 import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
+import { locale } from "../../i18n"
 
 
 export default props=>{
@@ -95,7 +96,7 @@ export default props=>{
     }
   })
 
-  createEffect(()=>console.log("player",player()))
+  createEffect(()=>console.log("locale",locale(),player()?.win))
 
   return(
   <Show when={connected()} fallback={<main class="container"><Welcome/></main>}>
@@ -140,7 +141,7 @@ export default props=>{
             <div>
               <button 
                 class="btn btn-primary rounded-full" 
-                disabled={player()&&Number(player()?.win?.[0])<=0}
+                disabled={!player()||!player()?.win||Number(player()?.win?.[0]||0)<=0}
                 onClick={()=>_claimer.open()}
               >
                 {t("action.claim")}
@@ -165,7 +166,7 @@ export default props=>{
                 <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,2)}</Show>  <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="#">{t("action.swap")}<Icon icon="ei:external-link"></Icon></a>
+                <span class="inline-flex items-center gap-1 text-current/30" href="#" disabled={true}>{t("action.swap")}<Icon icon="ei:external-link"></Icon></span>
               </div>
             </div>
             <div class="flex items-center gap-2 justify-between">
@@ -175,7 +176,7 @@ export default props=>{
                 <span><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(player()?.faucet?.[1]||0,agent_i?.Denomination||12,2)}</span></span>
               </div>
               <div>
-                {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" href="#">{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
+                {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" target="_blank" href={locale()=="zh"?"https://docs.aolotto.com/cn/shui-long-tou":"https://docs.aolotto.com/en/faucet"}>{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
                 
               </div>
             </div>
