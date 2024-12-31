@@ -20,7 +20,7 @@ export default props => {
     <div class="w-full py-12 flex flex-col items-center justify-center gap-4">
       <h2 class="text-2xl">{(t("w.welcome"))}</h2>
       <p class="text-current/50">{(t("w.connect"))}</p>
-      <div><button class="btn btn-primary btn-lg" onClick={handleConnection} disabled={connecting()}>{connecting()?t("connecting"):t("connect")}</button></div>
+      <div><button class="btn btn-primary btn-lg" onClick={handleConnection} disabled={connecting()}>{connecting()?t("conecting"):t("connect")}</button></div>
       <div class="text-sm">{t("w.download")}</div>
     </div>
   )

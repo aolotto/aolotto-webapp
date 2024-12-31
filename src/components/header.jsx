@@ -11,6 +11,7 @@ import tooltip from "./tooltip"
 import { connected, address, handleConnection,connecting } from "./wallet"
 import { shortStr } from "../lib/tool"
 import { app } from "../signals/global"
+import Spinner from "./spinner"
 
 
 export default props => {
@@ -25,7 +26,7 @@ export default props => {
     "nav.docs":"Docs",
     "nav.faucet":"🚰",
     "h.connect":"Connect",
-    "h.coneecting":"Connecting"
+    "h.conecting":"Connecting"
   })
 
   setDictionarys("zh",{
@@ -36,7 +37,7 @@ export default props => {
     "nav.docs":"文檔",
     "nav.faucet":"🚰",
     "h.connect":"連接钱包",
-    "h.coneecting":"連接中"
+    "h.conecting":"連接中"
   })
 
   const [stickied,setStickied] = createSignal(false)
@@ -123,7 +124,7 @@ export default props => {
                 onClick={handleConnection}
                 disabled={connected()||connecting()}
               >
-                {connecting()?t("h.connecting"):t("h.connect")}
+                {connecting()?<Spinner/>:t("h.connect")}
               </button>
             }
           >

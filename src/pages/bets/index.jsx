@@ -77,9 +77,9 @@ export default props => {
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
-    "d.minting" : (v)=><span className="text-current/50">The minting cap for this round left <span className="text-base-content">{v.balance}</span> / {v.total} $ALT, with <span className="text-base-content">{v.reward}</span> $ALT rewarded per bet.</span>,
+    "d.minting" : (v)=><span className="text-current/50">The minting cap for this round left <span className="text-base-content">{v.balance}</span> / {v.total} $ALT, with <span className="text-base-content">{v.reward}</span> $ALT rewarded per $1 bet.</span>,
     "b.learn_more" : "Learn the rules",
-    "tooltop.bet2mint" : ()=>"$ALT is minted through the Bet2Mint (Bet to Mint) mechanism in rounds. At the start of each round, the minting cap is reset to 1/10,000th of the remaining unminted $ALT (out of the total supply of 21 million). As the circulating supply grows, the minting cap gradually decreases. Users participating in the current betting round earn minting rewards based on the order of their bets. The minting reward for each bet is 1/1,000th of the remaining minting cap for that round."
+    "tooltop.bet2mint" : ()=>"$ALT is minted through the Bet2Mint (Bet to Mint) mechanism in rounds. At the start of each round, the minting cap is reset to 1/10,000th of the remaining unminted $ALT (out of the total supply of 210 million). As the circulating supply grows, the minting cap gradually decreases. Users participating in the current betting round earn minting rewards based on the order of their bets. The minting reward for each bet is 1/1,000th of the remaining minting cap for that round."
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -93,9 +93,9 @@ export default props => {
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
-    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣配额仅剩 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，單筆投注鑄幣獎勵 <span className="text-base-content">{v.reward}</span> $ALT</span>,
+    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣配额仅剩 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，投注$1可获得鑄幣獎勵 <span className="text-base-content">{v.reward}</span> $ALT</span>,
     "b.learn_more" : "了解规则",
-    "tooltop.bet2mint" : ()=>"$ALT通过Bet2Mint（投注挖矿）机制在轮次中铸造。每轮启动时铸币上限将重置为剩余未铸造的 $ALT 的1/10,000。随着流通供应量的增长，铸币上限逐渐减少。参与当前投注轮次的用户根据其投注顺序获得铸币奖励。每次投注的铸币奖励为该轮铸币上限余额的1/1,000。"
+    "tooltop.bet2mint" : ()=>"$ALT通过Bet2Mint（投注挖矿）机制在轮次中铸造。每轮启动时铸币上限将重置为剩余未铸造的$ALT(总量为2.1亿)的1/10,000。随着流通供应量的增长，铸币上限逐渐减少。参与当前投注轮次的用户根据其投注顺序获得铸币奖励。每次投注的铸币奖励为该轮铸币上限余额的1/1,000。"
 
   })
 
@@ -115,8 +115,8 @@ export default props => {
               className="btn btn-icon btn-ghost rounded-full btn-sm"
               onClick={()=>{
                 setShareData({
-                  title: `$1 to win $${toBalanceValue(state()?.jackpot||0,pay_i?.Denomination||6,0)}, last bettor takes at least a 50% higher chance to win on #Aolotto , Round-${state()?.round} is about to draw! 🏆`,
-                  url: "aolotto.com"
+                  title: `🏆$1 to win $${toBalanceValue(state()?.jackpot||0,pay_i?.Denomination||6,0)}! The last bettor gets at least a 50% better odds of WINNING on #Aolotto , ROUND-${state()?.round} is about to draw! 👉`,
+                  url: "https://aolotto.com",
                 })
                 share(TWITTER)
               }}
