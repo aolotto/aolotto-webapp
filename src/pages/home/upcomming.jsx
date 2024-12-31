@@ -47,8 +47,14 @@ export default props => {
     const [count,setCount] = createSignal()
     onMount(()=>{
       timer = setInterval(()=>{
+        
         const now = new Date().getTime()
         const diff = (end - now) / 1000
+        if (diff <= 0) {
+          clearInterval(timer)
+          window.location.reload()
+          return
+        }
         let day = Math.floor(diff / 60 / 60 / 24).toString().padStart(2, "0");
         let hour = Math.floor(diff / 60 / 60 % 24 ).toString().padStart(2, "0");
         let minute = Math.floor(diff / 60 % 60).toString().padStart(2, "0");
@@ -93,7 +99,7 @@ export default props => {
       
         <div class="py-4 lg:py-12">
           <div class="col-span-full border-y border-current/20 p-4">
-            <Timer class="text-8xl" end={1735689601000}/>
+            <Timer class="text-8xl" end={import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):1735677660000}/>
           </div>
         </div>
 
