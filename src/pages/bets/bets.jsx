@@ -86,7 +86,7 @@ const BetItem = props => {
 
 export default props => {
   setDictionarys("en",{
-    "t.win_rate" : "👇 The last bettor below gets at least a 50% higher chance to win. Bet now to take the spot!",
+    "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
     "t.no_bets" : "No bets yet,earlier bets mint more."
   })
   setDictionarys("zh",{
