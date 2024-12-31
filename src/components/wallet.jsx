@@ -223,40 +223,47 @@ export const {
   }
 
   onMount(()=>{
-
     createPortal()
-
-      window.addEventListener("arweaveWalletLoaded",async(e)=>{
-        const type = localStorage?.getItem("AR-WALLET-TYPE")
-        if(type=="arconnect"){
-
-          const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
-            console.log(err)
-            // window.location?.reload();
-            return
-          })
-
-          if(permissions?.length == configs()?.permissions?.length){
-            const address= await window?.arweaveWallet?.getActiveAddress()
-            if(address){
-              setAddress(address)
+    const type = localStorage?.getItem("AR-WALLET-TYPE")
+    try {
+      if(window?.arweaveWallet){
+        console.log("Arweave wallet found")
+        if(type=="arconnect"){setConnecting(true)}
+        window.addEventListener("arweaveWalletLoaded",async(e)=>{
+          if(type=="arconnect"){
+            const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
+              console.log(err)
               setConnecting(false)
-              setWsdk(window?.arweaveWallet)
+              return
+            })
+            if(permissions?.length == configs()?.permissions?.length){
+              const address= await window?.arweaveWallet?.getActiveAddress()
+              if(address){
+                setAddress(address)
+                setConnecting(false)
+                setWsdk(window?.arweaveWallet)
+              }
             }
           }
-          
-        }
-      })
-      window.addEventListener("walletSwitch",(e)=>{
-        const type = localStorage?.getItem("AR-WALLET-TYPE")
-        if(type=="arconnect"){
-          setAddress(e.detail.address)
           setConnecting(false)
-          setWsdk(window.arweaveWallet)
-        }
-      })
+        })
+        window.addEventListener("walletSwitch",(e)=>{
+          const type = localStorage?.getItem("AR-WALLET-TYPE")
+          if(type=="arconnect"){
+            setAddress(e.detail.address)
+            setConnecting(false)
+            setWsdk(window.arweaveWallet)
+          }
+        })
+      }
+      
+    } catch (error) {
+      console.log(error)
+      setConnecting(false)
     }
-  )
+    
+    
+  })
 
   onCleanup(()=>{
     window.removeEventListener("walletSwitch",()=>console.log("Removed walletSwitch listener"))

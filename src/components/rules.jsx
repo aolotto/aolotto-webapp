@@ -12,7 +12,7 @@ export default props => {
     "r.d":"If no matching bets are placed, the last bettor wins the entire jackpot.",
     "r.e":"Each round allocates a minting cap, equivalent to 1/10,000th of the total unminted $ALT (out of the total supply of 21 million), to reward bettors. The minting reward per bet is 1/1,000th of the round's minting cap balance.",
     "r.f":"Once the wagers reach the target, the draw time will no longer be extended.",
-    "r.g":"The jackpot increases with the total amount of bets placed,good luck!!",
+    "r.g":"The jackpot is 50% of the pool balance, while the remaining 50% carries over to the next round as the base balance of the pool. The pool grows with the total amount of bets placed. Good luck!",
     "r.h":"learn more on docs"
   })
   setDictionarys("zh",{
@@ -22,7 +22,7 @@ export default props => {
     "r.d":"如果沒有匹配的投注，最後一個下注者將贏得整個大奖。",
     "r.e":"每輪分配一個鑄幣上限，相當於未鑄幣的總$ALT的1/10,000（總供應量為2.1亿），獎勵本轮的投注者。每次投注的鑄幣獎勵為該輪鑄幣上限餘額的1/1,000。",
     "r.f":"一旦投注金額達到目標，開獎時間將不再无限延長。",
-    "r.g":"大奖金额会隨投注總額增加而增加，祝好運！",
+    "r.g":"大奖金额是当前奖池总额的50%，会隨投注總額增加而增加，剩余50%保留到下一轮作为基础奖金，祝好運！",
     "r.h":"去文檔中了解更多"
   })
   onMount(()=>{
@@ -42,7 +42,7 @@ export default props => {
       class="w-full max-w-[480px]"
     >
       <ModalHeader title="The Rules"></ModalHeader>
-      <ModalContainer class="w-full">
+      <ModalContainer class="w-full max-h-[85vh] overflow-y-auto">
         <div class=" m-[1em] pt-4">
           <ol class="list-decimal list-outside flex flex-col gap-4 pl-8">
             <li>{t("r.a")}</li>

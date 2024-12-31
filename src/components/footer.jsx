@@ -15,7 +15,7 @@ export default props => {
     logo: "carbon:logo-discord"
   },{
     laber:"telegram",
-    url:"",
+    url:"https://t.me/aolotto",
     logo: "bxl:telegram"
   }]
   return(
