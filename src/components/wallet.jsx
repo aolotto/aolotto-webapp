@@ -231,11 +231,8 @@ export const {
         if(type=="arconnect"){setConnecting(true)}
         window.addEventListener("arweaveWalletLoaded",async(e)=>{
           if(type=="arconnect"){
-            const permissions = await window?.arweaveWallet?.getPermissions().catch((err)=>{
-              console.log(err)
-              setConnecting(false)
-              return
-            })
+            console.log("arconnect loaded")
+            const permissions = await window?.arweaveWallet?.getPermissions()
             if(permissions?.length == configs()?.permissions?.length){
               const address= await window?.arweaveWallet?.getActiveAddress()
               if(address){
