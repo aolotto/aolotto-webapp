@@ -11,6 +11,7 @@ import tooltip from "./tooltip"
 import { connected, address, handleConnection,connecting } from "./wallet"
 import { shortStr } from "../lib/tool"
 import { app } from "../signals/global"
+import Spinner from "./spinner"
 
 
 export default props => {
@@ -123,7 +124,7 @@ export default props => {
                 onClick={handleConnection}
                 disabled={connected()||connecting()}
               >
-                {connecting()?t("h.conecting"):t("h.connect")}
+                {connecting()?<Spinner/>:t("h.connect")}
               </button>
             }
           >

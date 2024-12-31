@@ -231,18 +231,10 @@ export const {
         if(type=="arconnect"){setConnecting(true)}
         window.addEventListener("arweaveWalletLoaded",async(e)=>{
           if(type=="arconnect"){
-            console.log("arconnect loaded")
-            const permissions = await window?.arweaveWallet?.getPermissions()
-            if(permissions?.length == configs()?.permissions?.length){
-              const address= await window?.arweaveWallet?.getActiveAddress()
-              if(address){
-                setAddress(address)
-                setConnecting(false)
-                setWsdk(window?.arweaveWallet)
-              }
-            }
+            connect("arconnect",configs())
+          }else{
+            setConnecting(false)
           }
-          setConnecting(false)
         })
         window.addEventListener("walletSwitch",(e)=>{
           const type = localStorage?.getItem("AR-WALLET-TYPE")
@@ -253,7 +245,6 @@ export const {
           }
         })
       }
-      
     } catch (error) {
       console.log(error)
       setConnecting(false)
@@ -274,6 +265,7 @@ export const {
   const connect = async(type = "arconnect",options) =>{
     
     if(connected()&&inited()) return
+    console.log("connecting...")
     const appInfo = {
       name : options?.appInfo?.name || configs()?.appInfo?.name,
       logo : options?.appInfo?.logo || configs()?.appInfo?.logo,
