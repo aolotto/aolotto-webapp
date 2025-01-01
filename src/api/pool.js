@@ -59,15 +59,15 @@ export const fetchPoolRanks = async(id,{refetch}) => {
 // }
 
 
-export const fetchActiveBets = async([id,{size,cursor}],{value,refetch})=>{
+export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
   try {
     if(!id) {
       return
     }
-    console.log("fetchActiveBets",id)
+    const offset = page?size*page+1:1
     const { Messages } = await ao.dryrun({
       process: id,
-      tags: {Action:"Get",Table:"Bets",Limit:toString(size),Offset:cursor?toString(cursor):"1"}
+      tags: {Action:"Get",Table:"Bets",Limit:toString(size),Offset:offset.toString()}
     })
     // console.log("fetchActiveBets",Messages)
     if(Messages?.length>0&&Messages?.[0]){
