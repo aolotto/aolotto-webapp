@@ -94,6 +94,9 @@ export default props=>{
       const idx = subMenus().findIndex((item)=>item.key===searchParams.tab)
       setTab(subMenus()?.[Math.max(idx,0)])
     }
+    if(player()){
+      refetchUserBalances()
+    }
   })
 
   createEffect(()=>console.log("locale",locale(),player()?.win))

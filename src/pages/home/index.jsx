@@ -247,11 +247,11 @@ export default props => {
                   <Icon icon="iconoir:component" />
                       <a 
                         class="inline-flex items-center text-base-content/50" 
-                        use:tooltip={["top-overlap",()=>protocols?.pool_id]}
+                        use:tooltip={["top-overlap",()=>protocols?.agent_id]}
                         target="_blank"
-                        href={`${app.ao_link_url}/#/entity/${protocols?.pool_id}`}
+                        href={`${app.ao_link_url}/#/entity/${protocols?.agent_id}`}
                       >
-                        {shortStr(protocols?.pool_id,6)} <Icon icon="ei:external-link"></Icon>
+                        {shortStr(protocols?.agent_id,6)} <Icon icon="ei:external-link"></Icon>
                       </a>
                     </Show>
                   </div>
