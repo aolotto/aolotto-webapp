@@ -18,7 +18,7 @@ export default props => {
   const jackpot =  createMemo(()=>detail()?.jackpot)
   const type =  createMemo(()=>detail()?.reward_type)
 
-  createEffect(()=>console.log(rewards()))
+  createEffect(()=>console.log("type",type()))
 
   onMount(()=>{
     props.ref({
@@ -63,7 +63,10 @@ export default props => {
             </div>
             <div class="text-sm text-current/50 py-4 flex gap-4 px-1">
               <Icon icon="proicons:info" />
-              <p>No matching bets this round, the last bettor takes the entire prize.</p>
+              <Show when={type()}>
+               <p> {type()=="MATCHED"?"Players won the grand prize by matching bets":"No matching bets this round, the last bettor takes the entire prize."}</p>
+              </Show>
+             
             </div>
           </Show>
         </div>

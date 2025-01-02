@@ -92,6 +92,9 @@ input[type='number'] {
 
 
 @layer components {
+  .tipy{
+    @apply bg-base-100 p-4 rounded-2xl border border-base-200;
+  }
 
   .kbd{
     @apply inline-flex items-center justify-center rounded-md px-1 py-0 text-xs border border-current border-b-2 bg-current/20;

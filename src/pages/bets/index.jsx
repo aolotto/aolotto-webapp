@@ -68,14 +68,18 @@ export default props => {
     "s.participation" : "Participation",
     "s.picked" : "Picked",
     "s.countdown" : "Count to the draw",
+    "s.draw_time" : "Draw Time",
     "s.draw_tip" : ({time,wager})=><span>New bets extend the draw by <b class="text-base-content">{time}</b> hours from the time placed, until the wagers reach <b class="text-base-content">${wager}</b>. Matching bets share the jackpot; If no match, the last bettor takes all.</span>,
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
     "d.minting" : (v)=><span className="text-current/50">The minting cap for this round left <span className="text-base-content">{v.balance}</span> / {v.total} $ALT, with <span className="text-base-content">{v.reward}</span> $ALT rewarded per $1 bet.</span>,
     "b.learn_more" : "Learn the rules",
-    "tooltop.bet2mint" : ()=>"$ALT is minted through the Bet2Mint (Bet to Mint) mechanism in rounds. At the start of each round, the minting cap is reset to 1/2000th of the remaining unminted $ALT (out of the total supply of 210 million). As the circulating supply grows, the minting cap gradually decreases. Users participating in the current betting round earn minting rewards based on the order of their bets. The minting reward for each bet is 1/1000th of the remaining minting cap for that round.",
-    "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>
+    "tooltop.bet2mint" : ()=>"Aolotto's dividend token, $ALT, is minted through the Bet2Mint (bet to mining) mechanism in each round. The minting cap for each round is reset to 1/2000 of the remaining unminted $ALT (total supply of 210 million) at the start of the round. As the circulating supply increases, the minting cap gradually decreases. Users participating in the current betting round receive minting rewards based on their betting order. The minting reward for each bet is calculated as 1/1000 of the round's minting cap balance * the minting rate.",
+    "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>,
+    "tooltop.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
+    "tooltop.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
+    "tooltop.minting_speed" : (v)=> <span>The minting speed = (Max supply - current circulation) / Max supply</span>
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -85,14 +89,18 @@ export default props => {
     "s.participation" : "參與統計",
     "s.picked" : "已選號碼",
     "s.countdown" : "開獎倒計時",
+    "s.draw_time" : "開獎時間",
     "s.draw_tip" : ({time,wager})=><span>新投注將會延長開獎時間至下注後的<b className="text-base-content">{time}</b>小時，直到累計投注量達到<b className="text-base-content">${wager}</b>；開獎後，號碼(000-999)匹配的投注共享大獎，若無投注匹配，最後下注者一人獨攬。</span>,
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
-    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣配额仅剩 <span className="text-base-content">{v.balance}</span>/{v.total} $ALT，投注$1可获得鑄幣獎勵 <span className="text-base-content">{v.reward}</span> $ALT</span>,
+    "d.minting" : (v)=><span className="text-current/50">本輪鑄幣上限的余额仅剩 <span className="text-base-content">{v.balance}</span> / {v.total} $ALT，投注$1可获得鑄幣獎勵 <span className="text-base-content">{v.reward}</span> $ALT</span>,
     "b.learn_more" : "了解规则",
-    "tooltop.bet2mint" : ()=>"$ALT通过Bet2Mint（投注挖矿）机制在轮次中铸造。每轮启动时铸币上限将重置为剩余未铸造的$ALT(总量为2.1亿)的1/2000。随着流通供应量的增长，铸币上限逐渐减少。参与当前投注轮次的用户根据其投注顺序获得铸币奖励。每次投注的铸币奖励该轮铸币上限余额的1/1000 * 铸币速度。",
-    "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>
+    "tooltop.bet2mint" : ()=>"Aolotto分红代币，$ALT通过Bet2Mint（投注挖矿）机制在轮次中铸造。每轮启动时铸币上限将重置为剩余未铸造的$ALT(总量为2.1亿)的1/2000。随着流通供应量的增长，铸币上限逐渐减少。参与当前投注轮次的用户根据其投注顺序获得铸币奖励。每次投注的铸币奖励该轮铸币上限余额的1/1000 * 铸币速度。",
+    "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>,
+    "tooltop.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
+    "tooltop.draw_time_fixed" : (v)=> <span>投注量已达到目标${v.target}，开奖时间已固定。</span>,
+    "tooltop.minting_speed" : (v)=> <span>铸币速度 = (最大发行量 - 当前流通量) / 最大发行量</span>
   })
 
   createEffect(()=>console.log(state()))
@@ -104,7 +112,19 @@ export default props => {
 
         <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col gap-8">
           <div class="h-16 flex items-center gap-4 w-fit">
-            <span class=" border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center" use:tooltip={["bottom",()=>("Round "+state().round)]}><Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show></span>
+            <span 
+              class="border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center"
+              use:tippy={{
+                allowHTML: true,
+                hidden: true,
+                animation: 'fade',
+                props: {
+                  content : ()=><div class="tipy">Round {state()?.round}</div> 
+                }
+              }}
+            >
+              <Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show>
+            </span>
             <span class="text-current/50 uppercase text-sm"><Show when={!state.loading} fallback="...">{t("s.start")} <Datetime ts={state()?.ts_round_start} display={"date"}/></Show></span>
        
             <button 
@@ -142,8 +162,30 @@ export default props => {
                 <span class="text-current/50">tickets</span>
               </div>
             </InfoItem>
-            <InfoItem label={t("s.picked")}>
-              <Show when={!state.loading} fallback="...">{state()?.picks}</Show> <span class="text-current/50">/ 1000</span> 
+            <InfoItem label={t("s.draw_time")}>
+              <span
+                class="flex items-center gap-2">
+                <Show when={!state.loading} fallback="...">
+                  {new Date(state()?.ts_latest_draw).toLocaleString()} 
+                  <span
+                    class="text-current/60 uppercase cursor-help inline-flex items-center text-xs bg-base-200 gap-1 rounded-full px-2 py-1"
+                    use:tippy={{
+                      allowHTML: true,
+                      hidden: true,
+                      animation: 'fade',
+                      props: {
+                        content : ()=><div class="bg-base-100 p-4 rounded-2xl border border-base-200">
+                          {draw_locker()?
+                            t("tooltop.draw_time_fixed",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)}):
+                            t("tooltop.draw_time_est",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})
+                          }
+                        </div> 
+                      }
+                    }}
+                  >
+                    {draw_locker()?"Fixed":"Est."}
+                  </span></Show> 
+              </span>
             </InfoItem>
           </div>
         </div>
@@ -165,8 +207,8 @@ export default props => {
                         hidden: true,
                         animation: 'fade',
                         props: {
-                          content : ()=><div class="bg-base-100 p-4 rounded-2xl border border-base-200">{t("tooltop.draw_locker",{time:state()?.ts_latest_draw?new Date(state()?.ts_latest_draw).toLocaleString():"..."})}</div> 
-                      }
+                          content : ()=><div class="tipy">{t("tooltop.draw_locker",{time:state()?.ts_latest_draw?new Date(state()?.ts_latest_draw).toLocaleString():"..."})}</div> 
+                        }
                     }}>
                       <Icon icon="iconoir:lock" />
                     </span>
@@ -178,7 +220,7 @@ export default props => {
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
             <div class="text-current/50 text-sm">
-              {t("s.draw_tip",{time:"24",wager:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})}
+              {t("s.draw_tip",{time:"24",wager:state()?.wager_limit?toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1):"..."})}
               <button class="text-primary cursor-pointer" onClick={()=>_rules?.open()}>
                 {t("b.learn_more")}
               </button>
@@ -212,7 +254,12 @@ export default props => {
               hidden: true,
               animation: 'fade',
               props: {
-                content : ()=><div class="bg-base-100 p-4 rounded-2xl border border-base-200">{t("tooltop.bet2mint")}</div> 
+                content : ()=><div class="tipy">
+                  <div>{t("tooltop.bet2mint")}</div>
+                  <div class="pt-2 mt-2 border-t border-current/20">
+                    {t("tooltop.minting_speed")}
+                  </div>
+                </div> 
               }
             }}
             class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help">
