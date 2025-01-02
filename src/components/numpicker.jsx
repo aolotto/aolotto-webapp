@@ -33,7 +33,9 @@ setDictionarys("en",{
   "picked" : "Picked",
   "np.minting_reward" : "Minting Reward",
   "np.buff_release" : "ALTb Release",
-  "np.buff_faucet_tip" : ()=> <span>Claim ALTb via <a href="https://docs.aolotto.com/en/faucet" target="_blank">faucet</a></span>
+  "np.buff_faucet_tip" : ()=> <span>Claim ALTb via <a href="https://docs.aolotto.com/en/faucet" target="_blank">faucet</a></span>,
+  "np.pick_count" : (v)=><span>The number appeared in <span class="inline-flex text-base-content">{v}</span> bets</span>,
+  "np.pick_count_tip" : "Picks a number to show bet count"
 })
 setDictionarys("zh",{
   "np.title" : (v)=> "投注到第"+v+"轮",
@@ -52,7 +54,9 @@ setDictionarys("zh",{
   "np.bets" : "投注数量",
   "np.minting_reward" : "铸币奖励",
   "np.buff_release" : "ALTb释放",
-  "np.buff_faucet_tip" : ()=> <span>通过<a href="https://docs.aolotto.com/cn/shui-long-tou" target="_blank">水龙头</a>领取ALTb</span>
+  "np.buff_faucet_tip" : ()=> <span>通过<a href="https://docs.aolotto.com/cn/shui-long-tou" target="_blank">水龙头</a>领取ALTb</span>,
+  "np.pick_count" : (v)=><span>该号码出现在<span class="inline-flex text-base-content">{v}</span>次投注中</span>,
+  "np.pick_count_tip" : "选择号码查看已投注数量"
 })
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
@@ -118,6 +122,7 @@ export default props => {
   })
   const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
   const enableSubmit = createMemo(()=>balance()>=cost()&&picked())
+  const pickedCount = createMemo(()=>props?.state?.picks?.[picked()?.join('')]||0)
   
   createEffect(()=>{
     if(picked()?.length>=3){
@@ -190,6 +195,8 @@ export default props => {
                     <Icon icon="iconoir:shuffle"></Icon></button>
                 </span>
               </Show>
+
+             
               
             </div>
             <Show when={enableMultiplier()} fallback={
@@ -239,6 +246,8 @@ export default props => {
                     </div>
                   )}
                 </For>
+
+                <div class="text-sm inline-flex items-center justify-end pt-2 text-current/50"><Show when={picked()?.join("").length>=3} fallback={t("np.pick_count_tip")}>{t("np.pick_count",pickedCount())}</Show></div>
               </div>
             </div>
           </div>
