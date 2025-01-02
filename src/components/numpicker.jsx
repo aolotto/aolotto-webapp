@@ -133,6 +133,9 @@ export default props => {
           setQuantity(1)
         }
         _number_picker.open()
+        if(player()){
+          refetchUserBalances()
+        }
       },
       close:()=>_number_picker.close(),
     })
