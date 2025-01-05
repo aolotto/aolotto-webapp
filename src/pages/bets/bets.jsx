@@ -23,11 +23,13 @@ const BetItem = props => {
   const sponsor = createMemo(()=>item()?.sponsor?.split(","))
   setDictionarys("en",{
     "i.bet" : "Bet",
-    "i.mint" : "Mint"
+    "i.mint" : "Mint",
+    "tooltip.gap_reward": (v)=><span>Since no new bets were placed after this bet for a while, the protocol distributed <b>{v.count}</b> Gap-Rewards to the bettor (one every 10 minutes), totaling <b>{v.amount}</b> $ALT.</span>
   })
   setDictionarys("zh",{
     "i.bet" : "下注",
-    "i.mint" : "鑄幣"
+    "i.mint" : "鑄幣",
+    "tooltip.gap_reward": (v)=><span>这笔投注之后的一段时间内无新投注追加，协议向投注者下发了<b>{v.count}</b>次空当奖励，共计<b>{v.amount}</b>$ALT.</span>
   })
 
   return (
@@ -77,7 +79,7 @@ const BetItem = props => {
                         animation: 'fade',
                         props: {
                           content : ()=><div class="tipy">
-                            Since no new bets were placed for a long time after this bet, the protocol automatically issued <b>{mined()?.plus?.[1]}</b> minting rewards to the bettor (~every 10 minutes), totaling <b>{toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)}</b> $ALT.
+                            {t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}
                           </div> 
                         }
                       }}

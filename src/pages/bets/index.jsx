@@ -6,7 +6,7 @@ import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
 import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup } from "solid-js"
+import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
 import { protocols, app } from "../../signals/global"
@@ -15,9 +15,8 @@ import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
 import { tippy, useTippy } from 'solid-tippy';
 import Rules from "../../components/rules"
-
-
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
+import { fetchPoolState } from "../../api/pool"
 
 
 
@@ -51,10 +50,17 @@ export default props => {
 
   const [share, close] = createSocialShare(() => shareData());
 
-  const autoRefetchPage = function(){
-    // refetchPoolState()
-    // refetchStats()
-  }
+  const [updates,{refetch:refetchUpdates}] = createResource(()=>protocols?.pool_id,fetchPoolState) 
+
+  // const autoRefetchPage = function(){
+  //   if(updates()?.){
+
+  //   }
+  //   // console.log("autoRefetchPage",updates())
+  //   // startTransition(batch(()=>{
+  //   //   refetchUpdates()
+  //   // }))
+  // }
 
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
@@ -65,7 +71,7 @@ export default props => {
     });
 
     page_timer = setInterval(()=>{
-      autoRefetchPage()
+      // autoRefetchPage()
     },10000)
 
   })
@@ -94,8 +100,11 @@ export default props => {
     "tooltop.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
     "tooltop.minting_speed" : (v)=> <span>The minting speed = (Max supply - current circulation) / Max supply</span>,
-    "m.mint_tip" : (v)=><span>Remaining Bet2Mint rewards: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet are based on the reward ladder. When no new bets are placed, the last bettor gets <b class="text-base-content">~{v.auto_reward}</b> $ALT every <span class="text-base-content">10</span> minutes. To avoid missing out, place your bets ASAP.</span>,
-    "m.bet" : "Bet"
+    "m.mint_tip" : (v)=><span class='leading-[0.5em]'>Remaining Bet2Mint rewards: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet are based on the reward ladder. If no new bets, the protocol will give a Gap-Reward of <b class="text-base-content">~{v.auto_reward}</b> $ALT to the last bettor every <span class="text-base-content">10</span> minutes,Place bets early to avoid missing out.</span>,
+    "m.bet" : "Bet",
+    "m.mint_speed" : "Minting Speed",
+    "m.next_auto_mint" : "latest Gap-Reward",
+    "m.count_auto_mint" : "Gap-Reward Count"
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -117,11 +126,11 @@ export default props => {
     "tooltop.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>投注量已达到目标${v.target}，开奖时间已固定。</span>,
     "tooltop.minting_speed" : (v)=> <span>铸币速度 = (最大发行量 - 当前流通量) / 最大发行量</span>,
-    "m.mint_tip" : (v)=><span>本轮Bet2Mint铸币奖励剩余 <b class="text-base-content">{v.balance}</b> / {v.total} $ALT, 单次投注获得的奖励参照奖励阶梯；没有新的投注追加时，协议将每<span class="text-base-content">10分钟</span>奖励最后下注者 <span class="text-base-content">~{v.auto_reward}</span> $ALT,建议尽早下注，避免本轮铸币奖励被其它玩家耗光。</span>,
+    "m.mint_tip" : (v)=><span>本轮Bet2Mint铸币奖励剩余 <b class="text-base-content">{v.balance}</b> / {v.total} $ALT, 单次投注获得的奖励参照奖励阶梯；没有新的投注追加时，协议将每<span class="text-base-content">10分钟</span>下发一次空当奖励 <span class="text-base-content">~{v.auto_reward}</span> $ALT给最后下注者,建议尽早下注，避免本轮铸币奖励被其它玩家耗光。</span>,
     "m.bet" : "投注",
     "m.mint_speed" : "铸币速度",
-    "m.next_auto_mint" : "下一次铸币奖励",
-    "m.count_auto_mint" : "自动奖励次数"
+    "m.next_auto_mint" : "最近一次空当奖励",
+    "m.count_auto_mint" : "空当奖励次数"
   })
 
   createEffect(()=>console.log("state",state(),"stats",stats()))
@@ -291,9 +300,9 @@ export default props => {
                   Bet2Mint<Icon icon="carbon:information"></Icon>
                 </span>
                 <div class="flex flex-col gap-1">
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>铸币速度：<span class="text-base-content">~{toBalanceValue(state()?.mint_speed,0,12)}</span></div>
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>下一次自动奖励：<span class="text-base-content"><Countdown end={(state()?.latest_minting_plus||state()?.ts_latest_bet)+600000} /></span></div>
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>自动奖励次数: <span class="text-base-content">{state()?.minting_plus?.[1]}</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content">~{toBalanceValue(state()?.mint_speed,0,12)}</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.next_auto_mint")}: <span class="text-base-content">{new Date(state()?.latest_minting_plus).toLocaleTimeString()}</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.count_auto_mint")}: <span class="text-base-content">{state()?.minting_plus?.[1]}</span></div>
                 </div>
               </div>
               }
