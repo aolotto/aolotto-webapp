@@ -6,6 +6,7 @@ import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
 import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
+import { stats } from "../signals/pool"
 
 import { address,wsdk } from "./wallet"
 import { AO } from "../lib/ao"
@@ -123,6 +124,20 @@ export default props => {
   const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
   const enableSubmit = createMemo(()=>balance()>=cost()&&picked())
   const pickedCount = createMemo(()=>props?.state?.picks?.[picked()?.join('')]||0)
+  const minting = createMemo(()=>{
+    if(quantity()>=100){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["100"] || 1)
+    }
+    if(quantity()>=50){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["50"] || 0.6)
+    }
+    if(quantity()>=10){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["10"] || 0.3)
+    }
+    if(quantity()>=1){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["1"] || 0.1)
+    }
+  })
   
   createEffect(()=>{
     if(picked()?.length>=3){
@@ -265,12 +280,12 @@ export default props => {
           <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
               <InfoItem label={t("np.minting_reward")} value={
               <div>
-                <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(Number(props?.minting?.per_reward)*quantity(),agent_i.Denomination,3)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
+                <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(minting(),agent_i.Denomination,12)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
               </div>}/>
               <InfoItem label={t("np.buff_release")} value={<span>
                 <span>
                 <Show when={quantity()&&props?.minting} fallback="-">
-                  {toBalanceValue(Math.min(Number(props?.minting?.per_reward)*quantity(),player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} 
+                  {toBalanceValue(Math.min(minting(),player()?.faucet?.[0]||0),agent_i.Denomination||12,12)} 
                   <Ticker class="text-current/50 ml-2">{agent_i.Ticker}</Ticker>
                 </Show>
                 </span>

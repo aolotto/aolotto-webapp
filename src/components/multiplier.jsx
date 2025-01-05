@@ -48,6 +48,26 @@ export const Multiplier = props => {
       >
         <Icon icon="iconoir:plus"></Icon>
       </button>
+      <button 
+        class="btn btn-xs rounded-full uppercase"
+        disabled={value()==10||props?.disabled}
+        onClick={()=>{
+          setValue(10)
+          onChange()
+        }}
+      >
+          10
+      </button>
+      <button 
+        class="btn btn-xs rounded-full uppercase"
+        disabled={value()==50||props?.disabled}
+        onClick={()=>{
+          setValue(50)
+          onChange()
+        }}
+      >
+          50
+      </button>
       <button
         class="btn btn-xs rounded-full uppercase"
         disabled={value()>=max||props?.disabled}

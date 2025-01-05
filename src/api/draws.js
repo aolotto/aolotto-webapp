@@ -80,6 +80,7 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
         })
       })
     }
+    draws.sort((a,b)=>b.round - a.round)
     return draws
   } catch (error) {
     console.error("fetch draws faild.", error)

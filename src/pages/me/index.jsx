@@ -128,10 +128,10 @@ export default props=>{
         <div class="col-span-full lg:col-span-7 flex flex-col justify-between">
 
           <InfoItem label={t("label.tickets")}><Show when={!player.loading} fallback="...">{player()?.bet?.[2]||0}</Show></InfoItem>
-          <InfoItem label={t("label.bet")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.win")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.mint")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,4)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.dividends")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.bet")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.win")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.mint")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,12)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.dividends")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
           
         </div>
 
@@ -156,7 +156,7 @@ export default props=>{
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
                 <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,2)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></span>
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,6)}</Show> </span>
               </div>
               <div>
                 <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">{t("action.deposit")}<Icon icon="ei:external-link"></Icon></a>
@@ -166,7 +166,7 @@ export default props=>{
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
                 <img src={`https://arweave.net/${agent_i?.Logo}`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,2)}</Show>  <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></span>
+                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,12)}</Show> </span>
               </div>
               <div>
                 <span class="inline-flex items-center gap-1 text-current/30" href="#" disabled={true}>{t("action.swap")}<Icon icon="ei:external-link"></Icon></span>

@@ -12,13 +12,13 @@ import { bets,hasMore,loadMore,loadingMore } from "../../signals/pool"
 import Loadmore from "../../components/loadmore"
 import { setDictionarys,t } from "../../i18n"
 import Empty from "../../components/empty"
+import { tippy } from "solid-tippy"
 
 
 
 
 const BetItem = props => {
   const item = () => props.value
-  // const token_bet = createMemo(()=>item()?.currency.split(","))
   const mined = createMemo(()=>item()?.mint)
   const sponsor = createMemo(()=>item()?.sponsor?.split(","))
   setDictionarys("en",{
@@ -44,12 +44,11 @@ const BetItem = props => {
         <div class="col-span-full lg:col-span-1 flex items-center justify-end">
         <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
         </div>
-        <div class="col-span-full lg:col-span-5 flex items-center gap-4">
+        <div class="col-span-full lg:col-span-6 flex items-center gap-4">
           
           <div class="inline-flex gap-1">
             <span class="text-current/50">{t("i.bet")}</span>
-            <span>${toBalanceValue(item()?.amount,item()?.denomination||6,1)}</span>
-            {/* <Ticker class="text-current/50">{item()?.ticker}</Ticker> */}
+            <b>${toBalanceValue(item()?.amount,item()?.denomination||6)}</b>
           </div>
           <Switch>
             <Match when={item()?.sponsor} >
@@ -62,8 +61,35 @@ const BetItem = props => {
                 <div class="inline-flex items-center gap-2">
                   <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
                   <span class="text-current/50">{t("i.mint")}</span>
-                  <span>{toBalanceValue(mined().total,mined().denomination||12,2)}</span> 
+                  <span>{toBalanceValue(mined().total,mined().denomination||12,12)}</span> 
                   <Ticker class="text-current/50">{mined().ticker}</Ticker>
+                  
+                  <Show when={mined()?.plus}>
+                   
+                    <span 
+                      class="bg-base-200 text-xs px-2 py-1 rounded-full"
+                      classList={{
+                        "bg-third/50" : props?.first
+                      }}
+                      use:tippy={{
+                        allowHTML: true,
+                        hidden: true,
+                        animation: 'fade',
+                        props: {
+                          content : ()=><div class="tipy">
+                            Since no new bets were placed for a long time after this bet, the protocol automatically issued <b>{mined()?.plus?.[1]}</b> minting rewards to the bettor (~every 10 minutes), totaling <b>{toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)}</b> $ALT.
+                          </div> 
+                        }
+                      }}
+                    >
+                        +{mined()?.plus?.[1]}
+                    </span>
+                  </Show>
+
+                  <Show when={props?.first&&!mined()?.plus}>
+                  ⏰
+                  </Show>
+                  
                 </div>
               </Show>
             </Match>
@@ -72,7 +98,7 @@ const BetItem = props => {
 
         </div>
   
-        <div class="col-span-full lg:col-span-3 flex justify-between items-center">
+        <div class="col-span-full lg:col-span-2 flex justify-between items-center">
           <span class="text-current/50">
           <Moment ts={item()?.created}/>
           </span>
@@ -90,8 +116,8 @@ export default props => {
     "t.no_bets" : "No bets yet,earlier bets mint more."
   })
   setDictionarys("zh",{
-    "t.win_rate" : "👇 下面最後下注玩家的贏獎機率至少高出50%，立即下注替代TA!",
-    "t.no_bets" : "暫無投注,越早投注鑄幣額越高"
+    "t.win_rate" : "👇 最後下注玩家的贏獎機率至少高出50%，立即下注替代TA!",
+    "t.no_bets" : "暫無投注,越早投注鑄幣奖励越高"
   })
   return(
     <section 
@@ -104,8 +130,8 @@ export default props => {
         </Show>
         
         <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
-          {(item)=>{
-            return <BetItem value={item} onXNumberClick={props?.onXNumberClick}/>
+          {(item,index)=>{
+            return <BetItem value={item} onXNumberClick={props?.onXNumberClick} first={index()==0}/>
           }}
         </For>
         <Show when={hasMore()}>

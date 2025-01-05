@@ -53,7 +53,7 @@ export default props => {
           
           }>
           <ErrorBoundary>
-            <Draws/>
+            <Draws archived={stats()?.total_archived_round}/>
           </ErrorBoundary>
         </Suspense>
 

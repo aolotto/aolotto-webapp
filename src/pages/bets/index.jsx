@@ -2,12 +2,11 @@ import { InfoItem } from "../../components/infoitem"
 import Ticker from "../../components/ticker"
 import Bets from "./bets"
 import { Icon } from "@iconify-icon/solid"
-import { ShareToSocial } from "../../components/share"
 import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
-import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks} from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal } from "solid-js"
+import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
+import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
 import { protocols, app } from "../../signals/global"
@@ -24,6 +23,7 @@ import { createSocialShare, TWITTER }  from "@solid-primitives/share";
 
 
 export default props => {
+  let page_timer
   let _numpicker
   let _rules
   const pay_i = protocols?.details?.[protocols.pay_id]
@@ -51,6 +51,11 @@ export default props => {
 
   const [share, close] = createSocialShare(() => shareData());
 
+  const autoRefetchPage = function(){
+    // refetchPoolState()
+    // refetchStats()
+  }
+
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
       console.log(e)
@@ -58,6 +63,15 @@ export default props => {
         _numpicker.open()
       }
     });
+
+    page_timer = setInterval(()=>{
+      autoRefetchPage()
+    },10000)
+
+  })
+
+  onCleanup(()=>{
+    clearInterval(page_timer)
   })
 
   setDictionarys("en",{
@@ -79,7 +93,9 @@ export default props => {
     "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>,
     "tooltop.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
-    "tooltop.minting_speed" : (v)=> <span>The minting speed = (Max supply - current circulation) / Max supply</span>
+    "tooltop.minting_speed" : (v)=> <span>The minting speed = (Max supply - current circulation) / Max supply</span>,
+    "m.mint_tip" : (v)=><span>Remaining Bet2Mint rewards: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet are based on the reward ladder. When no new bets are placed, the last bettor gets <b class="text-base-content">~{v.auto_reward}</b> $ALT every <span class="text-base-content">10</span> minutes. To avoid missing out, place your bets ASAP.</span>,
+    "m.bet" : "Bet"
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -100,10 +116,15 @@ export default props => {
     "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>,
     "tooltop.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>投注量已达到目标${v.target}，开奖时间已固定。</span>,
-    "tooltop.minting_speed" : (v)=> <span>铸币速度 = (最大发行量 - 当前流通量) / 最大发行量</span>
+    "tooltop.minting_speed" : (v)=> <span>铸币速度 = (最大发行量 - 当前流通量) / 最大发行量</span>,
+    "m.mint_tip" : (v)=><span>本轮Bet2Mint铸币奖励剩余 <b class="text-base-content">{v.balance}</b> / {v.total} $ALT, 单次投注获得的奖励参照奖励阶梯；没有新的投注追加时，协议将每<span class="text-base-content">10分钟</span>奖励最后下注者 <span class="text-base-content">~{v.auto_reward}</span> $ALT,建议尽早下注，避免本轮铸币奖励被其它玩家耗光。</span>,
+    "m.bet" : "投注",
+    "m.mint_speed" : "铸币速度",
+    "m.next_auto_mint" : "下一次铸币奖励",
+    "m.count_auto_mint" : "自动奖励次数"
   })
 
-  createEffect(()=>console.log(state()))
+  createEffect(()=>console.log("state",state(),"stats",stats()))
 
   return(
     <>
@@ -224,7 +245,6 @@ export default props => {
               <button class="text-primary cursor-pointer" onClick={()=>_rules?.open()}>
                 {t("b.learn_more")}
               </button>
-              {/* <a target="_blank" href="https://docs.aolotto.com/en/draw-and-rules" class="inline-flex items-center">{t("learn_more")}<Icon icon="ei:external-link"></Icon></a> */}
             </div>
             <div>
               <button 
@@ -247,31 +267,55 @@ export default props => {
       </section>
 
       <Show when={minting()}>
-        <section class="response_cols py-8 border-t border-current/20 flex justify-center items-center">
-          <span
-            use:tippy={{
-              allowHTML: true,
-              hidden: true,
-              animation: 'fade',
-              props: {
-                content : ()=><div class="tipy">
-                  <div>{t("tooltop.bet2mint")}</div>
-                  <div class="pt-2 mt-2 border-t border-current/20">
-                    {t("tooltop.minting_speed")}
-                  </div>
-                </div> 
+        <section class="response_cols py-8 border-t border-current/20 ">
+          <div class="col-span-7 flex flex-col">
+            <InfoItem
+              label={
+                <div class=" flex flex-col justify-between h-full">
+                  <span
+                    use:tippy={{
+                    allowHTML: true,
+                    hidden: true,
+                    animation: 'fade',
+                    props: {
+                      content : ()=><div class="tipy">
+                        <div>{t("tooltop.bet2mint")}</div>
+                        <div class="pt-2 mt-2 border-t border-current/20">
+                          {t("tooltop.minting_speed")}
+                        </div>
+                      </div> 
+                    }
+                  }}
+                  class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help w-fit"
+                >
+                  Bet2Mint<Icon icon="carbon:information"></Icon>
+                </span>
+                <div class="flex flex-col gap-1">
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>铸币速度：<span class="text-base-content">~{toBalanceValue(state()?.mint_speed,0,12)}</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>下一次自动奖励：<span class="text-base-content"><Countdown end={(state()?.latest_minting_plus||state()?.ts_latest_bet)+600000} /></span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>自动奖励次数: <span class="text-base-content">{state()?.minting_plus?.[1]}</span></div>
+                </div>
+              </div>
               }
-            }}
-            class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help">
-              Bet2Mint<Icon icon="carbon:information"></Icon>
-          </span> 
-          <span >
-          {t("d.minting",{
-            balance : <Show when={!state.loading} fallback="...">{toBalanceValue(minting()?.quota?.[0],agent_i?.Denomination||12,2)}</Show>,
-            total : toBalanceValue(minting()?.quota?.[1],agent_i?.Denomination||12,2),
-            reward : toBalanceValue(minting()?.per_reward,agent_i?.Denomination||12,2)
-          })}
-           </span>
+            >
+              <span class="text-sm text-current/50">
+              {t("m.mint_tip",{
+                balance: toBalanceValue(minting()?.quota?.[0],agent_i?.Denomination||12,3),
+                total: toBalanceValue(minting()?.quota?.[1],agent_i?.Denomination||12,3),
+                auto_reward: toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)
+              })}
+              </span>
+            </InfoItem>
+            
+            
+          </div>
+          
+          <div class="col-span-4 col-start-9 flex flex-col gap-1 justify-between">
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third text-xs px-[3px] py-[2px] inline-block rounded-sm">L4</span> {t("m.bet")} <span class="text-base-content">$100</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">{toBalanceValue(minting()?.per_reward * 100 * 1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/80 text-xs px-[3px] py-[2px] inline-block rounded-sm">L3</span> {t("m.bet")} <span class="text-base-content">$50-99</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">{toBalanceValue(minting()?.per_reward * 50 * 0.6,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 99 * 0.6,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/60 text-xs px-[3px] py-[2px] inline-block rounded-sm">L2</span> {t("m.bet")} <span class="text-base-content">$10-49</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">{toBalanceValue(minting()?.per_reward * 10 * 0.3,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 49 * 0.3,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/40 text-xs px-[3px] py-[2px] inline-block rounded-sm">L1</span> {t("m.bet")} <span class="text-base-content">$1-9</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">{toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 9 * 0.1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+          </div>
         </section>
       </Show>
       

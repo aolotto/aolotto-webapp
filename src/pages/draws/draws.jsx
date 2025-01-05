@@ -14,7 +14,7 @@ import { createSocialShare,TWITTER } from "@solid-primitives/share"
 
 
 const DrawItem = props => {
-  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination,bet,block_height}},rest] = splitProps(props,["item"])
+  const [{item:{round,lucky_number,matched,jackpot,created,winners,taxation,id,ticker,denomination,bet,block_height,upcoming}},rest] = splitProps(props,["item"])
   const [shareData,setShareData] = createSignal({
     title: app.name,
     url: app.host,
@@ -40,7 +40,10 @@ const DrawItem = props => {
     "i.winners" : "中獎者",
   })
   return(
+    
     <section class="response_cols border-b border-current/10 py-12 px-2">
+      <Show when={id != null} fallback={<div class="col-span-full lg:col-span-12 text-center">⏰ <span class="text-current/50">The result of the <span class="text-base-content">{upcoming}th</span> round draw will be announced shortly</span></div>}>
+     
       <div class="col-span-full lg:col-span-3 flex flex-col justify-between gap-4">
         <div>
           <div class="text-current/50 uppercase">{t("i.round")}</div>
@@ -60,7 +63,7 @@ const DrawItem = props => {
       <div class="col-span-full lg:col-span-6 lg:col-start-5 flex flex-col gap-4">
         <div>
           <div class="text-current/50 uppercase">{t("i.the_prize")}</div>
-          <div class="text-2xl text-secondary">${toBalanceValue(jackpot,denomination||6,2)}</div>
+          <div class="text-2xl">${toBalanceValue(jackpot,denomination||6,2)}</div>
         </div>
         <div>
           <InfoItem label={t("i.matched_bets")}><span classList={{
@@ -103,6 +106,9 @@ const DrawItem = props => {
             </button>
         </div>
       </div>
+
+      </Show>
+      
     </section>
   )
 }
@@ -110,11 +116,24 @@ const DrawItem = props => {
 export default props => {
   let _winner
   const [draws,{hasMore,loadingMore,loadMore}] = createDraws(()=>({pool_id:protocols?.pool_id,agent_id:protocols?.agent_id}))
-  createEffect(()=>console.log("draws",draws()))
+  
+  const formatDraws = createMemo(()=>{
+    const archived = props?.archived || draws()?.length
+    if(archived <= draws()?.length){
+      return draws()
+    }else{
+      const diff = archived - draws()?.length
+      // const newdraws = draws()
+      draws()?.unshift({upcoming:draws()?.length+diff})
+      return draws()
+    }
+    
+  })
+  createEffect(()=>console.log("formart draws",formatDraws()))
   return (
     <>
       <section class="flex flex-col">
-        <For each={draws()} fallback={<Empty tips="No draws yet"/>}>
+        <For each={formatDraws()} fallback={<Empty tips="No draws yet"/>}>
             {item=>{
               return <DrawItem item={item} onClickWinner={(id)=>{
                 console.log("open winner")
