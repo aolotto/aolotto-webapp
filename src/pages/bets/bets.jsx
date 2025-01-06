@@ -24,12 +24,14 @@ const BetItem = props => {
   setDictionarys("en",{
     "i.bet" : "Bet",
     "i.mint" : "Mint",
-    "tooltip.gap_reward": (v)=><span>Since no new bets were placed after this bet for a while, the protocol distributed <b>{v.count}</b> Gap-Rewards to the bettor (one every 10 minutes), totaling <b>{v.amount}</b> $ALT.</span>
+    "tooltip.gap_reward": (v)=><span>Since no new bets were placed after this bet for a while, the protocol distributed <b>{v.count}</b> Gap-Rewards to the bettor (one every 10 minutes), totaling <b>{v.amount}</b> $ALT.</span>,
+    "tooltip.first_gap_reward": (v)=><span>The first Gap-Reward is expected to be received at {v} , if no new bets are added in time.</span>
   })
   setDictionarys("zh",{
     "i.bet" : "下注",
     "i.mint" : "鑄幣",
-    "tooltip.gap_reward": (v)=><span>这笔投注之后的一段时间内无新投注追加，协议向投注者下发了<b>{v.count}</b>次空当奖励，共计<b>{v.amount}</b>$ALT.</span>
+    "tooltip.gap_reward": (v)=><span>这笔投注之后的一段时间内无新投注追加，协议向投注者下发了<b>{v.count}</b>次空当奖励(Gap-Reward)，共计<b>{v.amount}</b>$ALT.</span>,
+    "tooltip.first_gap_reward": (v)=><span>如果没有新的投注追加,第1笔空当奖励（Gap-Reward）将于{v}下发</span>
   })
 
   return (
@@ -89,7 +91,16 @@ const BetItem = props => {
                   </Show>
 
                   <Show when={props?.first&&!mined()?.plus}>
-                  ⏰
+                  <span use:tippy={{
+                        allowHTML: true,
+                        hidden: true,
+                        animation: 'fade',
+                        props: {
+                          content : ()=><div class="tipy">
+                            {t("tooltip.first_gap_reward",new Date(item()?.created+600000).toLocaleTimeString())}
+                          </div> 
+                        }
+                      }}>⏰</span>
                   </Show>
                   
                 </div>

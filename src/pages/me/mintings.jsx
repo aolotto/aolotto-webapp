@@ -37,40 +37,42 @@ export default props => {
             <span>🪙</span> 
            <span class="text-current/50" use:tooltip={["top",item?.id]}>{shortStr(item?.id,8)}</span>
           </div>
-          <div class="col-span-full lg:col-span-2 flex items-center gap-2">
-            <div>{item?.type=="Save-Ticket"?
-              <span 
-                class="text-xs bg-primary text-primary-content px-2 py-1 rounded-xs uppercase"
-                use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">Mint+ is the $ALT reward issued by the protocol to the last bettor every 5 minutes if no one places a follow-up bet after the user. The amount issued each time is calculated as the minting balance of current round * 0.0001 * minting speed.</div> 
-                  }
-                }}
-              >
-                bet2mint
-              </span>
-              :
-              <span 
-                class="text-xs bg-third text-third-content px-2 py-1 uppercase rounded-sm"
-                use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">Mint+ is the $ALT reward issued by the protocol to the last bettor every 5 minutes if no one places a follow-up bet after the user. The amount issued each time is calculated as the minting balance of current round * 0.0001 * minting speed, This reward is based on the bet: {item?.bet_id}  </div> 
-                  }
-                }}
-              >
-                  auto-mint
-                </span>}</div>
-          </div>
-          <div class="col-span-full lg:col-span-7 flex items-center justify-between">
+          {/* <div class="col-span-full lg:col-span-1 flex items-center gap-2">
+            <div></div>
+          </div> */}
+          <div class="col-span-full lg:col-span-9 flex items-center justify-between">
             
-            <div>
-              <span class="text-current/50">{t("minted")} 
+            
+            <div class="flex items-center gap-4">
+              {item?.type=="Save-Ticket"?
+                <span 
+                  class="text-xs bg-primary text-primary-content px-2 py-1 rounded-xs uppercase"
+                  use:tippy={{
+                    allowHTML: true,
+                    hidden: true,
+                    animation: 'fade',
+                    props: {
+                      content : ()=><div class="tipy">Rewards from betting.</div> 
+                    }
+                  }}
+                >
+                  bet-2-mint
+                </span>
+                :
+                <span 
+                  class="text-xs bg-third text-third-content px-2 py-1 uppercase rounded-sm"
+                  use:tippy={{
+                    allowHTML: true,
+                    hidden: true,
+                    animation: 'fade',
+                    props: {
+                      content : ()=><div class="tipy">The Gap-Reward is issued by the protocol to the last bettor every 10 minutes if no new bets are added. This reward comes from the bet: {shortStr(item?.bet_id,6)}   </div> 
+                    }
+                  }}
+                >
+                    Gap-Reward
+                  </span>}
+              <span class="text-current/50 flex items-center gap-2">{t("minted")} 
               <span 
                 class="text-base-content" 
                 use:tippy={{
@@ -82,7 +84,7 @@ export default props => {
                     }
                   }}
                 >
-                    {toBalanceValue(item.total,agent_i?.Denomination||12,2)}
+                    {toBalanceValue(item.total,agent_i?.Denomination||12,6)}
                   </span> , {t("received")} 
               <span 
                 class="text-base-content"
@@ -95,7 +97,7 @@ export default props => {
                   }
                 }}
               >
-                {toBalanceValue(item.amount,agent_i?.Denomination||12,2)}
+                {toBalanceValue(item.amount,agent_i?.Denomination||12,6)}
               </span> $ALT</span>
             </div>
             <div class="flex items-center gap-4">

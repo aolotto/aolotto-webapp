@@ -22,7 +22,7 @@ import { useSearchParams } from "@solidjs/router"
 import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
 import { locale } from "../../i18n"
-
+import { tippy } from "solid-tippy"
 
 export default props=>{
   let _claimer
@@ -155,8 +155,15 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,6)}</Show> </span>
+                <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full" use:tippy={{
+                  allowHTML: true,
+                  hidden: true,
+                  animation: 'fade',
+                  props: {
+                    content : ()=><div class="tipy">$wUSDC - warped USDC</div> 
+                  }
+                }}/> 
+                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,6)}</Show> </span>
               </div>
               <div>
                 <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">{t("action.deposit")}<Icon icon="ei:external-link"></Icon></a>
@@ -165,8 +172,15 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/${agent_i?.Logo}`} class="size-6 rounded-full"/> 
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,12)}</Show> </span>
+                <img src={`https://arweave.net/${agent_i?.Logo}`} class="size-6 rounded-full"  use:tippy={{
+                  allowHTML: true,
+                  hidden: true,
+                  animation: 'fade',
+                  props: {
+                    content : ()=><div class="tipy">$ALT - Ao Lotto Token</div> 
+                  }
+                }}/> 
+                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,12)}</Show> </span>
               </div>
               <div>
                 <span class="inline-flex items-center gap-1 text-current/30" href="#" disabled={true}>{t("action.swap")}<Icon icon="ei:external-link"></Icon></span>
@@ -175,11 +189,18 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <span class="size-6 rounded-full bg-third/50 inline-flex items-center justify-center" use:tooltip={["top","ALTb( ALT Minting Buff )"]}>💧</span>
-                <span><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,2)}</Show>  <span class="text-current/50"> / {toBalanceValue(player()?.faucet?.[1]||0,agent_i?.Denomination||12,2)}</span></span>
+                <span class="size-6 rounded-full bg-third/50 inline-flex items-center justify-center" use:tippy={{
+                  allowHTML: true,
+                  hidden: true,
+                  animation: 'fade',
+                  props: {
+                    content : ()=><div class="tipy">ALTb - ALT minting buff </div> 
+                  }
+                }}>💧</span>
+                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,6)}</Show></span>
               </div>
               <div>
-                {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center gap-1">{t("m.getted")}<Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" target="_blank" href={locale()=="zh"?"https://docs.aolotto.com/cn/shui-long-tou":"https://docs.aolotto.com/en/faucet"}>{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
+                {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center text-sm gap-1">{t("m.getted")} {toBalanceValue(player()?.faucet?.[1]||0,agent_i?.Denomination||12,2)} <Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" target="_blank" href={locale()=="zh"?"https://docs.aolotto.com/cn/shui-long-tou":"https://docs.aolotto.com/en/faucet"}>{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
                 
               </div>
             </div>
