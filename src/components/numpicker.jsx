@@ -23,7 +23,7 @@ setDictionarys("en",{
   "np.pick_tip" : "Picks a 3-digit number",
   "price" : "Price",
   "multiplier" : "Multiplier",
-  "np.bets" : "Bets",
+  "np.bets" : "Quantity",
   "cost" : "Cost",
   "random" : "Random",
   "balance" : "Balance",
@@ -298,7 +298,7 @@ export default props => {
                   <span class="text-current/50 text-xs border-t border-current/20 pt-1">{t("np.buff_faucet_tip")}</span>
                   </Match>
                   <Match when={player()?.faucet?.[1] > 0}>
-                    <span class="text-current/50 border-t border-current/20 pt-1">{toBalanceValue(player()?.faucet?.[0],agent_i.Denomination||12,2)} ALTb {t("in_balance")}</span>
+                    <span class="text-current/50 border-t border-current/20 pt-1">{toBalanceValue(player()?.faucet?.[0] - Math.min(minting()||0,player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} ALTb {t("in_balance")}</span>
                   </Match>
                 </Switch>
                 

@@ -22,7 +22,6 @@ import { fetchPoolState } from "../../api/pool"
 
 
 export default props => {
-  let page_timer
   let _numpicker
   let _rules
   const pay_i = protocols?.details?.[protocols.pay_id]
@@ -50,7 +49,7 @@ export default props => {
 
   const [share, close] = createSocialShare(() => shareData());
 
-  const [updates,{refetch:refetchUpdates}] = createResource(()=>protocols?.pool_id,fetchPoolState) 
+  // const [updates,{refetch:refetchUpdates}] = createResource(()=>protocols?.pool_id,fetchPoolState) 
 
   // const autoRefetchPage = function(){
   //   if(updates()?.){
@@ -70,15 +69,9 @@ export default props => {
       }
     });
 
-    page_timer = setInterval(()=>{
-      // autoRefetchPage()
-    },10000)
-
   })
 
-  onCleanup(()=>{
-    clearInterval(page_timer)
-  })
+
 
   setDictionarys("en",{
     "s.start" : "Started at ",
@@ -93,21 +86,22 @@ export default props => {
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
-    "b.learn_more" : "Learn the rules",
+    "b.learn_more" : "👉 Rules",
     "tooltop.bet2mint" : ()=>"$ALT (The Dividends Token) is minted in rounds via the Bet2Mint mechanism. At the start of each round, the minting reward is reset to (max supply - current supply) * 0.002. Users receive minting rewards based on their betting order, calculated as: current round’s Bet2Mint balance * minting speed [1] * reward ladder coefficient",
     "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>,
     "tooltop.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
     "tooltop.minting_speed" : (v)=> <span>[1] Minting Speed = 1 - max supply / current supply</span>,
-    "m.mint_tip" : (v)=><span class='leading-[0.5em]'>Remaining Bet2Mint rewards: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet are based on the reward ladder. If no new bets are placed, the last bettor will receive a Gap-Reward of <b class="text-base-content">~{v.auto_reward}</b> $ALT every <span class="text-base-content">10m</span>, Bet NOW or watch the rewards vanish!</span>,
+    "m.mint_tip" : (v)=><span class='leading-[0.5em]'>Remaining Bet2Mint rewards in this round: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet follow the ladder. If no new bets, the last bettor will gets <b class="text-base-content">~{v.auto_reward}</b> $ALT Gap-Reward every <span class="text-base-content">10m</span>, Bet NOW or watch the rewards vanish!</span>,
     "m.bet" : "Bet",
-    "m.mint_speed" : "Minting Speed",
+    "m.mint_speed" : "Mint Speed",
     "m.next_auto_mint" : "latest Gap-Reward",
     "m.count_auto_mint" : "Gap-Reward Count",
-    "tooltip.reward_ladder_1" : "L1: Bet amount between $1-9, reward coefficient = 0.0001",
-    "tooltip.reward_ladder_2" : "L2: Bet amount between $10-49, reward coefficient = 0.0003",
-    "tooltip.reward_ladder_3" : "L3: Bet amount between $50-99, reward coefficient = 0.0006",
-    "tooltip.reward_ladder_4" : "L4: Bet amount between $100, reward coefficient = 0.001",
+    "m.supply" : "Circulation",
+    "tooltip.reward_ladder_1" : "L1: Bet amount between $1-9, reward coefficient = 0.0001, the actual amount is calculated based on the current Bet2Mint balance",
+    "tooltip.reward_ladder_2" : "L2: Bet amount between $10-49, reward coefficient = 0.0003, the actual amount is calculated based on the current Bet2Mint balance",
+    "tooltip.reward_ladder_3" : "L3: Bet amount between $50-99, reward coefficient = 0.0006, the actual amount is calculated based on the current Bet2Mint balance",
+    "tooltip.reward_ladder_4" : "L4: Bet amount at the maximum limit of $100, reward coefficient = 0.001, the actual amount is calculated based on the current Bet2Mint balance",
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -122,7 +116,7 @@ export default props => {
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
-    "b.learn_more" : "了解规则",
+    "b.learn_more" : "👉了解规则",
     "tooltop.bet2mint" : ()=>"$ALT(分红代币)通过Bet2Mint机制逐轮发行; 每轮启动时重置本轮铸币奖励的总额为(最大流通量-当前流通量)*0.002; 参与当前投注轮次的用户根据其投注顺序获得铸币奖励,每次投注的铸币奖励=该轮Bet2Mint余额 * 铸币速度[1] * 阶梯奖励系数",
     "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>,
     "tooltop.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
@@ -133,13 +127,12 @@ export default props => {
     "m.mint_speed" : "铸币速度",
     "m.next_auto_mint" : "最近一次空当奖励",
     "m.count_auto_mint" : "空当奖励次数",
-    "tooltip.reward_ladder_1" : "L1：投注金额位于 $1-9 区间，奖励系数为 0.0001",
-    "tooltip.reward_ladder_2" : "L2：投注金额位于 $10-49 区间，奖励系数为 0.0003",
-    "tooltip.reward_ladder_3" : "L3：投注金额位于 $50-99 区间，奖励系数为 0.0006",
-    "tooltip.reward_ladder_4" : "L4：投注金额达到最高投注上限 $100，奖励系数为 0.001",
+    "m.supply" : "循环流通",
+    "tooltip.reward_ladder_1" : "L1：投注金额位于 $1-9 区间，奖励系数为 0.0001,实际奖励金额基于当前Bet2Mint余额计算",
+    "tooltip.reward_ladder_2" : "L2：投注金额位于 $10-49 区间，奖励系数为 0.0003,实际奖励金额基于当前Bet2Mint余额计算",
+    "tooltip.reward_ladder_3" : "L3：投注金额位于 $50-99 区间，奖励系数为 0.0006,实际奖励金额基于当前Bet2Mint余额计算",
+    "tooltip.reward_ladder_4" : "L4：投注金额达到最高投注上限 $100，奖励系数为 0.001,实际奖励金额基于当前Bet2Mint余额计算",
   })
-
-  createEffect(()=>console.log("state",state(),"stats",stats()))
 
   return(
     <>
@@ -287,28 +280,53 @@ export default props => {
             <InfoItem
               label={
                 <div class=" flex flex-col justify-between h-full">
+                  {/* <div class="size-32 rounded-full flex flex-col items-center justify-center gap-2">
+                    <span>99.09%</span>
+                    
+                  <span class="text-xs">355666 $ALT</span>
+
+                  </div> */}
                   <span
-                    use:tippy={{
-                    allowHTML: true,
-                    hidden: true,
-                    animation: 'fade',
-                    props: {
-                      content : ()=><div class="tipy">
-                        <div>{t("tooltop.bet2mint")}</div>
-                        <div class="pt-2 mt-2 border-t border-current/20">
-                          {t("tooltop.minting_speed")}
-                        </div>
-                      </div> 
-                    }
-                  }}
-                  class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help w-fit"
-                >
-                  Bet2Mint<Icon icon="carbon:information"></Icon>
-                </span>
-                <div class="flex flex-col gap-1">
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content">~ {toBalanceValue(state()?.mint_speed,0,6)}</span></div>
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.next_auto_mint")}: <span class="text-base-content">{new Date(state()?.latest_minting_plus).toLocaleTimeString()}</span></div>
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.count_auto_mint")}: <span class="text-base-content">{state()?.minting_plus?.[1]}</span></div>
+                      use:tippy={{
+                      allowHTML: true,
+                      hidden: true,
+                      animation: 'fade',
+                      props: {
+                        content : ()=><div class="tipy">
+                          <div>{t("tooltop.bet2mint")}</div>
+                          <div class="pt-2 mt-2 border-t border-current/20">
+                            {t("tooltop.minting_speed")}
+                          </div>
+                        </div> 
+                      }
+                    }}
+                    class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help w-fit mt-2"
+                  >
+                    Bet2Mint
+                    <Icon icon="carbon:information"></Icon>
+                  </span>
+                  
+                <div class="flex flex-col gap-2">
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content" use:tippy={{
+                      allowHTML: true,
+                      hidden: true,
+                      animation: 'fade',
+                      props: {
+                        content : ()=><div class="tipy">
+                          {toBalanceValue(state()?.mint_speed*100,0,12)} %
+                        </div> 
+                      }
+                    }}>~ {toBalanceValue(state()?.mint_speed*100,0,2)} %</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.supply")}: <span class="text-base-content"  use:tippy={{
+                      allowHTML: true,
+                      hidden: true,
+                      animation: 'fade',
+                      props: {
+                        content : ()=><div class="tipy">
+                          {toBalanceValue(state()?.minting?.minted,12,12)}
+                        </div> 
+                      }
+                    }}>{toBalanceValue(state()?.minting?.minted,12,0)}</span> $ALT</div>
                 </div>
               </div>
               }
@@ -326,7 +344,7 @@ export default props => {
           </div>
           
           <div class="col-span-4 col-start-9 flex flex-col gap-1 justify-between">
-            <li class="text-sm text-current/50 flex items-center gap-2"
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third text-xs px-[3px] py-[2px] inline-block rounded-sm"
             use:tippy={{
               allowHTML: true,
               hidden: true,
@@ -335,9 +353,8 @@ export default props => {
                 content : ()=><div class="tipy">
                   {t("tooltip.reward_ladder_4")}
                 </div> 
-              }}}
-            ><span class="text-third-content bg-third text-xs px-[3px] py-[2px] inline-block rounded-sm">L4</span> {t("m.bet")} <span class="text-base-content">$100</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 100 * 1,agent_i?.Denomination||12,3)}</span> $ALT</li>
-            <li class="text-sm text-current/50 flex items-center gap-2"
+              }}}>L4</span> {t("m.bet")} <span class="text-base-content">$100</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 100 * 1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/80 text-xs px-[3px] py-[2px] inline-block rounded-sm"
             use:tippy={{
               allowHTML: true,
               hidden: true,
@@ -346,8 +363,8 @@ export default props => {
                 content : ()=><div class="tipy">
                   {t("tooltip.reward_ladder_3")}
                 </div> 
-              }}}><span class="text-third-content bg-third/80 text-xs px-[3px] py-[2px] inline-block rounded-sm">L3</span> {t("m.bet")} <span class="text-base-content">$50-99</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 50 * 0.6,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 99 * 0.6,agent_i?.Denomination||12,3)}</span> $ALT</li>
-            <li class="text-sm text-current/50 flex items-center gap-2"
+              }}}>L3</span> {t("m.bet")} <span class="text-base-content">$50-99</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 50 * 0.6,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 99 * 0.6,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/60 text-xs px-[3px] py-[2px] inline-block rounded-sm"
             use:tippy={{
               allowHTML: true,
               hidden: true,
@@ -356,8 +373,9 @@ export default props => {
                 content : ()=><div class="tipy">
                   {t("tooltip.reward_ladder_2")}
                 </div> 
-              }}}><span class="text-third-content bg-third/60 text-xs px-[3px] py-[2px] inline-block rounded-sm">L2</span> {t("m.bet")} <span class="text-base-content">$10-49</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 10 * 0.3,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 49 * 0.3,agent_i?.Denomination||12,3)}</span> $ALT</li>
+              }}}>L2</span> {t("m.bet")} <span class="text-base-content">$10-49</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 10 * 0.3,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 49 * 0.3,agent_i?.Denomination||12,3)}</span> $ALT</li>
             <li class="text-sm text-current/50 flex items-center gap-2"
+            ><span class="text-third-content bg-third/40 text-xs px-[3px] py-[2px] inline-block rounded-sm"
             use:tippy={{
               allowHTML: true,
               hidden: true,
@@ -366,7 +384,7 @@ export default props => {
                 content : ()=><div class="tipy">
                   {t("tooltip.reward_ladder_1")}
                 </div> 
-              }}}><span class="text-third-content bg-third/40 text-xs px-[3px] py-[2px] inline-block rounded-sm">L1</span> {t("m.bet")} <span class="text-base-content">$1-9</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 9 * 0.1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+              }}}>L1</span> {t("m.bet")} <span class="text-base-content">$1-9</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 9 * 0.1,agent_i?.Denomination||12,3)}</span> $ALT</li>
           </div>
         </section>
       </Show>

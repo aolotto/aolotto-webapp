@@ -2,17 +2,18 @@ import Avatar from "../../components/avatar"
 import { Xnumbers } from "../../components/xnumber"
 import Ticker from "../../components/ticker"
 import { Icon } from "@iconify-icon/solid"
-import { For, Match, Show, Suspense, Switch, createEffect, createMemo } from "solid-js"
+import { For, Match, Show, Suspense, Switch, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import tooltip from "../../components/tooltip"
 import { Moment } from "../../components/moment"
 import { app } from "../../signals/global"
 import Spinner from "../../components/spinner"
-import { bets,hasMore,loadMore,loadingMore } from "../../signals/pool"
+import { bets,hasMore,loadMore,loadingMore,refetchBets } from "../../signals/pool"
 import Loadmore from "../../components/loadmore"
 import { setDictionarys,t } from "../../i18n"
 import Empty from "../../components/empty"
 import { tippy } from "solid-tippy"
+import { state } from "../../signals/pool"
 
 
 
@@ -25,13 +26,13 @@ const BetItem = props => {
     "i.bet" : "Bet",
     "i.mint" : "Mint",
     "tooltip.gap_reward": (v)=><span>Since no new bets were placed after this bet for a while, the protocol distributed <b>{v.count}</b> Gap-Rewards to the bettor (one every 10 minutes), totaling <b>{v.amount}</b> $ALT.</span>,
-    "tooltip.first_gap_reward": (v)=><span>The first Gap-Reward is expected to be received at {v} , if no new bets are added in time.</span>
+    "tooltip.first_gap_reward": (v)=><span>The {v.count>1?"next":"first"} Gap-Reward is expected to be received at {v.time} if no new bets are added in time. After the time, refresh the list to check!</span>
   })
   setDictionarys("zh",{
     "i.bet" : "下注",
     "i.mint" : "鑄幣",
     "tooltip.gap_reward": (v)=><span>这笔投注之后的一段时间内无新投注追加，协议向投注者下发了<b>{v.count}</b>次空当奖励(Gap-Reward)，共计<b>{v.amount}</b>$ALT.</span>,
-    "tooltip.first_gap_reward": (v)=><span>如果没有新的投注追加,第1笔空当奖励（Gap-Reward）将于{v}下发</span>
+    "tooltip.first_gap_reward": (v)=><span>如果没有新的投注追加,{v.count>1?"下一笔":"第一笔"}空当奖励（Gap-Reward）将于{v.time}下发，超出时间后建议刷新列表检查。</span>
   })
 
   return (
@@ -45,11 +46,11 @@ const BetItem = props => {
             </span>
           </div>
         </div>
-        <div class="col-span-full lg:col-span-1 flex items-center justify-end">
+        <div class="col-span-full lg:col-span-1 flex items-center">
         <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
         </div>
-        <div class="col-span-full lg:col-span-6 flex items-center gap-4">
-          
+        <div class="col-span-full lg:col-span-6 flex items-center gap-4 justify-between">
+         <div>
           <div class="inline-flex gap-1">
             <span class="text-current/50">{t("i.bet")}</span>
             <b>${toBalanceValue(item()?.amount,item()?.denomination||6)}</b>
@@ -65,50 +66,58 @@ const BetItem = props => {
                 <div class="inline-flex items-center gap-2">
                   <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
                   <span class="text-current/50">{t("i.mint")}</span>
-                  <span>{toBalanceValue(mined().total,mined().denomination||12,12)}</span> 
-                  <Ticker class="text-current/50">{mined().ticker}</Ticker>
-                  
-                  <Show when={mined()?.plus}>
-                   
-                    <span 
-                      class="bg-base-200 text-xs px-2 py-1 rounded-full"
-                      classList={{
-                        "bg-third/50" : props?.first
-                      }}
-                      use:tippy={{
-                        allowHTML: true,
-                        hidden: true,
-                        animation: 'fade',
-                        props: {
-                          content : ()=><div class="tipy">
-                            {t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}
-                          </div> 
-                        }
-                      }}
-                    >
-                        +{mined()?.plus?.[1]}
-                    </span>
-                  </Show>
-
-                  <Show when={props?.first&&!mined()?.plus}>
                   <span use:tippy={{
                         allowHTML: true,
                         hidden: true,
                         animation: 'fade',
                         props: {
                           content : ()=><div class="tipy">
-                            {t("tooltip.first_gap_reward",new Date(item()?.created+600000).toLocaleTimeString())}
+                            {toBalanceValue(mined().total,mined().denomination||12,12)}
                           </div> 
                         }
-                      }}>⏰</span>
-                  </Show>
-                  
+                      }}>~{toBalanceValue(mined().total,mined().denomination||12,6)}</span> 
+                  <Ticker class="text-current/50">{mined().ticker}</Ticker>
                 </div>
               </Show>
             </Match>
           </Switch>
-          
+          </div>
+          <div class="px-4 flex items-center gap-4">
+          <Show when={props?.first}>
+                 <span use:tippy={{
+                       allowHTML: true,
+                       hidden: true,
+                       animation: 'fade',
+                       props: {
+                         content : ()=><div class="tipy">
+                           {t("tooltip.first_gap_reward",
+                             {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
+                           )}
+                         </div> 
+                       }
+                     }}><Icon icon="eos-icons:hourglass" /></span>
+                 </Show>
+          <Show when={mined()?.plus}>
+                  
+                   <span 
+                     class="border text-xs px-2 py-1 rounded-full"
+                     use:tippy={{
+                       allowHTML: true,
+                       hidden: true,
+                       animation: 'fade',
+                       props: {
+                         content : ()=><div class="tipy">
+                           {t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}
+                         </div> 
+                       }
+                     }}
+                   >
+                     +{mined()?.plus?.[1]}
+                   </span>
+                 </Show>
 
+                 
+          </div>
         </div>
   
         <div class="col-span-full lg:col-span-2 flex justify-between items-center">
@@ -126,12 +135,13 @@ const BetItem = props => {
 export default props => {
   setDictionarys("en",{
     "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
-    "t.no_bets" : "No bets yet,earlier bets mint more."
+    "t.no_bets" : "No bets yet, earlier bets mint more."
   })
   setDictionarys("zh",{
     "t.win_rate" : "👇 最後下注玩家的贏獎機率至少高出50%，立即下注替代TA!",
-    "t.no_bets" : "暫無投注,越早投注鑄幣奖励越高"
+    "t.no_bets" : "暫無投注,越早投注鑄幣奖励越高."
   })
+
   return(
     <section 
       class="border-t border-current/20 py-10 flex flex-col gap-4 "
