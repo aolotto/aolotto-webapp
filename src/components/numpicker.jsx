@@ -6,6 +6,7 @@ import { app,protocols } from "../signals/global"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
 import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
+import { stats } from "../signals/pool"
 
 import { address,wsdk } from "./wallet"
 import { AO } from "../lib/ao"
@@ -22,7 +23,7 @@ setDictionarys("en",{
   "np.pick_tip" : "Picks a 3-digit number",
   "price" : "Price",
   "multiplier" : "Multiplier",
-  "np.bets" : "Bets",
+  "np.bets" : "Quantity",
   "cost" : "Cost",
   "random" : "Random",
   "balance" : "Balance",
@@ -32,10 +33,12 @@ setDictionarys("en",{
   "np.pay_token" : "Pay Token",
   "picked" : "Picked",
   "np.minting_reward" : "Minting Reward",
-  "np.buff_release" : "ALTb Release",
+  "np.buff_release" : "ALTb Buffs",
   "np.buff_faucet_tip" : ()=> <span>Claim ALTb via <a href="https://docs.aolotto.com/en/faucet" target="_blank">faucet</a></span>,
   "np.pick_count" : (v)=><span>The number appeared in <span class="inline-flex text-base-content">{v}</span> bets</span>,
-  "np.pick_count_tip" : "Picks a number to show bet count"
+  "np.pick_count_tip" : "Picks a number to show bet count",
+  "in_balance" : "in balance",
+  "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
 })
 setDictionarys("zh",{
   "np.title" : (v)=> "投注到第"+v+"轮",
@@ -53,10 +56,12 @@ setDictionarys("zh",{
   "picked" : "选中",
   "np.bets" : "投注数量",
   "np.minting_reward" : "铸币奖励",
-  "np.buff_release" : "ALTb释放",
+  "np.buff_release" : "ALTb加成",
   "np.buff_faucet_tip" : ()=> <span>通过<a href="https://docs.aolotto.com/cn/shui-long-tou" target="_blank">水龙头</a>领取ALTb</span>,
   "np.pick_count" : (v)=><span>该号码出现在<span class="inline-flex text-base-content">{v}</span>次投注中</span>,
-  "np.pick_count_tip" : "选择号码查看已投注数量"
+  "np.pick_count_tip" : "选择号码查看已投注数量",
+  "in_balance" : "的余额",
+  "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
 })
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
@@ -123,6 +128,20 @@ export default props => {
   const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
   const enableSubmit = createMemo(()=>balance()>=cost()&&picked())
   const pickedCount = createMemo(()=>props?.state?.picks?.[picked()?.join('')]||0)
+  const minting = createMemo(()=>{
+    if(quantity()>=100){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["100"] || 1)
+    }
+    if(quantity()>=50){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["50"] || 0.6)
+    }
+    if(quantity()>=10){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["10"] || 0.3)
+    }
+    if(quantity()>=1){
+      return Number(props?.minting?.per_reward) * quantity() * (stats()?.mint_tier?.["1"] || 0.1)
+    }
+  })
   
   createEffect(()=>{
     if(picked()?.length>=3){
@@ -265,21 +284,21 @@ export default props => {
           <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
               <InfoItem label={t("np.minting_reward")} value={
               <div>
-                <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(Number(props?.minting?.per_reward)*quantity(),agent_i.Denomination,3)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
+                <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(minting(),agent_i.Denomination,12)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
               </div>}/>
-              <InfoItem label={t("np.buff_release")} value={<span>
+              <InfoItem label={t("np.buff_release")} value={<span class="flex flex-col text-xs gap-1 ">
                 <span>
                 <Show when={quantity()&&props?.minting} fallback="-">
-                  {toBalanceValue(Math.min(Number(props?.minting?.per_reward)*quantity(),player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} 
+                  + {toBalanceValue(Math.min(minting(),player()?.faucet?.[0]||0),agent_i.Denomination||12,12)} 
                   <Ticker class="text-current/50 ml-2">{agent_i.Ticker}</Ticker>
                 </Show>
                 </span>
                 <Switch>
                   <Match when={!player()?.faucet ||player()?.faucet?.[1] <= 0}>
-                  <span class="text-current/50 text-xs"> / {t("np.buff_faucet_tip")}</span>
+                  <span class="text-current/50 text-xs border-t border-current/20 pt-1">{t("np.buff_faucet_tip")}</span>
                   </Match>
                   <Match when={player()?.faucet?.[1] > 0}>
-                    <span class="text-current/50"> / {toBalanceValue(player()?.faucet?.[0],agent_i.Denomination||12,2)} </span>
+                    <span class="text-current/50 border-t border-current/20 pt-1">{toBalanceValue(player()?.faucet?.[0] - Math.min(minting()||0,player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} ALTb {t("in_balance")}</span>
                   </Match>
                 </Switch>
                 
@@ -344,7 +363,8 @@ export default props => {
                     const mint = val.mint
                     return (
                       <div>
-                        Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>! 
+                        {t("bet_sucess",{val,mint})}
+                        {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
                         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
                           <Icon icon="ei:external-link"></Icon>
                         </a>

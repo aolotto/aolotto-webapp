@@ -1,7 +1,8 @@
 export function toBalanceValue(balance: number, precision: number, len?: number): string {
   const n = (balance / Math.pow(10, precision)).toFixed(len || 0);
   const regexp = /(?:\.0*|(\.\d+?)0+)$/;
-  return n
+  const _n = parseFloat(String(n))
+  return _n
 }
 
 export function toBalanceQuantity(value: number, precision: number): number {

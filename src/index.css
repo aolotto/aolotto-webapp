@@ -93,7 +93,7 @@ input[type='number'] {
 
 @layer components {
   .tipy{
-    @apply bg-base-100 p-4 rounded-2xl border border-base-200;
+    @apply bg-base-100 p-3 rounded-2xl border border-base-200 text-sm;
   }
 
   .kbd{

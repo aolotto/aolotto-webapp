@@ -242,13 +242,10 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
               name: "Type", 
               values: ["Message"]
             },{
-              name: "Action",
-              values: ["Save-Ticket"]
-            },{
               name: "From-Process",
               values: ["${agent_id}"]
             },{
-              name: "Sender",
+              name: "Mint-For",
               values: ["${player_id}"]
             },{
               name: "Mint",
@@ -285,12 +282,15 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
  
         return({
           id: node.id,
+          type: tags?.Action,
           total: tags?.['Mint-Total'],
           buff: tags?.['Mint-Buff'],
           speed : tags?.['Mint-Speed'],
           amount: tags?.['Mint-Amount'],
           minter: tags?.Sender,
           timestamp : node?.block?.timestamp,
+          mint_tine : tags?.['Mint-Time'],
+          bet_id : tags?.['Bet-Id'],
           cursor
         })
       })
