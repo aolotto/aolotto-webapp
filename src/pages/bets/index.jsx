@@ -280,12 +280,6 @@ export default props => {
             <InfoItem
               label={
                 <div class=" flex flex-col justify-between h-full">
-                  {/* <div class="size-32 rounded-full flex flex-col items-center justify-center gap-2">
-                    <span>99.09%</span>
-                    
-                  <span class="text-xs">355666 $ALT</span>
-
-                  </div> */}
                   <span
                       use:tippy={{
                       allowHTML: true,

@@ -14,6 +14,8 @@ import { setDictionarys,t } from "../../i18n"
 import Empty from "../../components/empty"
 import { tippy } from "solid-tippy"
 import { state } from "../../signals/pool"
+import Gapview from "../../components/gapview"
+import { player } from "../../signals/player"
 
 
 
@@ -100,7 +102,7 @@ const BetItem = props => {
           <Show when={mined()?.plus}>
                   
                    <span 
-                     class="border text-xs px-2 py-1 rounded-full"
+                     class="border text-xs px-2 py-1 rounded-full cursor-pointer"
                      use:tippy={{
                        allowHTML: true,
                        hidden: true,
@@ -111,6 +113,7 @@ const BetItem = props => {
                          </div> 
                        }
                      }}
+                     onClick={props?.onGapRewardClick}
                    >
                      +{mined()?.plus?.[1]}
                    </span>
@@ -133,6 +136,7 @@ const BetItem = props => {
 }
 
 export default props => {
+  let _gap
   setDictionarys("en",{
     "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
     "t.no_bets" : "No bets yet, earlier bets mint more."
@@ -154,13 +158,14 @@ export default props => {
         
         <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
           {(item,index)=>{
-            return <BetItem value={item} onXNumberClick={props?.onXNumberClick} first={index()==0}/>
+            return <BetItem value={item} onXNumberClick={props?.onXNumberClick} onGapRewardClick={()=>_gap?.open(item)} first={index()==0}/>
           }}
         </For>
         <Show when={hasMore()}>
           <Loadmore loadMore={loadMore} loading={loadingMore()}/>
         </Show>
       </Suspense>
+      <Gapview ref={_gap}/>
     </section>
   )
 }

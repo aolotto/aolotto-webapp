@@ -44,19 +44,6 @@ export const fetchPoolRanks = async(id,{refetch}) => {
   }
 }
 
-// export const fetchPoolMine = async({pool_id,agent_id},{refetch}) => {
-//   console.log("fetchPoolMine",pool_id,agent_id)
-//   if(!pool_id||!agent_id) {
-//     return
-//   }
-//   const { Messages } = await ao.dryrun({
-//     process: agent_id,
-//     tags: {Action:"Mining-Quota",Pool:pool_id}
-//   })
-//   if(Messages?.length>0&&Messages[0]){
-//     return JSON.parse(Messages[0]?.Data)
-//   }
-// }
 
 
 export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
@@ -80,3 +67,98 @@ export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
   
 }
 
+export const fetchGapRewardsByBet = async({pool_id,agent_id,bet_id},{refetch}) => {
+  console.log("fetchGapRewards",pool_id,agent_id,bet_id)
+  if(!pool_id||!agent_id||!bet_id) return null
+  try {
+    const query_str =  `
+        query{
+          transactions(
+            sort: HEIGHT_DESC,
+            first: 150,
+            recipients: ["${pool_id}"],
+            tags: [{
+                name: "Data-Protocol",
+                values: ["ao"]
+              },{
+                name: "Variant",
+                values: ["ao.TN.1"]
+              },{
+                name: "Type", 
+                values: ["Message"]
+              },{
+                name: "From-Process",
+                values: ["${agent_id}"]
+              },{
+                name: "Action",
+                values: ["Minting-Plused"]
+              },{
+                name: "Bet-Id",
+                values: ["${bet_id}"]
+              }]
+          ) {
+            edges {
+              cursor
+              node {
+                id
+                tags {
+                  name,
+                  value
+                }
+                block {
+                  timestamp
+                }
+              }
+            }
+          }
+        }
+      `
+      const res = await ao.query(query_str)
+      let gaps
+      if(res?.length > 0){
+        gaps = res.map(({node,cursor})=>{
+          const tags = {}
+          for (const {name,value} of node.tags) {
+            tags[name] = value
+          }
+          return({
+            id: node.id,
+            amount: tags?.['Mint-Amount'],
+            total: tags?.['Mint-Total'],
+            speed: tags?.['Mint-Speed'],
+            time: tags?.['Mint-Time']?Number(tags?.['Mint-Time']):0,
+          })
+        })
+      }
+
+      console.log("gaps",gaps)
+      gaps.sort((a, b) => b.time - a.time)
+      return gaps
+
+  } catch (error) {
+    console.error("fetch minings faild.", error)
+    return null
+  }
+    
+  
+      // const res = await ao.query(query_str)
+      // let gaps
+      // if(res?.length > 0){
+      //   gaps = res.map(({node,cursor})=>{
+      //     const tags = {}
+      //     for (const {name,value} of node.tags) {
+      //       tags[name] = value
+      //     }
+      //     return({
+      //       id: node.id,
+      //       amount: tags?.Amount,
+      //       addresses: tags?.Addresses,
+      //       ref: tags?.['Distribution-No'],
+      //       supply: tags?.Supply,
+      //       timestamp: node?.block?.timestamp,
+      //       cursor
+      //     })
+      //   })
+      // }
+      
+}
