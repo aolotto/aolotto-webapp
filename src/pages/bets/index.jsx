@@ -135,6 +135,7 @@ export default props => {
   })
 
   return(
+    // <ErrorBoundary fallback={<div class="w-full h-40 flex justify-center items-center text-secondary">ERROR : Temporarily unable to access AO network</div>}>
     <>
     <main class="container flex flex-col min-h-lvh/2">
       <section class="response_cols py-10">
@@ -414,6 +415,7 @@ export default props => {
 
     <Rules ref={_rules}/>
 
+    {/* </ErrorBoundary> */}
     </>
   )
 }

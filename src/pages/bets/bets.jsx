@@ -2,7 +2,7 @@ import Avatar from "../../components/avatar"
 import { Xnumbers } from "../../components/xnumber"
 import Ticker from "../../components/ticker"
 import { Icon } from "@iconify-icon/solid"
-import { For, Match, Show, Suspense, Switch, createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { ErrorBoundary, For, Match, Show, Suspense, Switch, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import tooltip from "../../components/tooltip"
 import { Moment } from "../../components/moment"
@@ -127,7 +127,7 @@ const BetItem = props => {
           <span class="text-current/50">
           <Moment ts={item()?.created}/>
           </span>
-          <a href={`${app.ao_link_url}/#/entity/${item()?.id}?tab=linked`} target="_blank">
+          <a href={`${app.ao_link_url}/#/message/${item()?.id}?tab=linked`} target="_blank">
             <Icon icon="ei:external-link"></Icon>
           </a>
         </div>
@@ -151,21 +151,23 @@ export default props => {
       class="border-t border-current/20 py-10 flex flex-col gap-4 "
       classList={props?.classList}
     >
-      <Suspense fallback={<Spinner/>}>
-        <Show when={bets()?.length > 0}>
-         <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
-        </Show>
-        
-        <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
-          {(item,index)=>{
-            return <BetItem value={item} onXNumberClick={props?.onXNumberClick} onGapRewardClick={()=>_gap?.open(item)} first={index()==0}/>
-          }}
-        </For>
-        <Show when={hasMore()}>
-          <Loadmore loadMore={loadMore} loading={loadingMore()}/>
-        </Show>
-      </Suspense>
-      <Gapview ref={_gap}/>
+      <ErrorBoundary fallback="network error">
+        <Suspense fallback={<Spinner/>}>
+          <Show when={bets()?.length > 0}>
+          <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+          </Show>
+          
+          <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
+            {(item,index)=>{
+              return <BetItem value={item} onXNumberClick={props?.onXNumberClick} onGapRewardClick={()=>_gap?.open({...item,index})} first={index()==0}/>
+            }}
+          </For>
+          <Show when={hasMore()}>
+            <Loadmore loadMore={loadMore} loading={loadingMore()}/>
+          </Show>
+        </Suspense>
+        <Gapview ref={_gap}/>
+      </ErrorBoundary>
     </section>
   )
 }
