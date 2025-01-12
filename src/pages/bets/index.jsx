@@ -135,6 +135,7 @@ export default props => {
   })
 
   return(
+    // <ErrorBoundary fallback={<div class="w-full h-40 flex justify-center items-center text-secondary">ERROR : Temporarily unable to access AO network</div>}>
     <>
     <main class="container flex flex-col min-h-lvh/2">
       <section class="response_cols py-10">
@@ -280,12 +281,6 @@ export default props => {
             <InfoItem
               label={
                 <div class=" flex flex-col justify-between h-full">
-                  {/* <div class="size-32 rounded-full flex flex-col items-center justify-center gap-2">
-                    <span>99.09%</span>
-                    
-                  <span class="text-xs">355666 $ALT</span>
-
-                  </div> */}
                   <span
                       use:tippy={{
                       allowHTML: true,
@@ -420,6 +415,7 @@ export default props => {
 
     <Rules ref={_rules}/>
 
+    {/* </ErrorBoundary> */}
     </>
   )
 }

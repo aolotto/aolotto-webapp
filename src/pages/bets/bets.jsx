@@ -2,7 +2,7 @@ import Avatar from "../../components/avatar"
 import { Xnumbers } from "../../components/xnumber"
 import Ticker from "../../components/ticker"
 import { Icon } from "@iconify-icon/solid"
-import { For, Match, Show, Suspense, Switch, createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { ErrorBoundary, For, Match, Show, Suspense, Switch, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import tooltip from "../../components/tooltip"
 import { Moment } from "../../components/moment"
@@ -14,6 +14,8 @@ import { setDictionarys,t } from "../../i18n"
 import Empty from "../../components/empty"
 import { tippy } from "solid-tippy"
 import { state } from "../../signals/pool"
+import Gapview from "../../components/gapview"
+import { player } from "../../signals/player"
 
 
 
@@ -100,7 +102,7 @@ const BetItem = props => {
           <Show when={mined()?.plus}>
                   
                    <span 
-                     class="border text-xs px-2 py-1 rounded-full"
+                     class="border text-xs px-2 py-1 rounded-full cursor-pointer"
                      use:tippy={{
                        allowHTML: true,
                        hidden: true,
@@ -111,6 +113,7 @@ const BetItem = props => {
                          </div> 
                        }
                      }}
+                     onClick={props?.onGapRewardClick}
                    >
                      +{mined()?.plus?.[1]}
                    </span>
@@ -124,7 +127,7 @@ const BetItem = props => {
           <span class="text-current/50">
           <Moment ts={item()?.created}/>
           </span>
-          <a href={`${app.ao_link_url}/#/entity/${item()?.id}?tab=linked`} target="_blank">
+          <a href={`${app.ao_link_url}/#/message/${item()?.id}?tab=linked`} target="_blank">
             <Icon icon="ei:external-link"></Icon>
           </a>
         </div>
@@ -133,6 +136,7 @@ const BetItem = props => {
 }
 
 export default props => {
+  let _gap
   setDictionarys("en",{
     "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
     "t.no_bets" : "No bets yet, earlier bets mint more."
@@ -147,20 +151,23 @@ export default props => {
       class="border-t border-current/20 py-10 flex flex-col gap-4 "
       classList={props?.classList}
     >
-      <Suspense fallback={<Spinner/>}>
-        <Show when={bets()?.length > 0}>
-         <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
-        </Show>
-        
-        <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
-          {(item,index)=>{
-            return <BetItem value={item} onXNumberClick={props?.onXNumberClick} first={index()==0}/>
-          }}
-        </For>
-        <Show when={hasMore()}>
-          <Loadmore loadMore={loadMore} loading={loadingMore()}/>
-        </Show>
-      </Suspense>
+      <ErrorBoundary fallback="network error">
+        <Suspense fallback={<Spinner/>}>
+          <Show when={bets()?.length > 0}>
+          <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+          </Show>
+          
+          <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
+            {(item,index)=>{
+              return <BetItem value={item} onXNumberClick={props?.onXNumberClick} onGapRewardClick={()=>_gap?.open({...item,index})} first={index()==0}/>
+            }}
+          </For>
+          <Show when={hasMore()}>
+            <Loadmore loadMore={loadMore} loading={loadingMore()}/>
+          </Show>
+        </Suspense>
+        <Gapview ref={_gap}/>
+      </ErrorBoundary>
     </section>
   )
 }

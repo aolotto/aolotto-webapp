@@ -44,19 +44,6 @@ export const fetchPoolRanks = async(id,{refetch}) => {
   }
 }
 
-// export const fetchPoolMine = async({pool_id,agent_id},{refetch}) => {
-//   console.log("fetchPoolMine",pool_id,agent_id)
-//   if(!pool_id||!agent_id) {
-//     return
-//   }
-//   const { Messages } = await ao.dryrun({
-//     process: agent_id,
-//     tags: {Action:"Mining-Quota",Pool:pool_id}
-//   })
-//   if(Messages?.length>0&&Messages[0]){
-//     return JSON.parse(Messages[0]?.Data)
-//   }
-// }
 
 
 export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
@@ -80,3 +67,18 @@ export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
   
 }
 
+
+
+export const fetchGapRewards = async(id,{refetch}) => {
+  console.log("fetchGapRewards",id)
+  if(!id) {
+    return
+  }
+  const { Messages } = await ao.dryrun({
+    process: id,
+    tags: {Action:"Gap-Rewards"}
+  })
+  if(Messages?.length>0&&Messages[0]){
+    return JSON.parse(Messages[0]?.Data)
+  }
+}
