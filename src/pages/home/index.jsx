@@ -13,6 +13,7 @@ import Aolink from "./partners/aolink"
 import Typr from "./partners/typr"
 import Seagull from "./partners/seagull"
 import Pattern from "../../components/pattern"
+import Ario from "./partners/ario"
 import { t,setDictionarys } from "../../i18n"
 
 
@@ -155,6 +156,10 @@ export default props => {
       tooltip: "Seagull is a partner of our ecosystem with a focus on GameFi.",
       link: "https://x.com/happytowngame",
       element: <Seagull class="opacity-50 h-8 hover:opacity-100"/>
+    },{
+      tooltip: "ARIO provides permanent accessibility to dapps",
+      link: "https://x.com/happytowngame",
+      element: <Ario class="opacity-50 h-8 hover:opacity-100"/>
     }]))
   
     const faq = createMemo(()=>([{
