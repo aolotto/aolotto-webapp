@@ -21,7 +21,7 @@ export default props => {
   setDictionarys("en",{
     "nav.bets": "Bets",
     "nav.draws":"Draws",
-    "nav.rank":"Rank",
+    "nav.rank":"Ranks",
     "nav.alt": "$ALT",
     "nav.docs":"Docs",
     "nav.faucet":"🚰",

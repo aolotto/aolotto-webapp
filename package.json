@@ -12,6 +12,7 @@
     "deploy-main": "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
+    "@ar.io/sdk": "^3.2.0",
     "@othent/kms": "^2.0.0",
     "@robit-dev/tailwindcss-class-combiner": "^1.0.2",
     "@solid-aria/button": "^0.1.3",
