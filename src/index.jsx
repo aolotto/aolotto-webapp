@@ -13,6 +13,7 @@ import { isMobile } from './lib/ismobile';
 // components
 import Header from './components/header';
 import Footer from './components/footer';
+import Spinner from './components/spinner';
 // pages
 import Home from './pages/home';
 import Bets from './pages/bets';
@@ -23,6 +24,7 @@ import Me from './pages/me';
 import Notfound from './pages/notfound';
 import Upcomming from './pages/home/upcomming';
 import Mobile from './pages/home/mobile';
+import Alert from './pages/alert';
 
 const App = props => {
   const {isUpdate,browser,versions,lowestVersions=''} = isUpgradeBrowser()
@@ -81,15 +83,9 @@ const App = props => {
     }
   })
   return(
-    // <ErrorBoundary fallback={(e)=>{
-    //   console.log("错误类型",typeof(e))
-    //   console.log(e); 
-    //   return <div class="text-secondary">ERROR: {e.message}</div>
-    // }}>
-
     <Show 
       when={initialized()} 
-      fallback="Initialized Aolotto..."
+      fallback={<Spinner size="lg">Initialization...</Spinner>}
     >
       <Switch>
           <Match when={!launched()}>{Upcomming}</Match>
@@ -104,7 +100,6 @@ const App = props => {
         </Switch>
       <Toaster position="bottom-center" gutter={16}/>
     </Show>
-    // </ErrorBoundary>
   )
 }
 
@@ -116,7 +111,7 @@ render(() => (
     <Route path={["/rank/*"]} component={Ranks} />
     <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
-    <Route path={["/coming/*"]} component={Upcomming}/>
+    <Route path={["/alert/*"]} component={Alert}/>
     <Route path="*paramName" component={Notfound} />
   </HashRouter>
 ),  document.getElementById('root'))

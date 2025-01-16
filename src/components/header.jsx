@@ -88,14 +88,16 @@ export default props => {
       <div class="flex justify-start items-center gap-2">
         <A 
           href="/" 
-          class="text-current"
+          class="text-current pt-1"
         >
           <Logo/> 
         </A>
-        <Show when={app?.mode == "development"}>
-        <span class="inline-flex bg-base-200 text-xs px-1 rounded-sm uppercase text-current/50">dev</span>
-        </Show>
-        
+        <A
+          href="/alert"
+          class="inline-flex text-lg btn btn-ghost btn-icon btn-xs rounded-full"
+        >
+          <Icon icon="fluent:alert-urgent-20-regular" />
+        </A>
       </div>
 
       {/* right */}
