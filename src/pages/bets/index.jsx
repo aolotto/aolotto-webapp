@@ -102,6 +102,7 @@ export default props => {
     "tooltip.reward_ladder_2" : "L2: Bet amount between $10-49, reward coefficient = 0.0003, the actual amount is calculated based on the current Bet2Mint balance",
     "tooltip.reward_ladder_3" : "L3: Bet amount between $50-99, reward coefficient = 0.0006, the actual amount is calculated based on the current Bet2Mint balance",
     "tooltip.reward_ladder_4" : "L4: Bet amount at the maximum limit of $100, reward coefficient = 0.001, the actual amount is calculated based on the current Bet2Mint balance",
+    "a.deposit" : "Deposit"
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -132,6 +133,7 @@ export default props => {
     "tooltip.reward_ladder_2" : "L2：投注金额位于 $10-49 区间，奖励系数为 0.0003,实际奖励金额基于当前Bet2Mint余额计算",
     "tooltip.reward_ladder_3" : "L3：投注金额位于 $50-99 区间，奖励系数为 0.0006,实际奖励金额基于当前Bet2Mint余额计算",
     "tooltip.reward_ladder_4" : "L4：投注金额达到最高投注上限 $100，奖励系数为 0.001,实际奖励金额基于当前Bet2Mint余额计算",
+    "a.deposit" : "储值"
   })
 
   return(
@@ -267,7 +269,11 @@ export default props => {
             <div
               class="inline-flex items-center gap-2 py-2"
             >
-              <span class="text-current/50 uppercase">{t("s.price")}: </span><Show when={price()} fallback="...">{toBalanceValue(price(),pay_i.Denomination||6,1)}</Show> <span class="text-current/50"><Ticker>{pay_i.Ticker}</Ticker>/{t("u.bet")}</span> 
+              <span class="text-current/50 uppercase">
+                {t("s.price")}: </span><Show when={price()} fallback="...">{toBalanceValue(price(),pay_i.Denomination||6,1)}</Show> <span class="text-current/50"><Ticker>{pay_i.Ticker}</Ticker>/{t("u.bet")}
+              </span> 
+              <span class="text-current/50">-</span>
+              <a class="flex items-center" href="https://aox.xyz/#/cex-deposit" target="_blank">{t("a.deposit")} <Icon icon="ei:external-link"></Icon></a>
             </div>
             </div>
 
