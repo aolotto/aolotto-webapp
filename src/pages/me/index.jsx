@@ -22,7 +22,7 @@ import { useSearchParams } from "@solidjs/router"
 import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
 import { locale } from "../../i18n"
-import { tippy } from "solid-tippy"
+import Recharger from "../../components/recharger"
 
 export default props=>{
   let _claimer
@@ -115,7 +115,7 @@ export default props=>{
           <div class="flex gap-4 items-center">
             <span className="text-current/50">{t("action.disconnect")}</span>
             <button 
-              class="btn btn-icon rounded-full btn-ghost"
+              class="btn btn-circle btn-ghost"
               onClick={handleDisconnection}
             >
               <Icon icon="solar:logout-outline"></Icon>
@@ -155,31 +155,28 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full" use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">$wUSDC - warped USDC</div> 
-                  }
-                }}/> 
+                <span class="tooltip" data-tip = "$wUSDC - warped USDC">
+                  <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full"/>
+                </span>
                 <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,6)}</Show> </span>
               </div>
               <div>
-                <a class="inline-flex items-center" href="https://aox.xyz/#/home" target="_blank">{t("action.deposit")}<Icon icon="ei:external-link"></Icon></a>
+                <Recharger/>
               </div>
             </div>
-            <div class="flex items-center gap-2 justify-between">
+            <div 
+              class="flex items-center gap-2 justify-between"
+              
+            >
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <img src={`https://arweave.net/${agent_i?.Logo}`} class="size-6 rounded-full"  use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">$ALT - Ao Lotto Token</div> 
-                  }
-                }}/> 
+                <span class="tooltip" data-tip = "$ALT - AoLotto Token">
+                  <img 
+                    src={`https://arweave.net/${agent_i?.Logo}`} 
+                    class="size-6 rounded-full "  
+                  /> 
+                </span>
+                
                 <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,12)}</Show> </span>
               </div>
               <div>
@@ -189,14 +186,11 @@ export default props=>{
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">
                 <Icon icon="ph:arrow-elbow-down-right-light"></Icon>
-                <span class="size-6 rounded-full bg-third/50 inline-flex items-center justify-center" use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">ALTb - ALT minting buff </div> 
-                  }
-                }}>💧</span>
+                <span class="tooltip" data-tip = "ALTb - ALT minting buff">
+                  <span class="size-6 rounded-full bg-accent/50 inline-flex items-center justify-center" >💧</span>
+
+                </span>
+               
                 <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,6)}</Show></span>
               </div>
               <div>

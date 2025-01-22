@@ -16,6 +16,7 @@ import { setDictionarys,t } from "../i18n"
 // components
 import { Modal, ModalHeader, ModalContainer, ModalFooter } from "./popup"
 import toast from "solid-toast"
+import Recharger from "./recharger"
 
 setDictionarys("en",{
   "np.title" : (v)=> "Bet on Round-"+v,
@@ -174,7 +175,7 @@ export default props => {
       onCancel={(e)=>e.preventDefault()}
       class={"w-128 max-w-full min-w-[360px] h-fit gap-0"}
     >
-      {submiting() && <div class="fixed inset-0 bg-base-0 opacity-60 z-50 rounded-2xl" ></div>}
+      {submiting() && <div class="fixed inset-0 bg-base-100 opacity-60 z-50 rounded-2xl" ></div>}
       <ModalHeader>
         <div class="flex items-start justify-between text-xl w-full px-[1em] py-4">
        
@@ -196,8 +197,8 @@ export default props => {
               <image src={`https://arweave.net/${pay_i?.Logo}`} class="w-4 h-4"/> 
               <span class="text-current/50">{pay_i?.Ticker}</span>
             </span>
-            
-            <a href="https://aox.xyz/#/cex-deposit/USDC/1" target="_blank" class="inline-flex items-center">{t("deposit")}<Icon icon="ei:external-link"></Icon></a>
+            <Recharger/>
+            {/* <a href="https://aox.xyz/#/cex-deposit/USDC/1" target="_blank" class="inline-flex items-center">{t("deposit")}<Icon icon="ei:external-link"></Icon></a> */}
           </div>}/>
         </div>
         <section class="border-t border-current/20 last:border-b py-4 flex flex-col gap-6">

@@ -27,7 +27,7 @@ export default props => {
       classList={props?.classList}
     >
       <For each={tickets()} fallback={<Empty tips="No bets yet"/>}>
-        {(item,index)=><div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md">
+        {(item,index)=><div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md overflow-visible">
           <div class="col-span-full lg:col-span-3 flex items-center gap-2">
           <span>🎲</span> 
           <span class="text-current/50" use:tooltip={["top",item?.id]}>{shortStr(item?.id,8)}</span>
