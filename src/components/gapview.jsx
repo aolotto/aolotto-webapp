@@ -94,17 +94,9 @@ export default props => {
                     </span>
                     <span class="flex-1 text-current/50 justify-end flex items-center gap-2">
                       <span>
-                        <span class="text-base-content" 
-                        use:tippy={{
-                        allowHTML: true,
-                        hidden: true,
-                        animation: 'fade',
-                        props: {
-                          content : ()=><div class="tipy">
-                            {toBalanceValue(item?.[1],agent_i?.Denomination||12,agent_i?.Denomination||12)}
-                          </div> 
-                        }
-                      }}>{toBalanceValue(item?.[1],agent_i?.Denomination||12,3)}</span> $ALT
+                        <span class="text-base-content tooltip tooltip-left" 
+                        data-tip = {toBalanceValue(item?.[1],agent_i?.Denomination||12,agent_i?.Denomination||12)}
+                      >{toBalanceValue(item?.[1],agent_i?.Denomination||12,3)}</span> $ALT
                       </span>
                       <a href={`${app?.ao_link_url}/#/message/${item?.[2]}`} target="_blank"><Icon icon="ei:external-link"></Icon></a>
                     </span>

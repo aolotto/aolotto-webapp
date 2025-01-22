@@ -34,7 +34,7 @@ export default props => {
                 }}
               >
                 <div class="flex items-center gap-2">
-                  <span class="inline-flex bg-base-content/80 text-base-0 uppercase rounded-md text-xs px-1">{item}</span>
+                  <span class="inline-flex bg-base-content/80 text-base-100 uppercase rounded-md text-xs px-1">{item}</span>
                   <span>{locales[item].name}</span>
                 </div>
                 

@@ -44,7 +44,7 @@ export default props => {
       <div class="flex flex-col gap-2">
         <For each={minings()} fallback={<Empty tips="No mintings yet."/>}>
           {(item)=>(
-            <div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md ">
+            <div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md overflow-visible">
               <div class="flex items-center gap-4 col-span-full lg:col-span-4">
                 <Avatar username={item.address} class="size-7"/>
                 <div><span class="text-current/50">{shortStr(item.address||"",8)}</span></div>

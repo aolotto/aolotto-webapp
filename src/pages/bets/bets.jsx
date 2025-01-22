@@ -39,21 +39,25 @@ const BetItem = props => {
 
   return (
     
-    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none">
+    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none overflow-visible">
         <div class="col-span-full lg:col-span-3">
           <div class="flex items-center gap-4">
             <Avatar username={item()?.player} class="size-7"/>
-            <span class="text-current/50" use:tooltip={['top',()=>item()?.player]}>
-              <Show when={item()?.player} fallback="-">{shortStr(item().player||"",6)}</Show>
-            </span>
+            <div class="lg:tooltip tooltip-right">
+              <div className="tooltip-content overflow-x-auto"><span class="inline-flex text-xs w-fit whitespace-nowrap">{item()?.player}</span></div>
+              <span class="text-current/50" >
+                <Show when={item()?.player} fallback="-">{shortStr(item().player||"",6)}</Show>
+              </span>
+            </div>
+            
           </div>
         </div>
         <div class="col-span-full lg:col-span-1 flex items-center">
         <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
         </div>
         <div class="col-span-full lg:col-span-6 flex items-center gap-4 justify-between">
-         <div>
-          <div class="inline-flex gap-1">
+         <div class="flex items-center gap-2">
+          <div class="inline-flex gap-2">
             <span class="text-current/50">{t("i.bet")}</span>
             <b>${toBalanceValue(item()?.amount,item()?.denomination||6)}</b>
           </div>
@@ -68,16 +72,9 @@ const BetItem = props => {
                 <div class="inline-flex items-center gap-2">
                   <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
                   <span class="text-current/50">{t("i.mint")}</span>
-                  <span use:tippy={{
-                        allowHTML: true,
-                        hidden: true,
-                        animation: 'fade',
-                        props: {
-                          content : ()=><div class="tipy">
-                            {toBalanceValue(mined().total,mined().denomination||12,12)}
-                          </div> 
-                        }
-                      }}>~{toBalanceValue(mined().total,mined().denomination||12,6)}</span> 
+                    <div class="lg:tooltip" data-tip={toBalanceValue(mined().total,mined().denomination||12,12)}>
+                      <span>{toBalanceValue(mined().total,mined().denomination||12,6)}</span>
+                    </div>
                   <Ticker class="text-current/50">{mined().ticker}</Ticker>
                 </div>
               </Show>
@@ -86,37 +83,28 @@ const BetItem = props => {
           </div>
           <div class="px-4 flex items-center gap-4">
           <Show when={props?.first}>
-                 <span use:tippy={{
-                       allowHTML: true,
-                       hidden: true,
-                       animation: 'fade',
-                       props: {
-                         content : ()=><div class="tipy">
-                           {t("tooltip.first_gap_reward",
-                             {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
-                           )}
-                         </div> 
-                       }
-                     }}><Icon icon="eos-icons:hourglass" /></span>
+                 <div class="lg:tooltip">
+                    <div class="tooltip-content">
+                      <p class="text-left p-2">
+                        {t("tooltip.first_gap_reward",
+                            {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
+                          )}
+                      </p>
+                    </div>
+                    <Icon icon="eos-icons:hourglass" />
+                  </div>
                  </Show>
           <Show when={mined()?.plus}>
                   
-                   <span 
-                     class="border text-xs px-2 py-1 rounded-full cursor-pointer"
-                     use:tippy={{
-                       allowHTML: true,
-                       hidden: true,
-                       animation: 'fade',
-                       props: {
-                         content : ()=><div class="tipy">
-                           {t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}
-                         </div> 
-                       }
-                     }}
+                   <div 
+                     class="border text-xs px-2 py-1 rounded-full cursor-pointer lg:tooltip"
                      onClick={props?.onGapRewardClick}
                    >
+                    <div class="tooltip-content">
+                      <p class="text-left p-2">{t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}</p>
+                    </div>
                      +{mined()?.plus?.[1]}
-                   </span>
+                   </div>
                  </Show>
 
                  

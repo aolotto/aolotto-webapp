@@ -195,7 +195,7 @@ export default props => {
           <div class="col-span-full flex flex-col gap-8 items-center justify-center">
             <div class="flex flex-col justify-center items-center gap-2">
               <span class="text-current/50 uppercase">{t("top.jackpot_title")}</span>
-              <span class="text-4xl text-third font-bold">
+              <span class="text-4xl text-accent font-bold">
                 <Show when={!state.loading} fallback="...">${toBalanceValue(state()?.jackpot, pay_i?.Denomination||6,2)}</Show>
               </span>
             </div>

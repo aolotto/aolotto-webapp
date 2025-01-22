@@ -34,7 +34,7 @@ export default props => {
               AolottoAlert
               </h1>
             <h3 class ="text-xl text-current/50 py-2">Real-time Jackpot Alerts in Discord</h3>
-            <p class="mt-8">Get the latest betting, draw, and reward updates anytime, anywhere  in the <span class="inline-flex bg-base-100 py-[0.1em] px-[0.2em] rounded-sm">#🔔│alert</span> channel on our official Discord.</p>
+            <p class="mt-8">Get the latest betting, draw, and reward updates anytime, anywhere  in the <span class="inline-flex bg-base-300 py-[0.1em] px-[0.2em] rounded-sm">#🔔│alert</span> channel on our official Discord.</p>
             <a class="btn btn-primary w-fit mt-8 btn-xl" href="https://discord.com/invite/BFhkUCRjmF" target="_blank">Join Aolotto Discord <Icon icon="iconoir:arrow-right"/></a>
           </div>
         </div>

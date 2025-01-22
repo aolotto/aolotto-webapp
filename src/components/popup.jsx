@@ -65,7 +65,7 @@ export const Modal = props =>{
       </Show>
       <div 
         class={mergeClasses(
-          "bg-base-0 flex-col !z-[10000] fixed transition-all rounded-[1em] [&>section]:w-full [&>section]:px-[1em] [&>section]:first:pt-[1em] [&>section]:last:pb-[1em] flex justify-center items-center drop-shadow-black drop-shadow-2xl",
+          "bg-base-100 flex-col !z-[10000] fixed transition-all rounded-[1em] [&>section]:w-full [&>section]:px-[1em] [&>section]:first:pt-[1em] [&>section]:last:pb-[1em] flex justify-center items-center drop-shadow-black drop-shadow-2xl",
           props.className || props.class
         )}
         classList={{
@@ -104,7 +104,7 @@ export const ModalHeader = props => {
       fallback={
         <section class="w-full flex items-center justify-between">
           <h2 class="text-md font-bold text-current/80 h-[1.5em]">{props.title}</h2>
-          <button class="btn btn-icon btn-ghost rounded-full" onClick={context?.handleClose} disabled={props?.disabled}>
+          <button class="btn btn-square btn-ghost rounded-full" onClick={context?.handleClose} disabled={props?.disabled}>
             <iconify-icon icon="iconoir:cancel"></iconify-icon>
           </button>
         </section>

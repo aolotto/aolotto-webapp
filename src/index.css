@@ -1,32 +1,88 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox;
+}
 
-/* @import "https://unpkg.com/open-props"; */
 @theme {
-  --color-*: initial;
-  --color-base-0: #ffffff;
-  --color-base-100: #EFEBF3; 
-  --color-base-200: #E4DDEB;
-  --color-base-content: #0E0A16;
-  --color-primary: #6535CD;
-  --color-primary-content: #ffffff;
-  --color-secondary: #F9302A;
-  --color-secondary-content: #ffffff;
-  --color-third: #FCB61C;
-  --color-third-content: #000000;
-  --color-black: #000000;
-  --color-white: #ffffff;
-  --color-gray-0: #ffffff;
-  --color-gray-200: #e4e4e4;
-  --color-gray-400: #d4d4d4;
-  --color-gray-600: #737373;
-  --color-gray-800: #262626;
-  --color-gray-1000: #000000;
   --font-mono: ui-monospace,"Roboto Mono",monospace;
 }
 
 
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(97% 0 0);
+  --color-base-300: oklch(92% 0 0);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: #7947E3;
+  --color-primary-content: oklch(98% 0.003 247.858);
+  --color-secondary: oklch(65% 0.241 354.308);
+  --color-secondary-content: oklch(97% 0.014 343.198);
+  --color-accent: oklch(83% 0.128 66.29);
+  --color-accent-content: oklch(26% 0.079 36.259);
+  --color-neutral: oklch(14% 0.005 285.823);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(78% 0.115 274.713);
+  --color-info-content: oklch(25% 0.09 281.288);
+  --color-success: oklch(87% 0.15 154.449);
+  --color-success-content: oklch(26% 0.065 152.934);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: #140F1F;
+  --color-base-200: #1D172B;
+  --color-base-300: #241D34;
+  --color-base-content: oklch(94% 0.029 294.588);
+  --color-primary: #7947E3;
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(65% 0.241 354.308);
+  --color-secondary-content: oklch(94% 0.028 342.258);
+  --color-accent: oklch(83% 0.128 66.29);
+  --color-accent-content: oklch(26% 0.079 36.259);
+  --color-neutral: oklch(92% 0.004 286.32);
+  --color-neutral-content: oklch(21% 0.006 285.885);
+  --color-info: oklch(78% 0.115 274.713);
+  --color-info-content: oklch(28% 0.141 291.089);
+  --color-success: oklch(87% 0.15 154.449);
+  --color-success-content: oklch(26% 0.065 152.934);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(27% 0.077 45.635);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+
+
 :root {
-  @apply bg-base-0 text-base-content font-mono font-normal text-[1rem] min-w-[360px];
+  @apply bg-base-100 text-base-content font-mono font-normal text-[1rem] min-w-[360px];
   color-scheme: light dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,9 +90,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 iconify-icon {
-  display: inline-block;
+  display: inline-flex;
   width: 1em;
   height: 1em;
+  font-size: 1em;
+  justify-items: center;
+  align-items: center;
 }
 
 
@@ -48,21 +107,7 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-base-0: #0E0A16;
-    --color-base-100: #1f192b;
-    --color-base-200: #372e46;
-    --color-base-content: #c8c3d0;
-    --color-primary: #7947e3;
-    --color-gray-1000: #ffffff;
-    --color-gray-800: #e4e4e4;
-    --color-gray-600: #d4d4d4;
-    --color-gray-400: #737373;
-    --color-gray-200: #262626;
-    --color-gray-0: #000000;
-  }
-}
+
 
 @layer base{
   input,
@@ -76,10 +121,10 @@ input[type='number'] {
     background-color: transparent;
   }
   .container{
-    @apply mx-auto max-w-7xl px-4 lg:px-6 overflow-x-hidden;
+    @apply mx-auto max-w-7xl px-4 lg:px-6 overflow-x-visible;
   }
   .response_cols{
-    @apply grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 md:grid-cols-10 md:gap-6 sm:grid-cols-6 sm:gap-4 grid-flow-dense overflow-x-hidden;
+    @apply grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 md:grid-cols-10 md:gap-6 sm:grid-cols-6 sm:gap-4 grid-flow-dense overflow-x-auto;
   }
   a{
     @apply text-primary hover:text-base-content inline-flex gap-1 ;
@@ -93,12 +138,9 @@ input[type='number'] {
 
 @layer components {
   .tipy{
-    @apply bg-base-100 p-3 rounded-2xl border border-base-200 text-sm;
+    @apply bg-base-200 p-3 rounded-2xl border border-base-300 text-sm;
   }
 
-  .kbd{
-    @apply inline-flex items-center justify-center rounded-md px-1 py-0 text-xs border border-current border-b-2 bg-current/20;
-  }
 
   .ball{
     @apply inline-flex font-bold border-current border text-base-content rounded-full items-center justify-center size-[2rem];
@@ -110,7 +152,7 @@ input[type='number'] {
       @apply bg-transparent;
     }
     &:is(.ball-fill){
-      @apply text-gray-0;
+      @apply text-base-100;
       background: radial-gradient(60.71% 60.71% at 30.36% 21.43%, #e86500 0%, #812de6 100%);
       &:hover{
         @apply bg-base-content/10;
@@ -121,44 +163,6 @@ input[type='number'] {
   .number{
     @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
   }
-
-
-
-  .btn{
-    @apply inline-flex cursor-pointer items-center justify-center leading-none text-center transition-all ;
-    &:disabled { @apply cursor-not-allowed text-current/20; }
-    /* sizes */
-    &,
-    &:is(.btn-md) { @apply px-[1em] h-[2.4em] py-0 text-base rounded-[0.5em]; &:is(.btn-icon){ @apply size-[2.4em] *:scale-105} }
-    &:is(.btn-lg) { @apply px-[1.1em] h-[2.6em] py-0 rounded-[0.5em] text-lg; &:is(.btn-icon){ @apply size-[2.6em]}}
-    &:is(.btn-xl) { @apply px-[1.2em] h-[2.8em] py-0 rounded-[0.6em] text-xl; &:is(.btn-icon){ @apply size-[2.8em]}}
-    &:is(.btn-sm) { @apply px-[0.6em] h-[2.2em] py-0 rounded-[0.4em] text-sm; &:is(.btn-icon){ @apply size-[2.2em]}}
-    &:is(.btn-xs) { @apply px-[0.8em] h-[2em] py-0 rounded-[0.4em] text-xs; &:is(.btn-icon){ @apply size-[2em]}}
-    /* styles */
-    &,
-    &:is(.btn-default):not(:disabled) { @apply border bg-base-100 border-base-100 text-base-content; 
-      &:hover:not(:disabled) { @apply bg-base-100/80 border-base-100; }
-      &:is(.btn-ghost){@apply bg-transparent border-transparent text-base-content hover:text-base-content;}
-      &:is(.btn-outline){@apply bg-transparent border-current text-base-content hover:text-base-content;}
-    }
-    &:is(.btn-primary):not(:disabled) { @apply border bg-primary border-primary text-primary-content; 
-      &:hover:not(:disabled) { @apply bg-primary/90 border-primary; }
-      &:is(.btn-ghost){@apply bg-transparent border-transparent text-primary hover:text-primary-content;}
-      &:is(.btn-outline){@apply bg-transparent border-current text-primary hover:text-primary-content;}
-    }
-    &:is(.btn-secondary):not(:disabled) { @apply border bg-secondary border-secondary text-secondary-content; 
-      &:hover:not(:disabled) { @apply bg-secondary/90 border-secondary; }
-      &:is(.btn-ghost){@apply bg-transparent border-transparent text-secondary hover:text-secondary-content;}
-      &:is(.btn-outline){@apply bg-transparent border-current text-secondary hover:text-secondary-content;}
-    }
-    &:is(.btn-third):not(:disabled) { @apply border bg-third border-third text-third-content; 
-      &:hover:not(:disabled) { @apply bg-third/90 border-third; }
-      &:is(.btn-ghost){@apply bg-transparent border-transparent text-third hover:text-third-content;}
-      &:is(.btn-ghost){@apply bg-transparent border-current text-third hover:text-third-content;}
-    }
-   
-  }
- 
 
 }
 

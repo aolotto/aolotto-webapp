@@ -1,9 +1,7 @@
 import { Icon } from '@iconify-icon/solid';
 import { createSignal, Show } from 'solid-js';
-import tooltip from './tooltip';
 
 export function Copyable({value,children}){
-  const [tip,setTip] = createSignal("copy")
   const [copied,setCopied] = createSignal(false)
   return(
     <span 
@@ -17,9 +15,8 @@ export function Copyable({value,children}){
         {children}
       </Show>
       <button 
-        class="group-hover:visible invisible cursor-pointer"
-        use:tooltip="top"
-        title={copied()?"Copied":"Copy"}
+        class="group-hover:visible invisible cursor-pointer tooltip"
+        data-tip={copied()?"Copied":"Copy"}
         onMouseLeave={()=>setCopied(false)}
         onClick={async ()=>{
           await navigator.clipboard.writeText(value)

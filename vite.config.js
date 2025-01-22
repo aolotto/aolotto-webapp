@@ -2,9 +2,10 @@ import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
+import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
-  plugins: [solid(),tailwindcss()],
+  plugins: [solid(),tailwindcss(),solidPlugin()],
   base:"./",
   build: {
     cssMinify: "esbuild",

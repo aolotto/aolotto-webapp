@@ -16,7 +16,7 @@ import { setDictionarys,t } from "../../i18n"
 import { tippy, useTippy } from 'solid-tippy';
 import Rules from "../../components/rules"
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
-import { fetchPoolState } from "../../api/pool"
+import Recharger from "../../components/recharger"
 
 
 
@@ -139,21 +139,14 @@ export default props => {
   return(
     // <ErrorBoundary fallback={<div class="w-full h-40 flex justify-center items-center text-secondary">ERROR : Temporarily unable to access AO network</div>}>
     <>
-    <main class="container flex flex-col min-h-lvh/2">
-      <section class="response_cols py-10">
+    <main class="container flex flex-col min-h-lvh/2 overflow-visible">
+      <section class="response_cols py-10 overflow-visible">
 
-        <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col gap-8">
-          <div class="h-16 flex items-center gap-4 w-fit">
+        <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col gap-8 overflow-visible">
+          <div class="h-16 flex items-center gap-4 w-fit overflow-visible">
             <span 
-              class="border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center"
-              use:tippy={{
-                allowHTML: true,
-                hidden: true,
-                animation: 'fade',
-                props: {
-                  content : ()=><div class="tipy">Round {state()?.round}</div> 
-                }
-              }}
+              class="border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center tooltip"
+              data-tip={"Round "+state()?.round}
             >
               <Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show>
             </span>
@@ -200,22 +193,21 @@ export default props => {
                 <Show when={!state.loading} fallback="...">
                   {new Date(state()?.ts_latest_draw).toLocaleString()} 
                   <span
-                    class="text-current/60 uppercase cursor-help inline-flex items-center text-xs bg-base-200 gap-1 rounded-full px-2 py-1"
-                    use:tippy={{
-                      allowHTML: true,
-                      hidden: true,
-                      animation: 'fade',
-                      props: {
-                        content : ()=><div class="bg-base-100 p-4 rounded-2xl border border-base-200">
-                          {draw_locker()?
-                            t("tooltop.draw_time_fixed",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)}):
-                            t("tooltop.draw_time_est",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})
-                          }
-                        </div> 
-                      }
-                    }}
+                    class="text-current/60 cursor-help inline-flex items-center text-xs bg-base-200 gap-1 rounded-full px-2 py-1 tooltip"
                   >
-                    {draw_locker()?"Fixed":"Est."}
+                    <div class="tooltip-content">
+                      <div className="text-left p-2">
+                      {draw_locker()?
+                        t("tooltop.draw_time_fixed",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)}):
+                        t("tooltop.draw_time_est",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})
+                      }
+                      </div>
+                      
+                      </div>
+                      <span class="uppercase">
+                      {draw_locker()?"Fixed":"Est."}
+                      </span>
+                    
                   </span></Show> 
               </span>
             </InfoItem>
@@ -263,7 +255,7 @@ export default props => {
                 disabled={state.loading}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
-                <span class="inline-flex gap-4"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd">P</kbd></span>
+                <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
               </button>
             </div>
             <div
@@ -273,7 +265,7 @@ export default props => {
                 {t("s.price")}: </span><Show when={price()} fallback="...">{toBalanceValue(price(),pay_i.Denomination||6,1)}</Show> <span class="text-current/50"><Ticker>{pay_i.Ticker}</Ticker>/{t("u.bet")}
               </span> 
               <span class="text-current/50">-</span>
-              <a class="flex items-center" href="https://aox.xyz/#/cex-deposit" target="_blank">{t("a.deposit")} <Icon icon="ei:external-link"></Icon></a>
+              <Recharger/>
             </div>
             </div>
 
@@ -282,52 +274,51 @@ export default props => {
       </section>
 
       <Show when={minting()}>
-        <section class="response_cols py-8 border-t border-current/20 ">
+        <section class="response_cols py-8 border-t border-current/20 overflow-visible">
           <div class="col-span-7 flex flex-col">
             <InfoItem
               label={
                 <div class=" flex flex-col justify-between h-full">
                   <span
-                      use:tippy={{
-                      allowHTML: true,
-                      hidden: true,
-                      animation: 'fade',
-                      props: {
-                        content : ()=><div class="tipy">
-                          <div>{t("tooltop.bet2mint")}</div>
-                          <div class="pt-2 mt-2 border-t border-current/20">
-                            {t("tooltop.minting_speed")}
-                          </div>
-                        </div> 
-                      }
-                    }}
-                    class="inline-flex bg-third text-third-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help w-fit mt-2"
+                    //   use:tippy={{
+                    //   allowHTML: true,
+                    //   hidden: true,
+                    //   animation: 'fade',
+                    //   props: {
+                    //     content : ()=><div class="tipy">
+                    //       <div>{t("tooltop.bet2mint")}</div>
+                          // <div class="pt-2 mt-2 border-t border-current/20">
+                          //   {t("tooltop.minting_speed")}
+                          // </div>
+                    //     </div> 
+                    //   }
+                    // }}
+                    
+                    class=" tooltip w-fit"
                   >
+                    <div className="tooltip-content">
+                      <div className="text-sm text-left p-2">
+                        <div>{t("tooltop.bet2mint")}</div>
+                        <div class="pt-2 mt-2 border-t border-current/20">{t("tooltop.minting_speed")}</div>
+                      </div>
+                    </div>
+                    <span className="inline-flex bg-accent text-accent-content px-2 uppercase rounded-full py-0.5 items-center gap-1 cursor-help w-fit mt-2">
                     Bet2Mint
                     <Icon icon="carbon:information"></Icon>
+                    </span>
+                    
                   </span>
                   
                 <div class="flex flex-col gap-2">
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content" use:tippy={{
-                      allowHTML: true,
-                      hidden: true,
-                      animation: 'fade',
-                      props: {
-                        content : ()=><div class="tipy">
-                          {toBalanceValue(state()?.mint_speed*100,0,12)} %
-                        </div> 
-                      }
-                    }}>~ {toBalanceValue(state()?.mint_speed*100,0,2)} %</span></div>
-                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.supply")}: <span class="text-base-content"  use:tippy={{
-                      allowHTML: true,
-                      hidden: true,
-                      animation: 'fade',
-                      props: {
-                        content : ()=><div class="tipy">
-                          {toBalanceValue(state()?.minting?.minted,12,12)}
-                        </div> 
-                      }
-                    }}>{toBalanceValue(state()?.minting?.minted,12,0)}</span> $ALT</div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content tooltip" 
+                    data-tip = {toBalanceValue(state()?.mint_speed*100,0,12)}
+                  >~ {toBalanceValue(state()?.mint_speed*100,0,2)} %</span></div>
+                  <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.supply")}: <span 
+                    class="text-base-content tooltip"  
+                    data-tip = {toBalanceValue(state()?.minting?.minted,12,12)}
+                  >
+                    {toBalanceValue(state()?.minting?.minted,12,0)}</span> $ALT
+                  </div>
                 </div>
               </div>
               }
@@ -345,47 +336,19 @@ export default props => {
           </div>
           
           <div class="col-span-4 col-start-9 flex flex-col gap-1 justify-between">
-            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third text-xs px-[3px] py-[2px] inline-block rounded-sm"
-            use:tippy={{
-              allowHTML: true,
-              hidden: true,
-              animation: 'fade',
-              props: {
-                content : ()=><div class="tipy">
-                  {t("tooltip.reward_ladder_4")}
-                </div> 
-              }}}>L4</span> {t("m.bet")} <span class="text-base-content">$100</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 100 * 1,agent_i?.Denomination||12,3)}</span> $ALT</li>
-            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/80 text-xs px-[3px] py-[2px] inline-block rounded-sm"
-            use:tippy={{
-              allowHTML: true,
-              hidden: true,
-              animation: 'fade',
-              props: {
-                content : ()=><div class="tipy">
-                  {t("tooltip.reward_ladder_3")}
-                </div> 
-              }}}>L3</span> {t("m.bet")} <span class="text-base-content">$50-99</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 50 * 0.6,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 99 * 0.6,agent_i?.Denomination||12,3)}</span> $ALT</li>
-            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-third-content bg-third/60 text-xs px-[3px] py-[2px] inline-block rounded-sm"
-            use:tippy={{
-              allowHTML: true,
-              hidden: true,
-              animation: 'fade',
-              props: {
-                content : ()=><div class="tipy">
-                  {t("tooltip.reward_ladder_2")}
-                </div> 
-              }}}>L2</span> {t("m.bet")} <span class="text-base-content">$10-49</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 10 * 0.3,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 49 * 0.3,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-accent-content bg-accent text-xs px-[3px] py-[2px] inline-block rounded-sm tooltip"
+              data-tip={t("tooltip.reward_ladder_4")}
+              >L4</span> {t("m.bet")} <span class="text-base-content">$100</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 100 * 1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-accent-content bg-accent/80 text-xs px-[3px] py-[2px] inline-block rounded-sm tooltip"
+              data-tip={t("tooltip.reward_ladder_3")}
+              >L3</span> {t("m.bet")} <span class="text-base-content">$50-99</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 50 * 0.6,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 99 * 0.6,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            <li class="text-sm text-current/50 flex items-center gap-2"><span class="text-accent-content bg-accent/60 text-xs px-[3px] py-[2px] inline-block rounded-sm tooltip"
+              data-tip={t("tooltip.reward_ladder_2")}
+              >L2</span> {t("m.bet")} <span class="text-base-content">$10-49</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 10 * 0.3,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 49 * 0.3,agent_i?.Denomination||12,3)}</span> $ALT</li>
             <li class="text-sm text-current/50 flex items-center gap-2"
-            ><span class="text-third-content bg-third/40 text-xs px-[3px] py-[2px] inline-block rounded-sm"
-            use:tippy={{
-              allowHTML: true,
-              hidden: true,
-              animation: 'fade',
-              props: {
-                content : ()=><div class="tipy">
-                  {t("tooltip.reward_ladder_1")}
-                </div> 
-              }}}>L1</span> {t("m.bet")} <span class="text-base-content">$1-9</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 9 * 0.1,agent_i?.Denomination||12,3)}</span> $ALT</li>
+            ><span class="text-accent-content bg-accent/40 text-xs px-[3px] py-[2px] inline-block rounded-sm tooltip"
+              data-tip={t("tooltip.reward_ladder_1")}
+            >L1</span> {t("m.bet")} <span class="text-base-content">$1-9</span> <Icon icon="iconoir:arrow-right" class="text-current/50"/> <span class="text-base-content">~ {toBalanceValue(minting()?.per_reward * 1 * 0.1,agent_i?.Denomination||12,3)}-{toBalanceValue(minting()?.per_reward * 9 * 0.1,agent_i?.Denomination||12,3)}</span> $ALT</li>
           </div>
         </section>
       </Show>

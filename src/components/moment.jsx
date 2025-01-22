@@ -47,7 +47,7 @@ export const Moment = props => {
   const date = createMemo(()=>{
     return convertTimeToHumanReadable(ts)
   })
-  return <span use:tooltip title={new Date(ts).toLocaleString()}>{date}</span>
+  return <div className="lg:tooltip" data-tip={new Date(ts).toLocaleString()}><button>{date}</button></div>
 }
 
 export const Datetime = props => {
@@ -59,5 +59,5 @@ export const Datetime = props => {
 	}else if(props?.display == "time"){
 		display = new Date(ts).toLocaleTimeString()
 	}
-	return <span class={mergeClasses("",props?.class || props?.className)} use:tooltip title={full}>{display}</span>
+	return <span className="lg:tooltip" class={mergeClasses("",props?.class || props?.className)} data-tip={full}>{display}</span>
 }

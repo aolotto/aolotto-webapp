@@ -81,11 +81,11 @@ export default props => {
       ref={_header}
       className="h-16 flex items-center gap-4 px-4 justify-between sticky top-0 w-full z-1"
       classList={{
-        "bg-base-0/100 shadow-gray-1000/5 shadow-xs":stickied(),
+        "bg-base-100/100 shadow-gray-1000/5 shadow-xs":stickied(),
       }}
     >
       {/* left */}
-      <div class="flex justify-start items-center gap-2">
+      <div class="flex justify-start items-center">
         <A 
           href="/" 
           class="text-current pt-1"
@@ -94,7 +94,7 @@ export default props => {
         </A>
         <A
           href="/alert"
-          class="inline-flex text-lg btn btn-ghost btn-icon btn-xs rounded-full"
+          class="inline-flex text-lg btn btn-square btn-ghost btn-md rounded-full"
         >
           <Icon icon="fluent:alert-urgent-20-regular" />
         </A>
@@ -107,9 +107,9 @@ export default props => {
           {(item) => (
             <A 
               href={item()?.path} 
-              activeClass="active"
-              inactiveClass=""
-              class="inline-flex items-center gap-1 text-lg"
+              activeClass="text-base-content bold"
+              inactiveClass="link-primary link link-hover"
+              class="inline-flex items-center gap-1 text-lg "
               target={`${item().new?"_blank":"_self"}`}>
                 {t(`nav.${item()?.name}`)} {item().out&&<Icon icon="ei:external-link"></Icon>}
             </A>
@@ -130,13 +130,18 @@ export default props => {
               </button>
             }
           >
-            <a 
-              href="/me" 
-              use:tooltip={["bottom-left-overlap",()=>address()]}
-              class="btn rounded-full p-1 h-fit"
-            >
-              <Avatar username={address()} class="size-6"></Avatar>
-            </a>
+            <div class="tooltip tooltip-left">
+              <div class="tooltip-content text-left">{address()}</div>
+              <a 
+                href="/me" 
+                // use:tooltip={["bottom-left-overlap",()=>address()]}
+                class="btn rounded-full p-1 h-fit"
+              >
+                <Avatar username={address()} class="size-6"></Avatar>
+              </a>
+
+            </div>
+            
           </Show>
           <Langpicker/>
         </div>

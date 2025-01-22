@@ -11,7 +11,6 @@ import Loadmore from "../../components/loadmore"
 import tooltip from "../../components/tooltip"
 import Empty from "../../components/empty"
 import { setDictionarys,t } from "../../i18n"
-import { tippy, useTippy } from 'solid-tippy';
 
 
 export default props => {
@@ -32,7 +31,7 @@ export default props => {
       classList={props?.classList}
     >
       <For each={mintings()} fallback={<Empty tips="No bets yet"/>}>
-        {(item,index)=><div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md">
+        {(item,index)=><div class="response_cols p-2 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none rounded-md overflow-visible">
           <div class="col-span-full lg:col-span-3 flex items-center gap-2">
             <span>🪙</span> 
            <span class="text-current/50" use:tooltip={["top",item?.id]}>{shortStr(item?.id,8)}</span>
@@ -46,56 +45,44 @@ export default props => {
             <div class="flex items-center gap-4">
               {item?.type=="Save-Ticket"?
                 <span 
-                  class="text-xs bg-primary text-primary-content px-2 py-1 rounded-xs uppercase"
-                  use:tippy={{
-                    allowHTML: true,
-                    hidden: true,
-                    animation: 'fade',
-                    props: {
-                      content : ()=><div class="tipy">Rewards from betting.</div> 
-                    }
-                  }}
+                  class="text-xs bg-primary text-primary-content px-2 py-1 rounded-xs tooltip"
+                  data-tip={`Rewards from betting.`}
                 >
-                  bet-2-mint
+                  <span class="uppercase">bet-2-mint</span>
                 </span>
                 :
                 <span 
-                  class="text-xs bg-third text-third-content px-2 py-1 uppercase rounded-sm"
-                  use:tippy={{
-                    allowHTML: true,
-                    hidden: true,
-                    animation: 'fade',
-                    props: {
-                      content : ()=><div class="tipy">The Gap-Reward is issued by the protocol to the last bettor every 10 minutes if no new bets are added. This reward comes from the bet: {shortStr(item?.bet_id,6)}   </div> 
-                    }
-                  }}
+                  class="text-xs bg-accent text-accent-content px-2 py-1 rounded-sm tooltip"
+                  data-tip={`The Gap-Reward is issued by the protocol to the last bettor every 10 minutes if no new bets are added. This reward comes from the bet: ${shortStr(item?.bet_id,6)}`}
                 >
-                    Gap-Reward
+                    <span class="uppercase">Gap-Reward</span>
                   </span>}
               <span class="text-current/50 flex items-center gap-2">{t("minted")} 
               <span 
-                class="text-base-content" 
-                use:tippy={{
-                    allowHTML: true,
-                    hidden: true,
-                    animation: 'fade',
-                    props: {
-                      content : ()=><div class="tipy">{toBalanceValue(item.total,agent_i?.Denomination||12,12)}</div> 
-                    }
-                  }}
+                class="text-base-content tooltip"
+                data-tip={toBalanceValue(item.total,agent_i?.Denomination||12,12)}
+                // use:tippy={{
+                //     allowHTML: true,
+                //     hidden: true,
+                //     animation: 'fade',
+                //     props: {
+                //       content : ()=><div class="tipy">{toBalanceValue(item.total,agent_i?.Denomination||12,12)}</div> 
+                //     }
+                //   }}
                 >
                     {toBalanceValue(item.total,agent_i?.Denomination||12,6)}
                   </span> , {t("received")} 
               <span 
-                class="text-base-content"
-                use:tippy={{
-                  allowHTML: true,
-                  hidden: true,
-                  animation: 'fade',
-                  props: {
-                    content : ()=><div class="tipy">{toBalanceValue(item.amount,agent_i?.Denomination||12,12)}</div> 
-                  }
-                }}
+                class="text-base-content tooltip"
+                data-tip={toBalanceValue(item.amount,agent_i?.Denomination||12,12)}
+                // use:tippy={{
+                //   allowHTML: true,
+                //   hidden: true,
+                //   animation: 'fade',
+                //   props: {
+                //     content : ()=><div class="tipy">{toBalanceValue(item.amount,agent_i?.Denomination||12,12)}</div> 
+                //   }
+                // }}
               >
                 {toBalanceValue(item.amount,agent_i?.Denomination||12,6)}
               </span> $ALT</span>
