@@ -6,14 +6,13 @@ import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
 import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource } from "solid-js"
+import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource, Switch } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
 import { protocols, app } from "../../signals/global"
 import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
-import { tippy, useTippy } from 'solid-tippy';
 import Rules from "../../components/rules"
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
 import Recharger from "../../components/recharger"
@@ -86,6 +85,7 @@ export default props => {
     "s.price" : "Price",
     "u.bet" : "bet",
     "b.pick_and_bet" : "Pick and bet",
+    "b.betting_paused" : "Betting Paused",
     "b.learn_more" : "👉 Rules",
     "tooltop.bet2mint" : ()=>"$ALT (The Dividends Token) is minted in rounds via the Bet2Mint mechanism. At the start of each round, the minting reward is reset to (max supply - current supply) * 0.002. Users receive minting rewards based on their betting order, calculated as: current round’s Bet2Mint balance * minting speed [1] * reward ladder coefficient",
     "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>,
@@ -102,7 +102,9 @@ export default props => {
     "tooltip.reward_ladder_2" : "L2: Bet amount between $10-49, reward coefficient = 0.0003, the actual amount is calculated based on the current Bet2Mint balance",
     "tooltip.reward_ladder_3" : "L3: Bet amount between $50-99, reward coefficient = 0.0006, the actual amount is calculated based on the current Bet2Mint balance",
     "tooltip.reward_ladder_4" : "L4: Bet amount at the maximum limit of $100, reward coefficient = 0.001, the actual amount is calculated based on the current Bet2Mint balance",
-    "a.deposit" : "Deposit"
+    "a.deposit" : "Deposit",
+    "suspended" : "Suspended",
+    "maintenace.tip" : (v)=><span>Aolotto Round {v} is suspended due to maintenance. Betting and Gap-Rewards distribution will resume shortly.</span>
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -117,6 +119,7 @@ export default props => {
     "s.price" : "定价",
     "u.bet" : "注",
     "b.pick_and_bet" : "选号并下注",
+    "b.betting_paused" : "暂时停止下注",
     "b.learn_more" : "👉了解规则",
     "tooltop.bet2mint" : ()=>"$ALT(分红代币)通过Bet2Mint机制逐轮发行; 每轮启动时重置本轮铸币奖励的总额为(最大流通量-当前流通量)*0.002; 参与当前投注轮次的用户根据其投注顺序获得铸币奖励,每次投注的铸币奖励=该轮Bet2Mint余额 * 铸币速度[1] * 阶梯奖励系数",
     "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>,
@@ -133,15 +136,26 @@ export default props => {
     "tooltip.reward_ladder_2" : "L2：投注金额位于 $10-49 区间，奖励系数为 0.0003,实际奖励金额基于当前Bet2Mint余额计算",
     "tooltip.reward_ladder_3" : "L3：投注金额位于 $50-99 区间，奖励系数为 0.0006,实际奖励金额基于当前Bet2Mint余额计算",
     "tooltip.reward_ladder_4" : "L4：投注金额达到最高投注上限 $100，奖励系数为 0.001,实际奖励金额基于当前Bet2Mint余额计算",
-    "a.deposit" : "储值"
+    "a.deposit" : "储值",
+    "suspended" : "已暂停",
+    "maintenace.tip" : (v)=><span>Aolotto 第{v}轮因维护暂停，下注及空当奖励的发放稍后恢复。</span>
   })
 
   return(
     // <ErrorBoundary fallback={<div class="w-full h-40 flex justify-center items-center text-secondary">ERROR : Temporarily unable to access AO network</div>}>
     <>
     <main class="container flex flex-col min-h-lvh/2 overflow-visible">
-      <section class="response_cols py-10 overflow-visible">
+      <Show when={state.state==="ready" && state()?.run <= 0}>
 
+        <div role="alert" className="alert alert-warning mt-6 flex items-center justify-center">
+          <div>⚠️ {t("maintenace.tip",state()?.round)}</div>
+        </div>
+
+      </Show>
+      
+
+      <section class="response_cols py-10 overflow-visible">
+        
         <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col gap-8 overflow-visible">
           <div class="h-16 flex items-center gap-4 w-fit overflow-visible">
             <span 
@@ -219,25 +233,25 @@ export default props => {
               <span class="uppercase text-current/50 text-sm">{t("s.countdown")}</span>
               <span class="inline-flex items-center gap-2">
                 <Show when={state.state=="ready"} fallback="--:--:--">
-                  <Show when={state()?.ts_latest_draw>0} fallback="24:00:00">
-                    <Countdown class="text-xl" end={state()?.ts_latest_draw} />
-                  </Show>
+                  <Switch>
+                    <Match when={state()?.run>0}>
+                      <Show when={state()?.ts_latest_draw>0} fallback="24:00:00">
+                        <Countdown class="text-xl" end={state()?.ts_latest_draw} />
+                      </Show>
+                      <Show when={draw_locker()}>
+                        <span
+                          class="cursor-help inline-flex items-center gap-2 tooltip"
+                          data-tip={t("tooltop.draw_locker",{time:state()?.ts_latest_draw?new Date(state()?.ts_latest_draw).toLocaleString():"..."})}
+                        >
+                          <Icon icon="iconoir:lock" />
+                        </span>
+                      </Show>
+                    </Match>
+                    <Match when={state()?.run<=0}>
+                      <span class="text-xl">⏸️ {t("suspended")}</span>
+                    </Match>
+                  </Switch>
                   
-                  <Show when={draw_locker()}>
-                    <span
-                      class="cursor-help inline-flex items-center gap-2"
-                      use:tippy={{
-                        allowHTML: true,
-                        hidden: true,
-                        animation: 'fade',
-                        props: {
-                          content : ()=><div class="tipy">{t("tooltop.draw_locker",{time:state()?.ts_latest_draw?new Date(state()?.ts_latest_draw).toLocaleString():"..."})}</div> 
-                        }
-                    }}>
-                      <Icon icon="iconoir:lock" />
-                    </span>
-                    
-                  </Show>
                 </Show>
               </span>
               
@@ -252,10 +266,12 @@ export default props => {
             <div>
               <button 
                 class="btn btn-xl btn-primary"
-                disabled={state.loading}
+                disabled={state.loading || state()?.run<=0}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
-                <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
+                <Show when={state()?.run>0} fallback={t("b.betting_paused")}>
+                  <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
+                </Show>
               </button>
             </div>
             <div
@@ -280,20 +296,6 @@ export default props => {
               label={
                 <div class=" flex flex-col justify-between h-full">
                   <span
-                    //   use:tippy={{
-                    //   allowHTML: true,
-                    //   hidden: true,
-                    //   animation: 'fade',
-                    //   props: {
-                    //     content : ()=><div class="tipy">
-                    //       <div>{t("tooltop.bet2mint")}</div>
-                          // <div class="pt-2 mt-2 border-t border-current/20">
-                          //   {t("tooltop.minting_speed")}
-                          // </div>
-                    //     </div> 
-                    //   }
-                    // }}
-                    
                     class=" tooltip w-fit"
                   >
                     <div className="tooltip-content">

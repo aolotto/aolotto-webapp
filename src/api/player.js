@@ -109,6 +109,7 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
       })
       .then(({Messages,...rest})=>{
         console.log(rest)
+        console.log("fetchUserTokenBalances-Result",Messages)
         if (Messages?.length >= 1 && Messages?.[0].Data) {
           const data = JSON.parse(Messages?.[0].Data)
           if(data){
@@ -122,7 +123,8 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
             resolve([token_id,"0"])
           }
         }else{
-          reject("fetch balance error")
+          resolve([token_id,"0"])
+          // reject("fetch balance error")
         }
       })
     }

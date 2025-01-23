@@ -39,14 +39,16 @@ const BetItem = props => {
 
   return (
     
-    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none overflow-visible">
-        <div class="col-span-full lg:col-span-3">
+    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none overflow-visible ">
+        <div class="col-span-full lg:col-span-3 flex items-center">
           <div class="flex items-center gap-4">
             <Avatar username={item()?.player} class="size-7"/>
             <div class="lg:tooltip tooltip-right">
               <div className="tooltip-content overflow-x-auto"><span class="inline-flex text-xs w-fit whitespace-nowrap">{item()?.player}</span></div>
-              <span class="text-current/50" >
-                <Show when={item()?.player} fallback="-">{shortStr(item().player||"",6)}</Show>
+              <span class="text-current/50 flex gap-2 item-center" >
+                
+                <span>{shortStr(item().player||"",6)}</span>
+                {/* <span class="text-base-content">Happy new year!!!</span> */}
               </span>
             </div>
             
@@ -55,60 +57,65 @@ const BetItem = props => {
         <div class="col-span-full lg:col-span-1 flex items-center">
         <Xnumbers value={item()?.x_numbers+"*"+item().count} onClick={props?.onXNumberClick}/> 
         </div>
-        <div class="col-span-full lg:col-span-6 flex items-center gap-4 justify-between">
-         <div class="flex items-center gap-2">
-          <div class="inline-flex gap-2">
-            <span class="text-current/50">{t("i.bet")}</span>
-            <b>${toBalanceValue(item()?.amount,item()?.denomination||6)}</b>
-          </div>
-          <Switch>
-            <Match when={item()?.sponsor} >
-              <div class="inline-flex items-center gap-2">
-                <span>🎁</span><span class="text-sm"><span class="text-current/50">Sponsored by</span> <a href={sponsor()?.[3]} target="_blank" class="bg-primary/20 text-primary inline-flex px-2 py-0.5 rounded-md text-xs items-center gap-1">{sponsor()?.[1]}</a></span>
-              </div>
-            </Match>
-            <Match when={!item()?.sponsor}>
-              <Show when={item()?.mint}>
+        <div class="col-span-full lg:col-span-6">
+        
+          <div class=" flex items-center gap-4 justify-between">
+          <div class="flex items-center gap-2">
+            <div class="inline-flex gap-2">
+              <span class="text-current/50">{t("i.bet")}</span>
+              <b>${toBalanceValue(item()?.amount,item()?.denomination||6)}</b>
+            </div>
+            <Switch>
+              <Match when={item()?.sponsor} >
                 <div class="inline-flex items-center gap-2">
-                  <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
-                  <span class="text-current/50">{t("i.mint")}</span>
-                    <div class="lg:tooltip" data-tip={toBalanceValue(mined().total,mined().denomination||12,12)}>
-                      <span>{toBalanceValue(mined().total,mined().denomination||12,6)}</span>
-                    </div>
-                  <Ticker class="text-current/50">{mined().ticker}</Ticker>
+                  <span>🎁</span><span class="text-sm"><span class="text-current/50">Sponsored by</span> <a href={sponsor()?.[3]} target="_blank" class="bg-primary/20 text-primary inline-flex px-2 py-0.5 rounded-md text-xs items-center gap-1">{sponsor()?.[1]}</a></span>
                 </div>
-              </Show>
-            </Match>
-          </Switch>
-          </div>
-          <div class="px-4 flex items-center gap-4">
-          <Show when={props?.first}>
-                 <div class="lg:tooltip">
-                    <div class="tooltip-content">
-                      <p class="text-left p-2">
-                        {t("tooltip.first_gap_reward",
-                            {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
-                          )}
-                      </p>
-                    </div>
-                    <Icon icon="eos-icons:hourglass" />
+              </Match>
+              <Match when={!item()?.sponsor}>
+                <Show when={item()?.mint}>
+                  <div class="inline-flex items-center gap-2">
+                    <Icon icon="iconoir:arrow-right" class="text-current/50"></Icon>
+                    <span class="text-current/50">{t("i.mint")}</span>
+                      <div class="lg:tooltip" data-tip={toBalanceValue(mined().total,mined().denomination||12,12)}>
+                        <span>{toBalanceValue(mined().total,mined().denomination||12,6)}</span>
+                      </div>
+                    <Ticker class="text-current/50">{mined().ticker}</Ticker>
                   </div>
-                 </Show>
-          <Show when={mined()?.plus}>
-                  
-                   <div 
-                     class="border text-xs px-2 py-1 rounded-full cursor-pointer lg:tooltip"
-                     onClick={props?.onGapRewardClick}
-                   >
-                    <div class="tooltip-content">
-                      <p class="text-left p-2">{t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}</p>
+                </Show>
+              </Match>
+            </Switch>
+            </div>
+            <div class="px-4 flex items-center gap-4">
+            <Show when={props?.first}>
+                  <div class="lg:tooltip">
+                      <div class="tooltip-content">
+                        <p class="text-left p-2">
+                          {t("tooltip.first_gap_reward",
+                              {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
+                            )}
+                        </p>
+                      </div>
+                      <Icon icon="eos-icons:hourglass" />
                     </div>
-                     +{mined()?.plus?.[1]}
-                   </div>
-                 </Show>
+                  </Show>
+            <Show when={mined()?.plus}>
+                    
+                    <div 
+                      class="border text-xs px-2 py-1 rounded-full cursor-pointer lg:tooltip"
+                      onClick={props?.onGapRewardClick}
+                    >
+                      <div class="tooltip-content">
+                        <p class="text-left p-2">{t("tooltip.gap_reward",{count:mined()?.plus?.[1],amount:toBalanceValue(mined()?.plus?.[0],mined().denomination||12,12)})}</p>
+                      </div>
+                      +{mined()?.plus?.[1]}
+                    </div>
+                  </Show>
 
-                 
+                  
+            </div>
           </div>
+          
+          
         </div>
   
         <div class="col-span-full lg:col-span-2 flex justify-between items-center">
@@ -119,6 +126,12 @@ const BetItem = props => {
             <Icon icon="ei:external-link"></Icon>
           </a>
         </div>
+
+        {/* <div class="col-span-full inline-flex item-center gap-4 ">
+          <span class="size-8 inline-flex item-center justify-center">L</span>
+          <p class="text-sm text-current/80">$784 MILLION in taxpayer dollars for a new U.S. embassy in South Sudan, initiated in 2023.  This is not a reasonable expenditure. </p>
+        
+        </div> */}
     </div>
   )
 }
