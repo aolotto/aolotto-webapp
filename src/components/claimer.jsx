@@ -52,16 +52,28 @@ export const Claimer = props => {
         <div className="flex flex-col items-center w-[100%] gap-4">
           <Switch>
             <Match when={editing()}>
-              <div>
-                <input type="text" value={user()} />
-                <button>yes</button>
-                <button onClick={()=>setEditing(false)}>no</button>
+              <div className="flex items-center gap-2">
+                <input type="text" value={recipient() || user()} onChange={(v)=>{setRecipient(v.currentTarget.value)}} />
+                <button
+                  className="btn btn-primary btn-xs btn-circle"
+                  onClick={()=>{
+                  console.log("claiming to",recipient()||user())
+                  setRecipient(recipient()||user())
+                  setEditing(false)
+                }}>
+                  <Icon icon="iconoir:check" />
+                </button>
+                <button
+                  className="btn btn-xs btn-circle"
+                  onClick={()=>setEditing(false)}>
+                <Icon icon="iconoir:cancel" />
+                </button>
               </div>
             </Match>
             <Match when={!editing()}>
               <div className="text-sm w-fit flex items-center justify-center text-center px-3 py-1 rounded-full gap-2 hover:bg-base-100">
                 <span className="text-current/50">Recipient:</span>
-                <span use:tooltip={["top",()=>user()]}><Show when={connected()} fallback="-">{shortStr(user(),4)}</Show></span>
+                <span use:tooltip={["top",()=>recipient() || user()]}><Show when={connected()} fallback="-">{shortStr(recipient() || user(),4)}</Show></span>
                 <button 
                   className="btn btn-ghost btn-icon btn-xs" 
                   use:tooltip={["top",()=>"Edit Recipient"]}

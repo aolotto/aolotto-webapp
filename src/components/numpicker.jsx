@@ -117,6 +117,7 @@ export default props => {
   const pay_i = protocols.details[protocols?.pay_id]
   const pool_i = protocols.details[protocols?.pool_id]
   const agent_i = protocols.details[protocols?.agent_id]
+  const [opened,setOpened] = createSignal(false)
   const [picked, setPicked] = createSignal([])
   const [quantity, setQuantity] = createSignal()
   const enableMultiplier = createMemo(() => picked()?.join('').length >= 3)
@@ -158,18 +159,17 @@ export default props => {
           setQuantity(1)
         }
         _number_picker.open()
-        if(player()){
-          refetchUserBalances()
-        }
+        setOpened(true)
         document.addEventListener("keydown", (e)=>{
           
-          if(e.key=="r"){
-            console.log("_number_picker",e)
+          if(e.key=="r"&&opened()){
+            console.log("_number_picker",_number_picker)
             setPicked(generateRandomNumber(3))
           }
         });
       },
       close:()=>{
+        setOpened(false)
         _number_picker.close()
       },
     })
@@ -181,7 +181,12 @@ export default props => {
       id="number-picker" 
       ref={_number_picker}
       mask={true}
-      onClose={props.onClose} 
+      onClose={()=>{
+        setOpened(false)
+        if(props?.onClose&&typeof(props?.onClose)=="function"){
+          props.onClose()
+        }
+      }} 
       onCancel={(e)=>e.preventDefault()}
       class={"w-128 max-w-full min-w-[360px] h-fit gap-0"}
     >
