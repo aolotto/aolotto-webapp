@@ -325,7 +325,7 @@ export default props => {
         <div class="py-6 px-2 flex justify-between items-center border-t border-current/10">
           <div class="px-1 flex flex-col flex-1">
             <span class="text-current/50">{t("balance")}:</span>
-            <span class=""><Show when={balances.state=="ready"} fallback="...">{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
+            <span class=""><Show when={balances.state=="ready"} fallback={<Spinner size="sm"/>}>{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
           </div>
           <button
             disabled={balance.loading||!enableSubmit()||submiting()}
