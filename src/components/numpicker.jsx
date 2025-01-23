@@ -328,7 +328,7 @@ export default props => {
             <span class=""><Show when={balances.state=="ready"} fallback={<Spinner size="sm"/>}>{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
           </div>
           <button
-            disabled={balance.loading||!enableSubmit()||submiting()}
+            disabled={balances.loading||!enableSubmit()||submiting()}
             class="btn btn-primary btn-lg"
             onClick={async()=>{
               setSubmiting(true)

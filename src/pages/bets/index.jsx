@@ -6,7 +6,7 @@ import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
 import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource, Switch } from "solid-js"
+import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource, Switch, Match } from "solid-js"
 import { Datetime } from "../../components/moment"
 import { toBalanceValue, generateRange } from "../../lib/tool"
 import { protocols, app } from "../../signals/global"
@@ -258,9 +258,14 @@ export default props => {
                 disabled={state.loading || state()?.run<=0}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
-                <Show when={state()?.run>0} fallback={t("b.betting_paused")}>
-                  <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
-                </Show>
+                <Switch fallback={t("b.pick_and_bet")}>
+                  <Match when={state.state =="ready" &&state()?.run == 1}>
+                    <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
+                  </Match>
+                  <Match when={state.state =="ready" &&state()?.run == 0}>
+                    <span class="inline-flex gap-4 items-center"><span>{t("b.betting_paused")}</span></span>
+                  </Match>
+                </Switch>
               </button>
             </div>
             <div
