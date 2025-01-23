@@ -117,6 +117,7 @@ export default props => {
   const pay_i = protocols.details[protocols?.pay_id]
   const pool_i = protocols.details[protocols?.pool_id]
   const agent_i = protocols.details[protocols?.agent_id]
+  const [opened,setOpened] = createSignal(false)
   const [picked, setPicked] = createSignal([])
   const [quantity, setQuantity] = createSignal()
   const enableMultiplier = createMemo(() => picked()?.join('').length >= 3)
@@ -158,12 +159,21 @@ export default props => {
           setQuantity(1)
         }
         _number_picker.open()
-        if(player()){
-          refetchUserBalances()
-        }
+        setOpened(true)
+        document.addEventListener("keydown", (e)=>{
+          
+          if(e.key=="r"&&opened()){
+            console.log("_number_picker",_number_picker)
+            setPicked(generateRandomNumber(3))
+          }
+        });
       },
-      close:()=>_number_picker.close(),
+      close:()=>{
+        setOpened(false)
+        _number_picker.close()
+      },
     })
+    
   })
 
   return(
@@ -171,7 +181,12 @@ export default props => {
       id="number-picker" 
       ref={_number_picker}
       mask={true}
-      onClose={props.onClose} 
+      onClose={()=>{
+        setOpened(false)
+        if(props?.onClose&&typeof(props?.onClose)=="function"){
+          props.onClose()
+        }
+      }} 
       onCancel={(e)=>e.preventDefault()}
       class={"w-128 max-w-full min-w-[360px] h-fit gap-0"}
     >
@@ -190,7 +205,7 @@ export default props => {
         </div>
       </ModalHeader>
       <ModalContainer className="sm:px-4 w-full">
-        <div class="p-3 border-t border-current/20">
+        <div class="p-3 border-t border-current/10">
           <InfoItem label={t("np.account")}><Show when={address()}>{shortStr(address(),6)}</Show></InfoItem>
           <InfoItem class="py-[0.1em]" label={t("np.pay_token")} value={<div class="flex items-center justify-between gap-2">
             <span class="inline-flex items-center gap-2">
@@ -201,7 +216,7 @@ export default props => {
             {/* <a href="https://aox.xyz/#/cex-deposit/USDC/1" target="_blank" class="inline-flex items-center">{t("deposit")}<Icon icon="ei:external-link"></Icon></a> */}
           </div>}/>
         </div>
-        <section class="border-t border-current/20 last:border-b py-4 flex flex-col gap-6">
+        <section class="border-t border-current/10 last:border-b py-4 flex flex-col gap-6">
           <div class="px-3  flex gap-2 items-center w-full justify-between">
             <div class="flex gap-2 items-center">
               <Show 
@@ -282,7 +297,7 @@ export default props => {
         </section>
         
         <Show when={props?.minting}>
-          <div class="px-3 py-4 border-t border-current/20 flex flex-col gap-2">
+          <div class="px-3 py-4 border-t border-current/10 flex flex-col gap-2">
               <InfoItem label={t("np.minting_reward")} value={
               <div>
                 <Show when={quantity()&&props?.minting} fallback="-">{toBalanceValue(minting(),agent_i.Denomination,12)} <Ticker class="text-current/50">{agent_i.Ticker}</Ticker></Show>
@@ -296,10 +311,10 @@ export default props => {
                 </span>
                 <Switch>
                   <Match when={!player()?.faucet ||player()?.faucet?.[1] <= 0}>
-                  <span class="text-current/50 text-xs border-t border-current/20 pt-1">{t("np.buff_faucet_tip")}</span>
+                  <span class="text-current/50 text-xs border-t border-current/10 pt-1">{t("np.buff_faucet_tip")}</span>
                   </Match>
                   <Match when={player()?.faucet?.[1] > 0}>
-                    <span class="text-current/50 border-t border-current/20 pt-1">{toBalanceValue(player()?.faucet?.[0] - Math.min(minting()||0,player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} ALTb {t("in_balance")}</span>
+                    <span class="text-current/50 border-t border-current/10 pt-1">{toBalanceValue(player()?.faucet?.[0] - Math.min(minting()||0,player()?.faucet?.[0]||0),agent_i.Denomination||12,2)} ALTb {t("in_balance")}</span>
                   </Match>
                 </Switch>
                 
@@ -308,16 +323,17 @@ export default props => {
           </div>
         </Show>
         
+        {/* <div>dddd</div> */}
         
       </ModalContainer>
       <ModalFooter class="px-4">
-        <div class="py-6 px-2 flex justify-between items-center border-t border-current/20">
+        <div class="py-6 px-2 flex justify-between items-center border-t border-current/10">
           <div class="px-1 flex flex-col flex-1">
             <span class="text-current/50">{t("balance")}:</span>
-            <span class=""><Show when={balances.state=="ready"} fallback="...">{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
+            <span class=""><Show when={balances.state=="ready"} fallback={<Spinner size="sm"/>}>{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
           </div>
           <button
-            disabled={balance.loading||!enableSubmit()||submiting()}
+            disabled={balances.loading||!enableSubmit()||submiting()}
             class="btn btn-primary btn-lg"
             onClick={async()=>{
               setSubmiting(true)

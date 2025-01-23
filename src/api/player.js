@@ -100,8 +100,11 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
     }
     let key = "tk_bal_"+token_id+"_"+player_id
     let cached = localStorage?.getItem(key)
-    if(cached && !refetching){
-      resolve([token_id,JSON.parse(cached)])
+    let now = new Date().getTime()
+    let expire_duration = 1000 * 15
+    if(cached && JSON.parse(cached)?.exipre > now && !refetching){
+      console.log("fetchUserTokenBalances-Cached",JSON.parse(cached)?.data)
+      resolve([token_id,JSON.parse(cached)?.data])
     }else{
       ao.dryrun({
         process: token_id,
@@ -109,12 +112,16 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
       })
       .then(({Messages,...rest})=>{
         console.log(rest)
+        console.log("fetchUserTokenBalances-Result",Messages)
         if (Messages?.length >= 1 && Messages?.[0].Data) {
           const data = JSON.parse(Messages?.[0].Data)
           if(data){
             document.hasStorageAccess().then((hasAccess) => {
               if (hasAccess) {
-                localStorage.setItem(key,JSON.stringify(data))
+                localStorage.setItem(key,JSON.stringify({
+                  data,
+                  exipre: now + expire_duration
+                }))
               }
             })
             resolve([token_id,data])
@@ -122,7 +129,8 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
             resolve([token_id,"0"])
           }
         }else{
-          reject("fetch balance error")
+          resolve([token_id,"0"])
+          // reject("fetch balance error")
         }
       })
     }

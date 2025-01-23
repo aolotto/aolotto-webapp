@@ -299,7 +299,7 @@ export default props => {
               <Icon icon="arcticons:leafpic" />
               </p>
               <p class="text-2xl ">{t("third.second_title")}</p>
-              <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-third"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
+              <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-accent"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
               <p class="text-current/50">{t("third.second_desc")}</p>
            
             </section>

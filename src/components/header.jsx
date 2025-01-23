@@ -131,10 +131,9 @@ export default props => {
             }
           >
             <div class="tooltip tooltip-left">
-              <div class="tooltip-content text-left">{address()}</div>
+              <div class="tooltip-content text-left w-[20em] break-words">{shortStr(address()||"",13)}</div>
               <a 
                 href="/me" 
-                // use:tooltip={["bottom-left-overlap",()=>address()]}
                 class="btn rounded-full p-1 h-fit"
               >
                 <Avatar username={address()} class="size-6"></Avatar>
