@@ -48,22 +48,11 @@ export default props => {
 
   const [share, close] = createSocialShare(() => shareData());
 
-  // const [updates,{refetch:refetchUpdates}] = createResource(()=>protocols?.pool_id,fetchPoolState) 
-
-  // const autoRefetchPage = function(){
-  //   if(updates()?.){
-
-  //   }
-  //   // console.log("autoRefetchPage",updates())
-  //   // startTransition(batch(()=>{
-  //   //   refetchUpdates()
-  //   // }))
-  // }
 
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
       console.log(e)
-      if(e.key==="p"&&state.state==="ready"){
+      if(e.key==="p"&&state.state==="ready"&&state()?.run==1){
         _numpicker.open()
       }
     });
