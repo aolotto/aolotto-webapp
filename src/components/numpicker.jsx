@@ -39,7 +39,8 @@ setDictionarys("en",{
   "np.pick_count" : (v)=><span>The number appeared in <span class="inline-flex text-base-content">{v}</span> bets</span>,
   "np.pick_count_tip" : "Picks a number to show bet count",
   "in_balance" : "in balance",
-  "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
+  "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
+  "np.querying" : "Querying Betting Result..."
 })
 setDictionarys("zh",{
   "np.title" : (v)=> "投注到第"+v+"轮",
@@ -62,7 +63,8 @@ setDictionarys("zh",{
   "np.pick_count" : (v)=><span>该号码出现在<span class="inline-flex text-base-content">{v}</span>次投注中</span>,
   "np.pick_count_tip" : "选择号码查看已投注数量",
   "in_balance" : "的余额",
-  "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
+  "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
+  "np.querying" : "查询投注结果..."
 })
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
