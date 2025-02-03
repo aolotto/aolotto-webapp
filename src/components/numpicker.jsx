@@ -39,7 +39,8 @@ setDictionarys("en",{
   "np.pick_count" : (v)=><span>The number appeared in <span class="inline-flex text-base-content">{v}</span> bets</span>,
   "np.pick_count_tip" : "Picks a number to show bet count",
   "in_balance" : "in balance",
-  "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
+  "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
+  "np.querying" : "Querying Betting Result..."
 })
 setDictionarys("zh",{
   "np.title" : (v)=> "投注到第"+v+"轮",
@@ -62,7 +63,8 @@ setDictionarys("zh",{
   "np.pick_count" : (v)=><span>该号码出现在<span class="inline-flex text-base-content">{v}</span>次投注中</span>,
   "np.pick_count_tip" : "选择号码查看已投注数量",
   "in_balance" : "的余额",
-  "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>
+  "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
+  "np.querying" : "查询投注结果..."
 })
 const generateRandomNumber = (digits) => {
   const randomNumbers = [];
@@ -356,54 +358,43 @@ export default props => {
                   props.onSubmitted(msgid)
                 }
                 _number_picker.close()
-                toast.custom((t)=>{
-                  console.log("custom toast:",t)
-                  return(
-                    <div>
-                      {t.visible?"Betting success!":"Betting success2!"}
-                    </div>
-                  )
+       
+                toast.promise(new Promise((resolve, reject) => {
+                  new AO().dryrun({
+                    process: protocols.pool_id,
+                    tags : {
+                      Action : "Query",
+                      Table : "Bets",
+                      ['Query-Id']:msgid
+                    }
+                  })
+                  .then(({Messages})=>{
+                    if(Messages?.length>0&&Messages?.[0]?.Data){
+                      resolve(JSON.parse(Messages[0].Data))
+                    }else{
+                      reject(new Error("Betting faild."))
+                      return
+                    }
+                  })
+                }),{
+                  loading: 'Querying Betting Result...',
+                  success: (val) => {
+                    const mint = val.mint
+                    return (
+                      <div>
+                        {t("bet_sucess",{val,mint})}
+                        {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
+                        <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
+                          <Icon icon="ei:external-link"></Icon>
+                        </a>
+                      </div>
+                    )
+                  },
+                  error: "Querying faild."
+                },{
+                  duration: 10000,
+                  icon: false
                 })
-                // toast.promise(new Promise((resolve, reject) => {
-                //   new AO().dryrun({
-                //     process: protocols.pool_id,
-                //     tags : {
-                //       Action : "Query",
-                //       Table : "Bets",
-                //       ['Query-Id']:msgid
-                //     }
-                //   })
-                //   .then(({Messages})=>{
-                //     if(Messages?.length>0&&Messages?.[0]?.Data){
-                //       resolve(JSON.parse(Messages[0].Data))
-                //     }else{
-                //       reject(new Error("Betting faild."))
-                //       return
-                //     }
-                //   })
-                // }),{
-                //   loading: 'Querying Betting Result...',
-                //   success: (val) => {
-                //     const mint = val.mint
-                //     return (
-                //       <div>
-                //         {t("bet_sucess",{val,mint})}
-                //         {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
-                //         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
-                //           <Icon icon="ei:external-link"></Icon>
-                //         </a>
-                //       </div>
-                //     )
-                //   },
-                //   error: "Querying faild."
-                // },{
-                //   className : "bg-primary text-primary-content",
-                //   duration: 10000,
-                //   style: {
-                //     'background-color': '#f00',
-                //   },
-                //   icon: false
-                // })
               })
               .catch((error)=>{
                 console.log(error)
