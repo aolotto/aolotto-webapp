@@ -356,54 +356,43 @@ export default props => {
                   props.onSubmitted(msgid)
                 }
                 _number_picker.close()
-                toast.custom((t)=>{
-                  console.log("custom toast:",t)
-                  return(
-                    <div>
-                      {t.visible?"Betting success!":"Betting success2!"}
-                    </div>
-                  )
+       
+                toast.promise(new Promise((resolve, reject) => {
+                  new AO().dryrun({
+                    process: protocols.pool_id,
+                    tags : {
+                      Action : "Query",
+                      Table : "Bets",
+                      ['Query-Id']:msgid
+                    }
+                  })
+                  .then(({Messages})=>{
+                    if(Messages?.length>0&&Messages?.[0]?.Data){
+                      resolve(JSON.parse(Messages[0].Data))
+                    }else{
+                      reject(new Error("Betting faild."))
+                      return
+                    }
+                  })
+                }),{
+                  loading: 'Querying Betting Result...',
+                  success: (val) => {
+                    const mint = val.mint
+                    return (
+                      <div>
+                        {t("bet_sucess",{val,mint})}
+                        {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
+                        <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
+                          <Icon icon="ei:external-link"></Icon>
+                        </a>
+                      </div>
+                    )
+                  },
+                  error: "Querying faild."
+                },{
+                  duration: 10000,
+                  icon: false
                 })
-                // toast.promise(new Promise((resolve, reject) => {
-                //   new AO().dryrun({
-                //     process: protocols.pool_id,
-                //     tags : {
-                //       Action : "Query",
-                //       Table : "Bets",
-                //       ['Query-Id']:msgid
-                //     }
-                //   })
-                //   .then(({Messages})=>{
-                //     if(Messages?.length>0&&Messages?.[0]?.Data){
-                //       resolve(JSON.parse(Messages[0].Data))
-                //     }else{
-                //       reject(new Error("Betting faild."))
-                //       return
-                //     }
-                //   })
-                // }),{
-                //   loading: 'Querying Betting Result...',
-                //   success: (val) => {
-                //     const mint = val.mint
-                //     return (
-                //       <div>
-                //         {t("bet_sucess",{val,mint})}
-                //         {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
-                //         <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
-                //           <Icon icon="ei:external-link"></Icon>
-                //         </a>
-                //       </div>
-                //     )
-                //   },
-                //   error: "Querying faild."
-                // },{
-                //   className : "bg-primary text-primary-content",
-                //   duration: 10000,
-                //   style: {
-                //     'background-color': '#f00',
-                //   },
-                //   icon: false
-                // })
               })
               .catch((error)=>{
                 console.log(error)
