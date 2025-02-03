@@ -16,6 +16,7 @@ import { tippy } from "solid-tippy"
 import { state } from "../../signals/pool"
 import Gapview from "../../components/gapview"
 import { player } from "../../signals/player"
+import Detail from "../../components/bet_detail"
 
 
 
@@ -39,7 +40,7 @@ const BetItem = props => {
 
   return (
     
-    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border-b border-current/10 lg:border-none overflow-visible ">
+    <div class="response_cols p-1 hover:bg-current/5 gap-y-1 border border-current/0 hover:border-current/8 rounded-sm overflow-visible ">
         <div class="col-span-full lg:col-span-3 flex items-center">
           <div class="flex items-center gap-4">
             <Avatar username={item()?.player} class="size-7"/>
@@ -59,7 +60,7 @@ const BetItem = props => {
         </div>
         <div class="col-span-full lg:col-span-6">
         
-          <div class=" flex items-center gap-4 justify-between">
+          <div class=" flex items-center gap-4 justify-between h-full">
           <div class="flex items-center gap-2">
             <div class="inline-flex gap-2">
               <span class="text-current/50">{t("i.bet")}</span>
@@ -87,17 +88,17 @@ const BetItem = props => {
             </div>
             <div class="px-4 flex items-center gap-4">
             <Show when={props?.first}>
-                  <div class="lg:tooltip">
-                      <div class="tooltip-content">
-                        <p class="text-left p-2">
-                          {t("tooltip.first_gap_reward",
-                              {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
-                            )}
-                        </p>
-                      </div>
-                      <Icon icon="eos-icons:hourglass" />
-                    </div>
-                  </Show>
+              <div class="lg:tooltip">
+                  <div class="tooltip-content">
+                    <p class="text-left p-2">
+                      {t("tooltip.first_gap_reward",
+                          {time: new Date(item()?.created+(600000*(mined()?.plus?.[1]||1))).toLocaleTimeString(),count:mined()?.plus?.[1]?(mined()?.plus?.[1]):1}
+                        )}
+                    </p>
+                  </div>
+                  <Icon icon="eos-icons:hourglass" />
+                </div>
+              </Show>
             <Show when={mined()?.plus}>
                     
                     <div 
@@ -118,13 +119,24 @@ const BetItem = props => {
           
         </div>
   
-        <div class="col-span-full lg:col-span-2 flex justify-between items-center">
+        <div class="col-span-full lg:col-span-2 flex justify-between items-center gap-2">
           <span class="text-current/50">
-          <Moment ts={item()?.created}/>
+            <Moment ts={item()?.created}/>
           </span>
-          <a href={`${app.ao_link_url}/#/message/${item()?.id}?tab=linked`} target="_blank">
-            <Icon icon="ei:external-link"></Icon>
-          </a>
+          <button 
+            className="flex items-center justify-center text-primary p-1 tooltip cursor-pointer" 
+            data-tip="Betting Details"
+            onClick={props?.onDetailClick}
+          >
+              <Icon icon="hugeicons:square-arrow-expand-01" />
+          </button>
+          {/* <div className="flex gap-2 items-center">
+            
+            <a href={`${app.ao_link_url}/#/message/${item()?.id}?tab=linked`} target="_blank">
+              <Icon icon="ei:external-link"></Icon>
+            </a>
+          </div> */}
+          
         </div>
 
         {/* <div class="col-span-full inline-flex item-center gap-4 ">
@@ -138,6 +150,7 @@ const BetItem = props => {
 
 export default props => {
   let _gap
+  let _detail
   setDictionarys("en",{
     "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
     "t.no_bets" : "No bets yet, earlier bets mint more."
@@ -160,7 +173,17 @@ export default props => {
           
           <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>
             {(item,index)=>{
-              return <BetItem value={item} onXNumberClick={props?.onXNumberClick} onGapRewardClick={()=>_gap?.open({...item,index})} first={index()==0}/>
+              return <BetItem 
+                value={item} 
+                onXNumberClick={props?.onXNumberClick} 
+                onGapRewardClick={()=>_gap?.open({...item,index})}
+                onDetailClick={()=>{
+                  console.log("onDetailClick",item)
+                  console.log(_detail)
+                  _detail?.open(item)
+                }}
+                first={index()==0}
+              />
             }}
           </For>
           <Show when={hasMore()}>
@@ -168,6 +191,7 @@ export default props => {
           </Show>
         </Suspense>
         <Gapview ref={_gap}/>
+        <Detail ref={_detail}/>
       </ErrorBoundary>
     </section>
   )
