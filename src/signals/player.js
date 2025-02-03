@@ -4,7 +4,7 @@ import { protocols } from "./global";
 import { address,connected } from "../components/wallet";
 import { createPagination } from "../lib/page";
 import { createStore } from "solid-js/store";
-
+// import { ANT } from "@ar.io/sdk"
 
 const [store,setStore] = createStore({})
 
@@ -57,3 +57,13 @@ export const createUserDividends = (signal) => {
   }
   return store.dividends
 }
+
+// export const createUserAntProfile = async(signer) => {
+//   const ant = ANT.init({
+//     signer: signer,
+//     processId: 'bh9l1cy0aksiL_x9M359faGzM_yjralacHIUo8_nQXM'
+//   });
+//   const info = await ant.getInfo();
+  
+//   return info
+// }

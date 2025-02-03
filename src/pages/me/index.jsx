@@ -23,6 +23,7 @@ import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
 import { locale } from "../../i18n"
 import Recharger from "../../components/recharger"
+// import { createUserAntProfile } from "../../signals/player"
 
 export default props=>{
   let _claimer
