@@ -69,7 +69,10 @@ export default props => {
         <div className="divider"></div>
         <section className="modal-content p-1 ">
           <InfoItem label={t("detail.minted")}  value={()=>`${toBalanceValue(info()?.mint?.total,12,12)} $ALT`}/>
+          <Show when={info()?.mint?.plus?.[0]&&info()?.mint?.plus?.[0]>0}>
           <InfoItem label={t("detail.gap_rewards")} value={()=>`${toBalanceValue(info()?.mint?.plus?.[0],12,12)} $ALT`}/>
+          </Show>
+          
         </section>
         <div className="divider"></div>
         <section className="modal-content p-1">
