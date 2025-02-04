@@ -77,7 +77,7 @@ export default props => {
     "b.betting_paused" : "Betting Paused",
     "b.learn_more" : "👉 Rules",
     "tooltop.bet2mint" : ()=>"$ALT (The Dividends Token) is minted in rounds via the Bet2Mint mechanism. At the start of each round, the minting reward is reset to (max supply - current supply) * 0.002. Users receive minting rewards based on their betting order, calculated as: current round’s Bet2Mint balance * minting speed [1] * reward ladder coefficient",
-    "tooltop.draw_locker" : (v)=> <span>The draw time has been locked to {v.time}</span>,
+    "tooltop.draw_locker" : (v)=> `The draw time has been locked to ${v.time}`,
     "tooltop.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
     "tooltop.minting_speed" : (v)=> <span>[1] Minting Speed = 1 - max supply / current supply</span>,
@@ -111,7 +111,7 @@ export default props => {
     "b.betting_paused" : "暂时停止下注",
     "b.learn_more" : "👉了解规则",
     "tooltop.bet2mint" : ()=>"$ALT(分红代币)通过Bet2Mint机制逐轮发行; 每轮启动时重置本轮铸币奖励的总额为(最大流通量-当前流通量)*0.002; 参与当前投注轮次的用户根据其投注顺序获得铸币奖励,每次投注的铸币奖励=该轮Bet2Mint余额 * 铸币速度[1] * 阶梯奖励系数",
-    "tooltop.draw_locker" : (v)=> <span>开奖时间已锁定至{v.time}</span>,
+    "tooltop.draw_locker" : (v)=> `开奖时间已锁定至${v.time}`,
     "tooltop.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
     "tooltop.draw_time_fixed" : (v)=> <span>投注量已达到目标${v.target}，开奖时间已固定。</span>,
     "tooltop.minting_speed" : (v)=> <span>[1] 铸币速度 = 1-(当前流通量/最大发行量)</span>,
@@ -247,7 +247,7 @@ export default props => {
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
             <div class="text-current/50 text-sm">
-              {t("s.draw_tip",{time:"24",wager:state()?.wager_limit?toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1):"..."})}
+              {t("s.draw_tip",{time:state()?.draw_delay?state()?.draw_delay/60000/60:"24",wager:state()?.wager_limit?toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1):"..."})}
               <button class="text-primary cursor-pointer" onClick={()=>_rules?.open()}>
                 {t("b.learn_more")}
               </button>
