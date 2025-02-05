@@ -197,6 +197,9 @@ export default props => {
                   {new Date(state()?.ts_latest_draw).toLocaleString()} 
                   <span
                     class="text-current/60 cursor-help inline-flex items-center text-xs bg-base-200 gap-1 rounded-full px-2 py-1 tooltip"
+                    classList={{
+                      "bg-secondary text-secondary-content" : draw_locker()
+                    }}
                   >
                     <div class="tooltip-content">
                       <div className="text-left p-2">
@@ -254,7 +257,8 @@ export default props => {
             </div>
             <div>
               <button 
-                class="btn btn-xl btn-primary"
+                class="btn btn-xl btn-primary bg-linear-to-r/srgb from-indigo-500 to-teal-400"
+                classList = {{"animate-wiggle" : state.state=="ready" || state()?.run == 1}}
                 disabled={state.loading || state()?.run<=0}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
