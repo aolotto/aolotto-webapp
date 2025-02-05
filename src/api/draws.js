@@ -80,8 +80,11 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
         })
       })
     }
-    draws.sort((a,b)=>b.round - a.round)
-    return draws
+    const result = draws.filter((item)=>item.round != 3 || item.id =="SieOuCQ-G56Rhf8s2VSEFuJ5riFmlx37dpG7LZkDliM")
+    
+    result.sort((a,b)=>b.round - a.round)
+    
+    return result
   } catch (error) {
     console.error("fetch draws faild.", error)
     return null
