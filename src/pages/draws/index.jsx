@@ -2,7 +2,7 @@ import { InfoItem } from "../../components/infoitem"
 import { shortStr } from "../../lib/tool"
 import { ShareToSocial } from "../../components/share"
 import { Icon } from "@iconify-icon/solid"
-import { createEffect, Suspense,ErrorBoundary } from "solid-js"
+import { createEffect, Suspense,ErrorBoundary, Show } from "solid-js"
 import Spinner from "../../components/spinner"
 import Draws from "./draws"
 import { stats } from "../../signals/pool"
@@ -32,9 +32,9 @@ export default props => {
        
       <section class="response_cols">
         <div class="col-span-full lg:col-span-5 flex flex-col">
-          <InfoItem label={t("label.total_draws")}>{stats()?.total_archived_round} <span class="text-current/50">{stats()?.total_archived_round>1?"Rounds":"Round"}</span></InfoItem>
-          <InfoItem label={t("label.total_rewarded")}>{toBalanceValue(stats()?.total_reward_amount,6,2)} <span class="text-current/50">${pay_i?.Ticker}</span></InfoItem>
-          <InfoItem label={t("label.total_winners")}>{stats()?.total_winners} <span class="text-current/50">{stats()?.total_winners>1?"Players":"Player"}</span></InfoItem>
+          <InfoItem label={t("label.total_draws")}>{<Show when={!stats.loading} fallback="...">{stats()?.total_archived_round}</Show>} <span class="text-current/50">{stats()?.total_archived_round>1?"Rounds":"Round"}</span></InfoItem>
+          <InfoItem label={t("label.total_rewarded")}>{<Show when={!stats.loading} fallback="...">{toBalanceValue(stats()?.total_reward_amount,6,2)}</Show>} <span class="text-current/50">${pay_i?.Ticker}</span></InfoItem>
+          <InfoItem label={t("label.total_winners")}>{<Show when={!stats.loading} fallback="...">{stats()?.total_winners}</Show>} <span class="text-current/50">{stats()?.total_winners>1?"Players":"Player"}</span></InfoItem>
         </div>
 
         <div class="col-span-full lg:col-span-4 lg:col-end-13">
