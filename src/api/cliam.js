@@ -23,7 +23,6 @@ export const claim =(pool_id,recipient) => new Promise(async(resovle,reject)=>{
       console.log(Messages)
       resovle(JSON.parse(Messages?.[0].Data))
     }else{
-      console.log(rest)
       reject("Read result error")
     }
     
@@ -88,7 +87,6 @@ export const queryCliamResult = ({pool_id,claim_id,recipient,token_id}) => new P
     console.log(query_str)
     const ao = new AO()
     const res = await ao.query(query_str)
-    console.log("奖金转账结果",res)
     if(res.length>0){
       resovle(res)
     }else{
