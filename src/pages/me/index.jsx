@@ -32,6 +32,7 @@ export default props=>{
   const [searchParams, setSearchParams] = useSearchParams();
   const pay_i = protocols?.details[protocols.pay_id]
   const agent_i = protocols?.details[protocols.agent_id]
+  const [activeClaim,setActiveClaim] = createSignal()
   
 
   setDictionarys("en",{
@@ -100,7 +101,15 @@ export default props=>{
     }
   })
 
-  createEffect(()=>console.log("locale",locale(),player()?.win))
+  createEffect(()=>{
+    if(connected()){
+      const localActiveClaimsCache = localStorage.getItem("ACTIVE_CLAIM_"+address())
+      console.log("localActiveClaimsCache",localActiveClaimsCache)
+      if(localActiveClaimsCache){
+        setActiveClaim(JSON.parse(localActiveClaimsCache))
+      }
+    }
+  })
 
   return(
   <Show when={connected()} fallback={<main class="container"><Welcome/></main>}>
@@ -142,9 +151,15 @@ export default props=>{
               <span class="text-3xl">🏆</span>
               <Show when={!player.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": player()?.win?.[0] == 0}}>${toBalanceValue(player()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
             </div>
-            <div>
+            <div className="flex items-center gap-2">
+            <Show when={activeClaim()}>
+              <button
+                className="btn rounded-full btn-sm btn-secondary"
+                onClick={()=>_claimer.open()}
+              >1</button>
+            </Show>
               <button 
-                class="btn btn-primary rounded-full" 
+                class="btn btn-primary  rounded-full" 
                 disabled={!player()||!player()?.win||Number(player()?.win?.[0]||0)<=0}
                 onClick={()=>_claimer.open()}
               >
@@ -228,7 +243,6 @@ export default props=>{
         tax={player()?.tax?.[0]}
         user={address()}
         onClaimed ={(e)=>{
-          toast.success("Claimed!")
           batch(()=>{
             refetchUserBalances()
             refetchPlayer()
