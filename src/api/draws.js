@@ -80,6 +80,8 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
         })
       })
     }
+
+    console.log(draws)
     const result = draws.filter((item)=>item.round != 3 || item.id =="SieOuCQ-G56Rhf8s2VSEFuJ5riFmlx37dpG7LZkDliM")
     
     result.sort((a,b)=>b.round - a.round)

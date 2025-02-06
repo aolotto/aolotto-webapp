@@ -15,22 +15,82 @@ export const claim =(pool_id,recipient) => new Promise(async(resovle,reject)=>{
       }
     })
     if(!msg){reject("Send message error")}
-    const {Messages} = await ao.result({
+    const {Messages,...rest} = await ao.result({
       process: pool_id,
       message: msg
     })
     if(Messages?.length>=1){
-      const [quantity,id,tax,recipient,amount,player] = findTagItemValues(["Quantity","X-Claim-Id","X-Tax","Recipient","X-Amount","X-Player"],Messages?.[0]?.Tags)
-      resovle({
-        id: id || msg,
-        quantity,
-        tax,
-        recipient,
-        amount,
-        player
-      })
+      console.log(Messages)
+      resovle(JSON.parse(Messages?.[0].Data))
     }else{
       reject("Read result error")
+    }
+    
+  } catch (error) {
+    reject(error)
+  }
+})
+
+export const queryCliamResult = ({pool_id,claim_id,recipient,token_id}) => new Promise(async(resovle,reject)=>{
+  try {
+    if(!claim_id){reject("Missed claim id")}
+    if(!recipient){reject("Missed recipient")}
+    if(!pool_id){reject("Missed pool_id")}
+    const query_str =  `
+      query{
+        transactions(
+          recipients: ["${recipient}"],
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "From-Process",
+              values: ["${token_id}"]
+            },{
+              name: "Sender",
+              values: ["${pool_id}"]
+            },{
+              name: "Action",
+              values: ["Credit-Notice"]
+            },{
+              name: "X-Claim-Id",
+              values: ["${claim_id}"]
+            },{
+              name: "X-Transfer-Type",
+              values: ["Claim-Notice"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp,
+                height
+              }
+            }
+          }
+        }
+      }
+    `
+
+    console.log(query_str)
+    const ao = new AO()
+    const res = await ao.query(query_str)
+    if(res.length>0){
+      resovle(res)
+    }else{
+      reject("no transfer result for the claim")
     }
     
   } catch (error) {
