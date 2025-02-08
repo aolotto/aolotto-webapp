@@ -29,13 +29,15 @@ const BetItem = props => {
     "i.bet" : "Bet",
     "i.mint" : "Mint",
     "tooltip.gap_reward": (v)=><span>Since no new bets were placed after this bet for a while, the protocol distributed <b>{v.count}</b> Gap-Rewards to the bettor (one every 10 minutes), totaling <b>{v.amount}</b> $ALT.</span>,
-    "tooltip.first_gap_reward": (v)=><span>The {v.count>1?"next":"first"} Gap-Reward is expected to be received at {v.time} if no new bets are added in time. After the time, refresh the list to check!</span>
+    "tooltip.first_gap_reward": (v)=><span>The {v.count>1?"next":"first"} Gap-Reward is expected to be received at {v.time} if no new bets are added in time. After the time, refresh the list to check!</span>,
+    "i.new_tickets" : (v)=><span>{v} new ticket{v>1?"s":""}</span> 
   })
   setDictionarys("zh",{
     "i.bet" : "下注",
     "i.mint" : "鑄幣",
     "tooltip.gap_reward": (v)=><span>这笔投注之后的一段时间内无新投注追加，协议向投注者下发了<b>{v.count}</b>次空当奖励(Gap-Reward)，共计<b>{v.amount}</b>$ALT.</span>,
-    "tooltip.first_gap_reward": (v)=><span>如果没有新的投注追加,{v.count>1?"下一笔":"第一笔"}空当奖励（Gap-Reward）将于{v.time}下发，超出时间后建议刷新列表检查。</span>
+    "tooltip.first_gap_reward": (v)=><span>如果没有新的投注追加,{v.count>1?"下一笔":"第一笔"}空当奖励（Gap-Reward）将于{v.time}下发，超出时间后建议刷新列表检查。</span>,
+    "i.new_tickets" : (v)=><span>{v} 笔新投注</span> 
   })
 
   return (
@@ -130,20 +132,9 @@ const BetItem = props => {
           >
               <Icon icon="hugeicons:square-arrow-expand-01" />
           </button>
-          {/* <div className="flex gap-2 items-center">
-            
-            <a href={`${app.ao_link_url}/#/message/${item()?.id}?tab=linked`} target="_blank">
-              <Icon icon="ei:external-link"></Icon>
-            </a>
-          </div> */}
-          
+
         </div>
 
-        {/* <div class="col-span-full inline-flex item-center gap-4 ">
-          <span class="size-8 inline-flex item-center justify-center">L</span>
-          <p class="text-sm text-current/80">$784 MILLION in taxpayer dollars for a new U.S. embassy in South Sudan, initiated in 2023.  This is not a reasonable expenditure. </p>
-        
-        </div> */}
     </div>
   )
 }
@@ -168,7 +159,27 @@ export default props => {
       <ErrorBoundary fallback="network error">
         <Suspense fallback={<Spinner/>}>
           <Show when={bets()?.length > 0}>
-          <div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div>
+            <Switch>
+              <Match when={props?.update}><div class="w-full flex justify-center items-center h-10 pb-4 text-sm">
+                <button 
+                  className="btn btn-sm rounded-full"
+                  onClick={()=>{
+                    if(props?.onClickUpdate){
+                      props.onClickUpdate()
+                    }
+                  }}
+                >
+                  <div className="inline-grid *:[grid-area:1/1]">
+                    <div className="status status-accent animate-ping"></div>
+                    <div className="status status-accent"></div>
+                  </div>
+                  {t("i.new_tickets",props?.update)}
+                </button>
+                </div>
+              </Match>
+              <Match when={!props?.update}><div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div></Match>
+            </Switch>
+            
           </Show>
           
           <For each={bets()} fallback={<Empty tips={t("t.no_bets")}/>}>

@@ -10,11 +10,11 @@ import { Modal, ModalContainer, ModalHeader } from "./popup";
 let enables = [
   {
     key : "arconnect",
-    name: "Arconnect",
+    name: "Wander (Arconnect)",
     desc: "Browser plug-in wallet",
     type: "web3",
-    logo: "https://arweave.net/tQUcL4wlNj_NED2VjUGUhfCTJ6pDN9P0e3CbnHo3vUE",
-    downlink : "https://www.arconnect.io/download",
+    logo: "https://arweave.net/Wc6WDwI3TD5qWqtGZemWoBcMp9tOlkQwWF9PdYHGXyk",
+    downlink : "https://www.wander.app/download?tab=download-browser",
 
   },{
     key : "arweaveapp",

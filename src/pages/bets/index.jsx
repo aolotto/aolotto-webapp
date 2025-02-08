@@ -6,16 +6,18 @@ import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
 import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
-import { createEffect, Show, createMemo,startTransition,batch,useTransition, onMount, createSignal, onCleanup, createResource, Switch, Match } from "solid-js"
+import { createEffect, Show, createMemo,batch,useTransition, onMount, createSignal, onCleanup,Switch, Match } from "solid-js"
 import { Datetime } from "../../components/moment"
-import { toBalanceValue, generateRange } from "../../lib/tool"
+import { toBalanceValue } from "../../lib/tool"
 import { protocols, app } from "../../signals/global"
-import tooltip from "../../components/tooltip"
 import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
 import Rules from "../../components/rules"
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
 import Recharger from "../../components/recharger"
+import intervalWorker from "../../lib/interval_worker"
+import { fetchPoolState } from "../../api/pool"
+import { A } from "@solidjs/router"
 
 
 
@@ -23,6 +25,9 @@ import Recharger from "../../components/recharger"
 export default props => {
   let _numpicker
   let _rules
+  let pool_timer = new Worker(intervalWorker);
+  let last_update
+  
   const pay_i = protocols?.details?.[protocols.pay_id]
   const pool_i = protocols?.details?.[protocols?.pool_id]
   const agent_i = protocols?.details?.[protocols?.agent_id]
@@ -45,18 +50,57 @@ export default props => {
     title: app.name,
     url: app.host,
   })
-
   const [share, close] = createSocialShare(() => shareData());
+  const [switching,setSwitching] = createSignal(false)
+  const [update,setUpdate] = createSignal()
 
 
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
-      console.log(e)
-      if(e.key==="p"&&state.state==="ready"&&state()?.run==1){
+      if(e.key==="p"&&state.state==="ready"&&state()?.run==1&&state()?.ts_round_start>0){
         _numpicker.open()
       }
     });
 
+    if(window.Worker){
+      pool_timer.addEventListener("message",function(evt){
+        if(state.state == "ready"&&state()?.ts_latest_draw>0&&window.Worker){
+          const diff = state().ts_latest_draw - evt.data
+          if(diff<=0&&!switching()){
+            setSwitching(true)
+            _numpicker.close()
+          }
+          if(!last_update){
+            last_update = evt.data
+          }
+          if(evt.data-last_update>=1000 * 60 * 10){
+            last_update = evt.data
+            fetchPoolState(protocols?.pool_id,{refetch:true}).then(
+              (res)=>{
+                if(res.round == state().round){
+                  const diff_tickets = res.bet[2] - state()?.bet[2]
+                  if(diff_tickets>0){
+                    setUpdate(diff_tickets)
+                  }
+                }else{
+                  batch(()=>{
+                    setUpdate(null)
+                    refetchBets()
+                    refetchPoolState()
+                    refetchStats()
+                  })
+                }
+              }
+            )
+          }
+        }
+        
+      })
+    }
+  })
+
+  onCleanup(()=>{
+    pool_timer.terminate();
   })
 
 
@@ -93,7 +137,10 @@ export default props => {
     "tooltip.reward_ladder_4" : "L4: Bet amount at the maximum limit of $100, reward coefficient = 0.001, the actual amount is calculated based on the current Bet2Mint balance",
     "a.deposit" : "Deposit",
     "suspended" : "Suspended",
-    "maintenace.tip" : (v)=><span>Aolotto Round {v} is suspended due to maintenance. Betting and Gap-Rewards distribution will resume shortly.</span>
+    "maintenace.tip" : (v)=><span>Aolotto Round {v} is suspended due to maintenance. Betting and Gap-Rewards distribution will resume shortly.</span>,
+    "rw.title" : (v) => <span>🏁 Round {v} has ended</span>,
+    "rw.button" : "Head to next round",
+    "rw.disc" : ()=><span>The winning result will be generated in the 5th block after the round ends. Head to <A href="/draws">Draws</A> or follow the official <a href="https://x.com/aolotto_dao" target="_blank">X</a> for the announcement!</span>
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -127,19 +174,20 @@ export default props => {
     "tooltip.reward_ladder_4" : "L4：投注金额达到最高投注上限 $100，奖励系数为 0.001,实际奖励金额基于当前Bet2Mint余额计算",
     "a.deposit" : "储值",
     "suspended" : "已暂停",
-    "maintenace.tip" : (v)=><span>Aolotto 第{v}轮因维护暂停，下注及空当奖励的发放稍后恢复。</span>
+    "maintenace.tip" : (v)=><span>Aolotto 第{v}轮因维护暂停，下注及空当奖励的发放稍后恢复。</span>,
+    "rw.title" : (v) => <span>🏁 第 {v} 轮投注结束</span>,
+    "rw.button" : "进入下一轮投注",
+    "rw.disc" : ()=><span>开奖结果将会在轮次结束后的第五个区块上生成. 前往 <A href="/draws">开奖</A> 或关注官方 <a href="https://x.com/aolotto_dao" target="_blank">X</a> 账号获取最新的开奖通知!</span>
   })
 
   return(
-    // <ErrorBoundary fallback={<div class="w-full h-40 flex justify-center items-center text-secondary">ERROR : Temporarily unable to access AO network</div>}>
     <>
     <main class="container flex flex-col min-h-lvh/2 overflow-visible">
+      
       <Show when={state.state==="ready" && state()?.run <= 0}>
-
         <div role="alert" className="alert alert-warning mt-6 flex items-center justify-center">
           <div>⚠️ {t("maintenace.tip",state()?.round)}</div>
         </div>
-
       </Show>
       
 
@@ -153,7 +201,15 @@ export default props => {
             >
               <Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show>
             </span>
-            <span class="text-current/50 uppercase text-sm"><Show when={!state.loading} fallback="...">{t("s.start")} <Datetime ts={state()?.ts_round_start} display={"date"}/></Show></span>
+            <span 
+              class="text-current/50 uppercase text-sm">
+                <Show when={!state.loading} fallback="...">
+                  <Switch>
+                    <Match when={state().ts_round_start<=0}>NOT STARTED</Match>
+                    <Match  when={state().ts_round_start>0}>{t("s.start")} <Datetime ts={state()?.ts_round_start} display={"date"}/></Match>
+                  </Switch>
+                </Show>
+              </span>
        
             <button 
               className="btn btn-icon btn-ghost rounded-full btn-sm"
@@ -258,12 +314,15 @@ export default props => {
             <div>
               <button 
                 class="btn btn-xl btn-primary bg-linear-to-r/srgb from-indigo-500 to-teal-400"
-                classList = {{"animate-wiggle" : state.state=="ready" || state()?.run == 1}}
-                disabled={state.loading || state()?.run<=0}
+                classList = {{
+                  "animate-wiggle" : state.state=="ready" || state()?.run == 1,
+                  "": start.state != "ready" || state()?.run != 1 || state()?.ts_round_start <= 0
+                }}
+                disabled={state.loading || state()?.run<=0 || state()?.ts_round_start<=0}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
                 <Switch fallback={t("b.pick_and_bet")}>
-                  <Match when={state.state =="ready" &&state()?.run == 1}>
+                  <Match when={state.state =="ready" &&state()?.run == 1 && state()?.ts_round_start > 0}>
                     <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
                   </Match>
                   <Match when={state.state =="ready" &&state()?.run == 0}>
@@ -287,7 +346,7 @@ export default props => {
           
       </section>
 
-      <Show when={minting()}>
+      <Show when={minting()||!state.loading}>
         <section class="response_cols py-8 border-t border-current/20 overflow-visible">
           <div class="col-span-7 flex flex-col">
             <InfoItem
@@ -312,7 +371,7 @@ export default props => {
                 <div class="flex flex-col gap-2">
                   <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content tooltip" 
                     data-tip = {toBalanceValue(state()?.mint_speed*100,0,12)}
-                  >~ {toBalanceValue(state()?.mint_speed*100,0,2)} %</span></div>
+                  >~ <Show when={!state.loading} fallback="...">{toBalanceValue(state()?.mint_speed*100,0,2)}</Show> %</span></div>
                   <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.supply")}: <span 
                     class="text-base-content tooltip"  
                     data-tip = {toBalanceValue(state()?.minting?.minted,12,12)}
@@ -352,9 +411,18 @@ export default props => {
           </div>
         </section>
       </Show>
-      
+
       <Bets 
         id={protocols?.pool_id}
+        update = {update()}
+        onClickUpdate = {()=>{
+          batch(()=>{
+            setUpdate(null)
+            refetchBets()
+            refetchPoolState()
+            refetchStats()
+          })
+        }}
         classList={{
           "opacity-20":isPending(),
           "opacity-100":!isPending()
@@ -383,6 +451,36 @@ export default props => {
     />
 
     <Rules ref={_rules}/>
+    <div
+      className="w-[100vw] h-[100vh] backdrop-blur-3xl fixed top-0 left-0 flex items-center justify-center flex-col gap-8 transition-opacity"
+      classList={{
+        "visible opacity-100" : switching(),
+        "invisible opacity-0" : !switching()
+      }}
+    >
+      <div className="text-3xl">
+      {t("rw.title",state()?.round)}
+      </div>
+      <div>
+        <button
+          className="btn btn-primary btn-lg"
+          onClick={()=>{
+            batch(()=>{
+              refetchPoolState()
+              refetchStats()
+              refetchPoolRanks()
+              refetchBets()
+            })
+            setSwitching(false)
+          }}
+        >
+          {t("rw.button")} <Icon icon="iconoir:arrow-right"/>
+        </button>
+      </div>
+      <div className="text-sm w-[30%] min-w-[320px] text-current/50 text-center">
+          {t("rw.disc")}
+      </div>
+    </div>
 
     {/* </ErrorBoundary> */}
     </>
