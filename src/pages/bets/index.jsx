@@ -18,6 +18,7 @@ import Recharger from "../../components/recharger"
 import intervalWorker from "../../lib/interval_worker"
 import { fetchPoolState } from "../../api/pool"
 import { A } from "@solidjs/router"
+import PrizeDetail from "../../components/prize_detail"
 
 
 
@@ -25,6 +26,7 @@ import { A } from "@solidjs/router"
 export default props => {
   let _numpicker
   let _rules
+  let _prize_pie
   let pool_timer = new Worker(intervalWorker);
   let last_update
   
@@ -37,6 +39,14 @@ export default props => {
 
   const [isPending, start] = useTransition();
   const price = createMemo(()=>pool_i && Number(pool_i?.Price))
+  const pie_rate = createMemo(()=>{
+    if(1-state()?.bet?.[1] >= state()?.wager_limit){
+      return 0
+    }else{
+     return (1-Math.max(state()?.bet?.[1]/state()?.wager_limit,0.01))*100
+    }
+    
+  })
   const minting = createMemo(()=>{
     if(state()){
       const {max_mint,minted,quota} = state()?.minting?state().minting:{max_mint:0,minted:0,quota:0}
@@ -73,7 +83,8 @@ export default props => {
           if(!last_update){
             last_update = evt.data
           }
-          if(evt.data-last_update>=1000 * 60 * 10){
+          if(evt.data-last_update>=1000 * 60 * 5){
+            console.log("update")
             last_update = evt.data
             fetchPoolState(protocols?.pool_id,{refetch:true}).then(
               (res)=>{
@@ -227,7 +238,27 @@ export default props => {
           <div class="flex flex-col gap-2">
             <InfoItem label={t("s.jackpot")}>
               <div class="flex flex-col">
-                <span class="text-3xl truncate w-full"><Show when={!state.loading} fallback="...">{toBalanceValue(state()?.jackpot,pay_i?.Denomination||6,2)}</Show></span>
+                <span class="text-3xl truncate w-full flex items-center gap-4 overflow-visible">
+                  <Show when={!state.loading} fallback="...">
+                    {toBalanceValue(state()?.jackpot,pay_i?.Denomination||6,2)}
+                    <button
+                      className="tooltip cursor-pointer"
+                      data-tip="jackpot pie"
+                      onClick={()=>_prize_pie.open(state())}
+                    >
+                      <div className="tooltip-content">
+                        <div className="animate-bounce text-orange-400 -rotate-2 text-2xl font-black">🍕 Jackpot Pie</div>
+                      </div>
+                      <figure className="flex place-content-center flex-wrap gap-[1em] size-[0.7em]">
+                        <div
+                          className=" flex-1 aspect-square rounded-full flex items-center justify-center"
+                          style={{background: `conic-gradient(var(--color-accent) 0% ${pie_rate()||0}%, var(--color-primary) ${pie_rate()||0}% 100%)`}}
+                        >
+                        </div>
+                      </figure>
+                    </button>
+                  </Show>
+                </span>
                 <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker>
               </div>
             </InfoItem>
@@ -415,6 +446,8 @@ export default props => {
       <Bets 
         id={protocols?.pool_id}
         update = {update()}
+        state = {state()}
+        onClickJackpotPie = {()=>_prize_pie.open(state())}
         onClickUpdate = {()=>{
           batch(()=>{
             setUpdate(null)
@@ -481,6 +514,7 @@ export default props => {
           {t("rw.disc")}
       </div>
     </div>
+    <PrizeDetail ref={_prize_pie}/>
 
     {/* </ErrorBoundary> */}
     </>
