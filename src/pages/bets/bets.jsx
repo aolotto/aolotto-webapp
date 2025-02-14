@@ -17,6 +17,7 @@ import { state } from "../../signals/pool"
 import Gapview from "../../components/gapview"
 import { player } from "../../signals/player"
 import Detail from "../../components/bet_detail"
+// import PrizeDetail from "../../components/prize_detail"
 
 
 
@@ -142,14 +143,23 @@ const BetItem = props => {
 export default props => {
   let _gap
   let _detail
+  let _prize_detail
   setDictionarys("en",{
-    "t.win_rate" : "👇 The last bettor will get at least a 50% better odds of winning. Bet now to secure the spot!",
-    "t.no_bets" : "No bets yet, earlier bets mint more."
+    "t.win_rate" : "The last bettor has a higher chance to win since they get 100% of the jackpot if no bets match.",
+    "t.no_bets" : "No bets yet, earlier bets mint more.",
+    "t.win_rate2" : (v)=><span>If no more bets, {v.last_bettor_rate}% <b>(🍕~${v.last_bettor_amount})</b> of the jackpot goes to the last bettor, {v.winner_rate}% to the winners.</span>,
+    "details" : "details"
   })
   setDictionarys("zh",{
-    "t.win_rate" : "👇 最後下注玩家的贏獎機率至少高出50%，立即下注替代TA!",
-    "t.no_bets" : "暫無投注,越早投注鑄幣奖励越高."
+    "t.win_rate" : "最後下注的赢率更大，开奖若无中奖投注的情况下，奖金100%由最后下注者一人所得。",
+    "t.no_bets" : "暫無投注,越早投注鑄幣奖励越高.",
+    "t.win_rate2" : (v)=><span>若无投注追加, 大奖的{v.last_bettor_rate}% <b>(🍕~${v.last_bettor_amount})</b> 奖励最后下注者, {v.winner_rate}% 为赢家所得.</span>,
+    "details" : "详情"
   })
+  const reached_target = createMemo(()=>props?.state?.bet?.[1]>=props?.state?.wager_limit)
+  const lastreward = createMemo(()=>props?.state?.jackpot * (1-props?.state?.bet?.[1]/props?.state?.wager_limit))
+  const lastreward_rate = createMemo(()=>Math.max(1-props?.state?.bet?.[1]/props?.state?.wager_limit,0.01)*100)
+  const winreward_rate = createMemo(()=>(props?.state?.bet?.[1]/props?.state?.wager_limit)*100)
 
   return(
     <section 
@@ -177,7 +187,30 @@ export default props => {
                 </button>
                 </div>
               </Match>
-              <Match when={!props?.update}><div class="w-full flex justify-center items-center h-10 pb-4 text-sm">{t("t.win_rate")}</div></Match>
+              <Match when={!props?.update}>
+                <div class="w-full flex justify-center items-center h-10 pb-4 text-sm gap-2">
+                  {/* {t("t.win_rate")} */}
+                  <span className=" animate-bounce inline-flex items-center justify-center">👇</span> 
+                  <Show when={!reached_target()} fallback={
+                    <span>
+                      {t("t.win_rate")}
+                    </span>}>
+                    <span>
+                    {t("t.win_rate2",{
+                      last_bettor_rate: lastreward_rate().toFixed(2),
+                      last_bettor_amount: toBalanceValue(lastreward()||0,6,2),
+                      winner_rate: winreward_rate().toFixed(2)
+                    })}
+                    </span>
+                  </Show>
+                  
+                  <button className="btn btn-link p-0" onClick={()=>{
+                    if(props?.onClickJackpotPie){
+                      props.onClickJackpotPie()
+                    }
+                  }}>{t("details")}</button>
+                </div>
+              </Match>
             </Switch>
             
           </Show>
@@ -203,6 +236,7 @@ export default props => {
         </Suspense>
         <Gapview ref={_gap}/>
         <Detail ref={_detail}/>
+        {/* <PrizeDetail ref={_prize_detail}/> */}
       </ErrorBoundary>
     </section>
   )

@@ -1,5 +1,6 @@
 import { Icon } from "@iconify-icon/solid"
 import Aologo from "./aologo"
+import label from "daisyui/components/label"
 export default props => {
   const links = [{
     label: "github",
@@ -14,9 +15,13 @@ export default props => {
     url:"https://discord.com/invite/BFhkUCRjmF",
     logo: "carbon:logo-discord"
   },{
-    laber:"telegram",
+    label:"telegram",
     url:"https://t.me/aolotto",
     logo: "bxl:telegram"
+  },{
+    label:"youtube",
+    url:"https://www.youtube.com/@aolotto",
+    logo:"mdi:youtube"
   }]
   return(
     <footer class="flex w-full justify-between h-16 items-center px-4 flex-col md:flex-row">
