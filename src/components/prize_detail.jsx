@@ -1,6 +1,5 @@
 import { createMemo, createSignal, Match, onMount, Switch } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
-import { PieChart } from "../components/charts"
 import { toBalanceValue } from "../lib/tool"
 import { t,setDictionarys} from "../i18n"
 export default props => {

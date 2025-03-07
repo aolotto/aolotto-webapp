@@ -217,8 +217,9 @@ export async function fetchAltDividends([{pool_id,agent_id},{size,cursor}],{refe
           id: node.id,
           amount: tags?.Amount,
           addresses: tags?.Addresses,
-          ref: tags?.['Distribution-No'],
+          ref: tags?.['Distributed-No'],
           supply: tags?.Supply,
+          checkpoint : tags?.['Check-Point'],
           timestamp: node?.block?.timestamp,
           cursor
         })

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status;
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator ;
 }
 
 @theme {
@@ -182,6 +182,21 @@ input[type='number'] {
     @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
   }
 
+  .response_table{
+    @apply w-full border-collapse;
+    thead{
+      @apply text-current/50 uppercase text-left w-full h-0;
+    }
+    tr{
+      @apply rounded-2xl;
+      &:hover{
+        @apply bg-base-200;
+      }
+    }
+    th,td{
+      @apply p-2
+    }
+  }
 }
 
 @keyframes contentShow {

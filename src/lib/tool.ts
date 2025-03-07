@@ -2,7 +2,7 @@ export function toBalanceValue(balance: number, precision: number, len?: number)
   const n = (balance / Math.pow(10, precision)).toFixed(len || 0);
   const regexp = /(?:\.0*|(\.\d+?)0+)$/;
   const _n = parseFloat(String(n))
-  return _n
+  return _n.toLocaleString()
 }
 
 export function toBalanceQuantity(value: number, precision: number): number {
@@ -24,6 +24,17 @@ export function formartOffsetString(offset?: number, prefix?: string): string {
   offset = offset || new Date().getTimezoneOffset();
   const h = (0 - offset / 60);
   return h > 0 ? prefix + "+" + h : prefix + h;
+}
+
+export function getDateString(timestamp?: number) : string {
+  var date = new Date(timestamp);
+  var y = date.getFullYear(),
+  m = date.getMonth() + 1,
+  d = date.getDate();
+  if (m < 10) { m = '0' + m; }
+  if (d < 10) { d = '0' + d; }
+  var t = y + '-' + m + '-' + d
+  return t;
 }
 
 export async function digestMessage(message: string, algo: string = 'SHA-1'): Promise<string> {

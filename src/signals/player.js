@@ -17,7 +17,7 @@ export const [player,{refetch:refetchPlayer}] = createRoot(()=>createResource(()
 
 export const [balances,{refetch:refetchUserBalances}] = createRoot(()=>createResource(()=>{
   if(connected()){
-    return {player_id:address(),token_ids:[protocols?.pay_id,protocols?.agent_id]}
+    return {player_id:address(),token_ids:[protocols?.pay_id,protocols?.agent_id,protocols?.stake_id]}
   }
 },fetchUserTokenBalances))
 

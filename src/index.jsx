@@ -22,9 +22,9 @@ import Ranks from './pages/ranks';
 import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
-import Upcomming from './pages/home/upcomming';
 import Mobile from './pages/home/mobile';
 import Alert from './pages/alert';
+import Divs from './pages/divs';
 
 const App = props => {
   const {isUpdate,browser,versions,lowestVersions=''} = isUpgradeBrowser()
@@ -36,10 +36,6 @@ const App = props => {
   }
 
   
-  const launched = createMemo(()=>{
-    const launch_tiem = import.meta.env.VITE_LAUNCH_TIME? Number(import.meta.env.VITE_LAUNCH_TIME):0
-    return new Date().getTime() > launch_tiem
-  })
   const [initialized,setInitialized] = createSignal(false)
   
   onMount(async()=>{
@@ -68,12 +64,13 @@ const App = props => {
           token_id: import.meta.env.VITE_TOKEN_PROCESS,
           agent_id: import.meta.env.VITE_AGENT_PROCESS,
           env: import.meta.env,
-          ao_link_url: import.meta.env.VITE_AO_LINK
+          ao_link_url: import.meta.env.VITE_AO_LINK,
+          version:"0.2.0"
         })
       ]).then((res)=>{
         if(res?.[0] == true && typeof res?.[1] == "object"){
           console.log("wallet initialized")
-          initProtocols(import.meta.env.VITE_AGENT_PROCESS)
+          initProtocols(import.meta.env.VITE_AGENT_PROCESS,"020")
           .then((protocols)=>setInitialized(true))
         }
       })
@@ -88,9 +85,8 @@ const App = props => {
       fallback={<Spinner size="lg">Initialization...</Spinner>}
     >
       <Switch>
-          <Match when={!launched()}>{Upcomming}</Match>
           <Match when={isMobile()}>{Mobile}</Match>
-          <Match when={launched()}>
+          <Match when={!isMobile()}>
           <div class="flex flex-col min-h-screen w-full items-center justify-between">
             <Header/>
             <div class="flex-1 w-full">{props.children}</div>
@@ -112,6 +108,7 @@ render(() => (
     <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
     <Route path={["/alert/*"]} component={Alert}/>
+    <Route path={["/divs/*"]} component={Divs}/>
     <Route path="*paramName" component={Notfound} />
   </HashRouter>
 ),  document.getElementById('root'))
