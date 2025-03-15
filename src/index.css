@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
-  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator ;
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu;
 }
 
 @theme {
-  --font-mono: ui-monospace,"Roboto Mono",monospace;
+  --font-mono: "Noto Sans Mono",ui-monospace,monospace;
   --animate-wiggle: wiggle 1s ease-in-out infinite;
   @keyframes wiggle {
     10% { 

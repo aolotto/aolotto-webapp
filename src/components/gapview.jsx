@@ -4,11 +4,11 @@ import { createEffect, createMemo, createResource, createSignal, onMount, Show, 
 import { setDictionarys,t } from "../i18n"
 import { InfoItem } from "./infoitem"
 import { fetchGapRewards } from "../api/pool"
-import { protocols } from "../signals/global"
+import { protocols } from "../data/info"
 import { toBalanceValue } from "../lib/tool"
 import { Moment,Datetime } from "./moment"
 import { Icon } from "@iconify-icon/solid"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 import { tippy } from "solid-tippy"
 import { shortStr } from "../lib/tool"
 

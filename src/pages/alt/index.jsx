@@ -1,6 +1,6 @@
 import { createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
 import { Tabs } from "../../components/tabs"
-import { app ,protocols } from "../../signals/global"
+import { app ,protocols } from "../../data/info"
 import { shortStr,toBalanceValue } from "../../lib/tool"
 import { Icon } from "@iconify-icon/solid"
 import Minings from "./minings"
@@ -8,9 +8,8 @@ import Dividends from "./dividends"
 import Buybacks from "./buybacks"
 import Spinner from "../../components/spinner"
 import { useSearchParams } from "@solidjs/router"
-import { holders,supply } from "../../signals/alt"
+import { holders,supply } from "../../data/resouces"
 import { setDictionarys,t,locale } from "../../i18n"
-import { stats } from "../../signals/pool"
 
 export default props => {
   const pay_i = protocols?.details[protocols.pay_id]

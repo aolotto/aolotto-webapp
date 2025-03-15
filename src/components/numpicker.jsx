@@ -1,12 +1,12 @@
-import { createSignal,createEffect,createMemo,on,onMount, Show, Switch, Match } from "solid-js"
+import { createSignal,createEffect,createMemo,on,onMount, Show, Switch, Match,useTransition } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { InfoItem } from "./infoitem"
 import { shortStr, toBalanceValue } from "../lib/tool"
-import { app,protocols } from "../signals/global"
+import { app,protocols } from "../data/info"
 import { Multiplier } from "./multiplier"
 import Ticker from "./ticker"
-import { balances,refetchUserBalances,player,refetchPlayer } from "../signals/player"
-import { stats } from "../signals/pool"
+import { stats,player,refetchPlayer,USDC, refetchUSDC } from "../data/resouces"
+
 
 import { address,wsdk } from "./wallet"
 import { AO } from "../lib/ao"
@@ -126,7 +126,7 @@ export default props => {
   const [submiting,setSubmiting] = createSignal(false)
   const balance = createMemo(()=>{
     if(address()){
-      return balances()?.[protocols?.pay_id]
+      return USDC()
     }
   })
   const cost = createMemo(()=>quantity()*Number(pool_i?.Price))
@@ -331,14 +331,14 @@ export default props => {
         <div class="py-6 px-2 flex justify-between items-center border-t border-current/10">
           <div class="px-1 flex flex-col flex-1">
             <span class="text-current/50">{t("balance")}:</span>
-            <span class=""><Show when={balances.state=="ready"} fallback={<Spinner size="sm"/>}>{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
+            <span class=""><Show when={!USDC.loading} fallback={<Spinner size="sm"/>}>{toBalanceValue(balance()||0,6,1)} <Ticker class="text-current/50">{pay_i.Ticker}</Ticker></Show> </span>
           </div>
           <button
-            disabled={balances.loading||!enableSubmit()||submiting()}
+            disabled={USDC.loading||!enableSubmit()||submiting()}
             class="btn btn-primary btn-lg"
             onClick={async()=>{
               setSubmiting(true)
-              await refetchUserBalances()
+              await refetchUSDC()
               if(balance()<cost()){
                 toast.error("Insufficient balance")
                 setSubmiting(false)
@@ -351,53 +351,31 @@ export default props => {
                 numbers: picked(),
                 cost: cost()
               })
-              .then((msgid)=>{
-                refetchUserBalances()
-                refetchPlayer()
+              .then(async(msgid)=>{
+                await refetchUSDC()
+                const {Messages} = await new AO().dryrun({
+                  process: protocols.pool_id,
+                  tags : {
+                    Action : "Query",
+                    Table : "Bets",
+                    ['Query-Id'] : msgid
+                  }
+                })
                 if(props?.onSubmitted&&typeof(props?.onSubmitted)=="function"){
-                  props.onSubmitted(msgid)
+                  let data
+                  if(Messages?.[0]){
+                    data = JSON.parse(Messages?.[0]?.Data)
+                  }
+                  
+                  props.onSubmitted({
+                    id : msgid,
+                    data : data
+                  })
                 }
                 _number_picker.close()
-       
-                toast.promise(new Promise((resolve, reject) => {
-                  new AO().dryrun({
-                    process: protocols.pool_id,
-                    tags : {
-                      Action : "Query",
-                      Table : "Bets",
-                      ['Query-Id']:msgid
-                    }
-                  })
-                  .then(({Messages})=>{
-                    if(Messages?.length>0&&Messages?.[0]?.Data){
-                      resolve(JSON.parse(Messages[0].Data))
-                    }else{
-                      reject(new Error("Betting faild."))
-                      return
-                    }
-                  })
-                }),{
-                  loading: 'Querying Betting Result...',
-                  success: (val) => {
-                    const mint = val.mint
-                    return (
-                      <div>
-                        {t("bet_sucess",{val,mint})}
-                        {/* Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{val.x_numbers}*{val.count}</span> to round {val.round} <Show when={mint}> and minted: {toBalanceValue(mint.total,mint.denomination,2)} ${mint.ticker}</Show>!  */}
-                        <a href={`${app.ao_link_url}/#/entity/${val?.id}?tab=linked`} target="_blank">
-                          <Icon icon="ei:external-link"></Icon>
-                        </a>
-                      </div>
-                    )
-                  },
-                  error: "Querying faild."
-                },{
-                  duration: 10000,
-                  icon: false
-                })
               })
               .catch((error)=>{
-                console.log(error)
+                  console.log(error)
               })
               .finally(()=>setSubmiting(false))
             }}

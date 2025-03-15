@@ -2,7 +2,7 @@ import { Icon } from "@iconify-icon/solid"
 import { createEffect, createMemo, createSignal, onMount, Show } from "solid-js"
 import { InfoItem } from "./infoitem"
 import { shortStr,toBalanceValue } from "../lib/tool"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
 import Alclogo from "./alclogo"
 import { t,setDictionarys } from "../i18n"

@@ -7,8 +7,8 @@ import { batch, createEffect, createMemo, createSignal, Match, onMount, Show, Su
 import { InfoItem } from "../../components/infoitem"
 import tooltip from "../../components/tooltip"
 import { connected, handleDisconnection ,address } from "../../components/wallet"
-import { protocols } from "../../signals/global"
-import { balances,refetchUserBalances,player,refetchPlayer } from "../../signals/player"
+import { protocols } from "../../data/info"
+import { USDC,ALT,refetchALT,refetchUSDC,player,refetchPlayer } from "../../data/resouces"
 import Ticker from "../../components/ticker"
 import Tickets from "./tickets"
 import Rewards from "./rewards"
@@ -17,7 +17,6 @@ import Dividends from "./dividends"
 import Mintings from "./mintings"
 import Spinner from "../../components/spinner"
 import { Claimer } from "../../components/claimer"
-import toast from "solid-toast"
 import { useSearchParams } from "@solidjs/router"
 import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
@@ -27,8 +26,6 @@ import Recharger from "../../components/recharger"
 
 export default props=>{
   let _claimer
-  
-  // const [account,{refetch:refetchAccount}] = createPlayerAccount(()=>({player:address(),id:protocols?.agent_id}))
   const [searchParams, setSearchParams] = useSearchParams();
   const pay_i = protocols?.details[protocols.pay_id]
   const agent_i = protocols?.details[protocols.agent_id]
@@ -97,7 +94,10 @@ export default props=>{
       setTab(subMenus()?.[Math.max(idx,0)])
     }
     if(player()){
-      refetchUserBalances()
+      batch(()=>{
+        refetchALT()
+        refetchUSDC()
+      })
     }
   })
 
@@ -174,7 +174,7 @@ export default props=>{
                 <span class="tooltip" data-tip = "$wUSDC - warped USDC">
                   <img src={`https://arweave.net/${pay_i?.Logo}`} class="size-6 rounded-full"/>
                 </span>
-                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.pay_id]||0,pay_i?.Denomination||6,6)}</Show> </span>
+                <span class="text-sm"><Show when={!USDC.loading} fallback="...">{toBalanceValue(USDC()||0,pay_i?.Denomination||6,6)}</Show> </span>
               </div>
               <div>
                 <Recharger/>
@@ -193,7 +193,7 @@ export default props=>{
                   /> 
                 </span>
                 
-                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(balances()?.[protocols?.agent_id]||0,agent_i?.Denomination||12,12)}</Show> </span>
+                <span class="text-sm"><Show when={!ALT.loading} fallback="...">{toBalanceValue(ALT()||0,agent_i?.Denomination||12,12)}</Show> </span>
               </div>
               <div>
                 <span class="inline-flex items-center gap-1 text-current/30" href="#" disabled={true}>{t("action.swap")}<Icon icon="ei:external-link"></Icon></span>
@@ -207,7 +207,7 @@ export default props=>{
 
                 </span>
                
-                <span class="text-sm"><Show when={!balances.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,6)}</Show></span>
+                <span class="text-sm"><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.faucet?.[0]||0,agent_i?.Denomination||12,6)}</Show></span>
               </div>
               <div>
                 {player()?.faucet?.[1]>0?<span class="text-current/50 inline-flex items-center text-sm gap-1">{t("m.getted")} {toBalanceValue(player()?.faucet?.[1]||0,agent_i?.Denomination||12,2)} <Icon icon="iconoir:check" /></span>:<a class="inline-flex items-center" target="_blank" href={locale()=="zh"?"https://docs.aolotto.com/cn/shui-long-tou":"https://docs.aolotto.com/en/faucet"}>{t("m.get")}<Icon icon="ei:external-link"></Icon></a>}
@@ -244,7 +244,8 @@ export default props=>{
         user={address()}
         onClaimed ={(e)=>{
           batch(()=>{
-            refetchUserBalances()
+            refetchALT()
+            refetchUSDC()
             refetchPlayer()
           })
         }}

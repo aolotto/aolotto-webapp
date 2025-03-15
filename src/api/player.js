@@ -1,4 +1,3 @@
-import ticker from "../components/ticker"
 import { AO } from "../lib/ao"
 let ao = new AO()
 
@@ -12,6 +11,7 @@ export async function fetchTokenBalance(params,{value,refetching}){
       tags: { Action: "Balance", Recipient: player_id }
     })
     .then(({ Messages }) => {
+      console.log("余额查询",token_id,player_id,Messages)
       if (Messages?.length >= 1&& Messages?.[0]?.Data) {
         const data = JSON.parse(Messages?.[0]?.Data)
         if(data){
@@ -46,7 +46,7 @@ export async function fetchTokenBalance(params,{value,refetching}){
 export async function fetchPlayerAccount({player,id},{refetching}){
   try {
     if(!player||!id) return
-    console.log("fetchPlayerAccount",player,id)
+    console.log("⏳ fetch [ player ] from : " + id + " with address " + player)
     let key ='AOLOTTO-ACCOUNT-'+id+player
     let localData = sessionStorage?.getItem(key)
     if(!localData || refetching){
@@ -88,9 +88,52 @@ export async function fetchPlayerAccount({player,id},{refetching}){
 }
 
 
+export async function fetchStaker({staker,pid},{refetching}){
+  
+  try {
+    if(!staker||!pid) return
+    let key ='AOLOTTO-STAKER-'+pid+staker
+    let localData = sessionStorage?.getItem(key)
+    if(true){
+      return await ao.dryrun({
+        process: pid,
+        tags: { Action: "Get", Tab: "Stakers", Address: staker }
+      })
+      .then(({ Messages,Errors }) => {
+        console.log("fetchStaker-Result",Messages,Errors)
+        if (Messages?.length >= 1&& Messages?.[0]?.Data) {
+          const data = JSON.parse(Messages?.[0]?.Data)
+          if(data){
+            document.hasStorageAccess().then((hasAccess) => {
+              if (hasAccess) {
+                sessionStorage.setItem(key,JSON.stringify(data))
+              }
+            })
+            return data
+          }else{
+            return null
+          }
+        }
+        if(Errors){
+          throw Error(Errors)
+        }
+      })
+      .catch(err => {
+        throw Error(err)
+      })
+    }else{
+      return JSON.parse(localData)
+    }
+
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
 export async function fetchUserTokenBalances({player_id,token_ids},{refetching}){
-  console.log("fetchUserTokenBalances",player_id,token_ids)
-  if(!player_id||!token_ids||token_ids?.length<=0) {
+  console.log("获取余额")
+  if(!player_id||!token_ids||token_ids?.length<2) {
     // throw Error("missed player id or token ids")
     return
   }
@@ -111,8 +154,6 @@ export async function fetchUserTokenBalances({player_id,token_ids},{refetching})
         tags: { Action: "Balance", Recipient: player_id }
       })
       .then(({Messages,...rest})=>{
-        console.log(rest)
-        console.log("fetchUserTokenBalances-Result",Messages)
         if (Messages?.length >= 1 && Messages?.[0].Data) {
           const data = JSON.parse(Messages?.[0].Data)
           if(data){

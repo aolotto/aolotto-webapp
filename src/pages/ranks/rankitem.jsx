@@ -2,7 +2,7 @@ import Avatar from "../../components/avatar";
 import Ticker from "../../components/ticker";
 import { Icon } from "@iconify-icon/solid";
 import { toBalanceValue } from "../../lib/tool";
-import { app } from "../../signals/global";
+import { app } from "../../data/info";
 
 export default props => {
   return(

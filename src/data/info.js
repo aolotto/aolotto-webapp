@@ -47,6 +47,7 @@ export const {initProtocols,protocols,setProtocols} = createRoot(()=>{
         resolve(protocols)
         return
       }else{
+        console.log("⏳ fetch [protocols] from : "+id)
         ao.dryrun({
           process: id,
           tags: {Action:"Protocols"}

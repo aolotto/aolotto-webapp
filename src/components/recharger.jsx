@@ -3,10 +3,9 @@ import { address,connected,walletConnectionCheck } from "./wallet"
 import { shortStr, toBalanceValue } from "../lib/tool"
 import { For,Match,Show,Switch,createSignal } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
-import { balances, refetchUserBalances } from "../signals/player"
-import { protocols } from "../signals/global"
 import Spinner from "./spinner"
 import { setDictionarys,t } from "../i18n"
+import { USDC,refetchUSDC } from "../data/resouces"
 
 export default props => {
   let _recharger
@@ -92,12 +91,12 @@ export default props => {
                 <div className="">
                 <div className="text-sm text-current/50">{t("recharger.balance")}</div>
                 <div className="text-2xl">
-                  <Show when={balances.state == "ready"} fallback="...">{()=>toBalanceValue(balances()?.[protocols?.pay_id],6,2)}</Show>
+                  <Show when={USDC.state == "ready"} fallback="...">{()=>toBalanceValue(USDC()||0,6,2)}</Show>
                 </div>
                 </div>
                 
-                <Show when={balances.state == "ready"} fallback={<div><Spinner/></div>}>
-                <button className="btn btn-ghost btn-circle" onClick={()=>refetchUserBalances()}>
+                <Show when={USDC.state == "ready"} fallback={<div><Spinner/></div>}>
+                <button className="btn btn-ghost btn-circle" onClick={()=>refetchUSDC()}>
                   <Icon icon="iconoir:refresh" />
                 </button>
                 </Show>

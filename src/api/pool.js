@@ -3,7 +3,7 @@ import { AO } from "../lib/ao"
 let ao = new AO()
 
 export const fetchPoolState = async(id,{refetch}) => {
-  console.log("fetchPoolState",id)
+  console.log("⏳ fetch [pool state] from :" + id)
   if(!id) {
     return
   }
@@ -12,58 +12,67 @@ export const fetchPoolState = async(id,{refetch}) => {
     tags: {Action:"State"}
   })
   if(Messages?.length>0&&Messages[0]){
+    console.log(" ✅ [pool state] ")
     return JSON.parse(Messages[0]?.Data)
   }
 }
 
 
 export const fetchStats = async(id,{refetch}) => {
-  console.log("fetchStats",id)
   if(!id) {
     return
   }
+  console.log("⏳ fetch [stats] from :" + id)
   const { Messages } = await ao.dryrun({
     process: id,
     tags: {Action:"Stats"}
   })
   if(Messages?.length>0&&Messages[0]){
+    console.log(" ✅ [stats] ")
     return JSON.parse(Messages[0]?.Data)
   }
 }
 
 export const fetchPoolRanks = async(id,{refetch}) => {
-  console.log("fetchPoolRanks",id)
   if(!id) {
     return
   }
+  console.log("⏳ fetch [ranks] from :" + id)
   const { Messages } = await ao.dryrun({
     process: id,
     tags: {Action:"Ranks"}
   })
   if(Messages?.length>0&&Messages[0]){
+    console.log(" ✅ [ranks] ")
     return JSON.parse(Messages[0]?.Data)
   }
 }
 
 
 
-export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
+export const fetchActiveBets = async([id,{size,page}],{value,refetching})=>{
   try {
     if(!id) {
       return
     }
+    console.log("⏳ fetch [active bets] from :" + id, value, refetching)
     const offset = page?size*page+1:1
-    const { Messages } = await ao.dryrun({
+    const {Messages} = await ao.dryrun({
       process: id,
-      tags: {Action:"Get",Table:"Bets",Limit:toString(size),Offset:offset.toString()}
+      tags: {Action:"Get",Table:"Bets",Limit:size.toString(),Offset:offset.toString()}
     })
-    // console.log("fetchActiveBets",Messages)
+    
     if(Messages?.length>0&&Messages?.[0]){
+      console.log(" ✅ [active bets] ")
+      console.log(JSON.parse(Messages?.[0]?.Data))
       return JSON.parse(Messages?.[0]?.Data)
+    }else{
+      return null
     }
     
   } catch (error) {
-    console.log(error)
+    console.error("渲染投注列表失败")
+    throw error
   }
   
 }
@@ -71,10 +80,10 @@ export const fetchActiveBets = async([id,{size,page}],{value,refetch})=>{
 
 
 export const fetchGapRewards = async(id,{refetch}) => {
-  console.log("fetchGapRewards",id)
   if(!id) {
     return
   }
+  console.log("⏳ fetch [gap rewards] from :" + id)
   const { Messages } = await ao.dryrun({
     process: id,
     tags: {Action:"Gap-Rewards"}

@@ -227,7 +227,6 @@ export const {
     const type = localStorage?.getItem("AR-WALLET-TYPE")
     try {
       if(window?.arweaveWallet){
-        console.log("Arweave wallet found")
         if(type=="arconnect"){setConnecting(true)}
         window.addEventListener("arweaveWalletLoaded",async(e)=>{
           if(type=="arconnect"){
@@ -265,7 +264,6 @@ export const {
   const connect = async(type = "arconnect",options) =>{
     
     if(connected()&&inited()) return
-    console.log("connecting...")
     const appInfo = {
       name : options?.appInfo?.name || configs()?.appInfo?.name,
       logo : options?.appInfo?.logo || configs()?.appInfo?.logo,
@@ -290,7 +288,6 @@ export const {
               document?.hasStorageAccess()?.then((hasAccess) => {
                 if (hasAccess) {
                   localStorage.setItem("AR-WALLET-TYPE","arconnect");
-                  console.log("已获得 cookie 访问权限");
                 }
               });
             }

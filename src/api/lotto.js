@@ -1,6 +1,6 @@
 
 import { AO } from "../lib/ao"
-import { supply } from "../signals/alt"
+// import { supply } from "../data/resouces"
 let ao = new AO()
 
 

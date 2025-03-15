@@ -10,7 +10,7 @@ import Langpicker from "./langpicker"
 import tooltip from "./tooltip"
 import { connected, address, handleConnection,connecting } from "./wallet"
 import { shortStr } from "../lib/tool"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 import Spinner from "./spinner"
 
 

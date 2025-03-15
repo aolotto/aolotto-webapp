@@ -1,13 +1,13 @@
-import { createBuybacks } from "../../signals/alt"
-import { protocols } from "../../signals/global"
+import { createBuybacks } from "../../data/store"
+import { protocols } from "../../data/info"
 import { createEffect, For,Show } from "solid-js"
 import { shortStr, toBalanceValue } from "../../lib/tool"
 import { Datetime } from "../../components/moment"
-import { app } from "../../signals/global"
+import { app } from "../../data/info"
 import { Icon } from "@iconify-icon/solid"
 import Empty from "../../components/empty"
 import Loadmore from "../../components/loadmore"
-import { stats } from "../../signals/pool"
+import { stats } from "../../data/resouces"
 import { setDictionarys,t } from "../../i18n"
 
 
