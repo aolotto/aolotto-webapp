@@ -12,7 +12,7 @@ export const Xnumbers = (props)=>{
     return colorHash.hex(props?.value?.split('*')[0]||"aolotto")
   })
   return(
-    <span class="number px-2" style={`background-color:${bgcolor()};color:${textcolor()}`} onClick={()=>{
+    <span class="rounded-full w-fit text-xs px-2 py-1" style={`background-color:${bgcolor()};color:${textcolor()}`} onClick={()=>{
       if(props?.onClick){
         props.onClick(props?.value?.split('*')[0].split(''))
       }

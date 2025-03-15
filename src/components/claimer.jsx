@@ -6,7 +6,7 @@ import { address,walletConnectionCheck,connected } from "./wallet"
 import tooltip from "./tooltip"
 import { claim,queryCliamResult } from "../api/cliam"
 import toast from "solid-toast"
-import { protocols} from "../signals/global"
+import { protocols} from "../data/info"
 import Spinner from "./spinner"
 import { InfoItem } from "./infoitem"
 

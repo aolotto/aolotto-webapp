@@ -1,11 +1,12 @@
 import tooltip from "../../components/tooltip"
-import { createEffect, For, Show, Suspense } from "solid-js"
+import { createEffect, For, Show, Suspense, createResource } from "solid-js"
 import Empty from "../../components/empty"
 import { setDictionarys,t } from "../../i18n"
 import Spinner from "../../components/spinner"
-import { protocols } from "../../signals/global"
-import { ranks } from "../../signals/pool"
+import { protocols } from "../../data/info"
+// import { ranks } from "../../signals/pool"
 import Rankitem from "./rankitem"
+import { fetchPoolRanks } from "../../api/pool"
 
 export default props => {
   setDictionarys("en",{
@@ -20,6 +21,8 @@ export default props => {
     "top.winnings": "獲獎排行",
     "top.dividends": "分紅排行",
   })
+
+  const [ranks,{refetch:refetchPoolRanks}] = createResource(()=>protocols?.agent_id,fetchPoolRanks)
 
   return(
     <main class="container py-8">

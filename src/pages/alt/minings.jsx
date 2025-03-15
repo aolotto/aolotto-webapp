@@ -1,14 +1,14 @@
-import { createMinings } from "../../signals/alt"
+import { createMinings } from "../../data/store"
 import { createEffect, For, Show,createRoot } from "solid-js"
 import Loadmore from "../../components/loadmore"
 import Avatar from "../../components/avatar"
 import { toBalanceValue,shortStr } from "../../lib/tool"
 import { Datetime } from "../../components/moment"
 import { Icon } from "@iconify-icon/solid"
-import { app,protocols } from "../../signals/global"
+import { app,protocols } from "../../data/info"
 import Empty from "../../components/empty"
 import { setDictionarys,t } from "../../i18n"
-import { stats } from "../../signals/pool"
+import { stats } from "../../data/resouces"
 
 
 

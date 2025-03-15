@@ -1,6 +1,6 @@
-import { createUserTickets } from "../../signals/player"
+import { createUserTickets } from "../../data/store"
 import { connected,address } from "../../components/wallet"
-import { app,protocols } from "../../signals/global"
+import { app,protocols } from "../../data/info"
 import { createEffect, Match, Show, Switch } from "solid-js"
 import { Xnumbers } from "../../components/xnumber"
 import { shortStr, toBalanceValue } from "../../lib/tool"

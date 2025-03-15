@@ -10,7 +10,7 @@ import Langpicker from "./langpicker"
 import tooltip from "./tooltip"
 import { connected, address, handleConnection,connecting } from "./wallet"
 import { shortStr } from "../lib/tool"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 import Spinner from "./spinner"
 
 
@@ -22,6 +22,7 @@ export default props => {
     "nav.bets": "Bets",
     "nav.draws":"Draws",
     "nav.rank":"Ranks",
+    "nav.divs":"Divs",
     "nav.alt": "$ALT",
     "nav.docs":"Docs",
     "nav.faucet":"🚰",
@@ -33,6 +34,7 @@ export default props => {
     "nav.bets": "投注",
     "nav.draws":"開獎",
     "nav.rank":"排行",
+    "nav.divs":"分红",
     "nav.alt": "$ALT",
     "nav.docs":"文檔",
     "nav.faucet":"🚰",
@@ -51,6 +53,9 @@ export default props => {
   },{
     name: "rank",
     path: "/rank"
+  },{
+    name: "divs",
+    path: "/divs"
   },{
     name: "alt",
     path: "/alt"

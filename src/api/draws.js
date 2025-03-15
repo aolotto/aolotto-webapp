@@ -1,6 +1,6 @@
 import { message } from "@permaweb/aoconnect"
 import { AO } from "../lib/ao"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 let ao = new AO()
 
 

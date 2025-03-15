@@ -6,7 +6,7 @@ import { shortStr, toBalanceValue } from "../lib/tool"
 import Avatar from "./avatar"
 import { Icon } from "@iconify-icon/solid"
 import tooltip from "./tooltip"
-import { app } from "../signals/global"
+import { app } from "../data/info"
 
 export default props => {
   let _winner

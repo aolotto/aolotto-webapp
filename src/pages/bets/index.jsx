@@ -5,20 +5,21 @@ import { Icon } from "@iconify-icon/solid"
 import Numpicker from "../../components/numpicker"
 import Countdown from "../../components/countdown"
 import { walletConnectionCheck } from "../../components/wallet"
-import { state,refetchPoolState,refetchBets,refetchStats,refetchPoolRanks,stats} from "../../signals/pool"
+import { pool,refetchPool,refetchStats} from "../../data/resouces"
 import { createEffect, Show, createMemo,batch,useTransition, onMount, createSignal, onCleanup,Switch, Match } from "solid-js"
 import { Datetime } from "../../components/moment"
-import { toBalanceValue } from "../../lib/tool"
-import { protocols, app } from "../../signals/global"
+import { shortStr, toBalanceValue } from "../../lib/tool"
+import { protocols, app } from "../../data/info"
 import Spinner from "../../components/spinner"
 import { setDictionarys,t } from "../../i18n"
 import Rules from "../../components/rules"
 import { createSocialShare, TWITTER }  from "@solid-primitives/share";
 import Recharger from "../../components/recharger"
 import intervalWorker from "../../lib/interval_worker"
-import { fetchPoolState } from "../../api/pool"
 import { A } from "@solidjs/router"
 import PrizeDetail from "../../components/prize_detail"
+import toast from "solid-toast"
+
 
 
 
@@ -27,29 +28,30 @@ export default props => {
   let _numpicker
   let _rules
   let _prize_pie
+  let _bets
   let pool_timer = new Worker(intervalWorker);
   let last_update
   
   const pay_i = protocols?.details?.[protocols.pay_id]
   const pool_i = protocols?.details?.[protocols?.pool_id]
   const agent_i = protocols?.details?.[protocols?.agent_id]
+  
   const draw_locker = createMemo(()=>{
-    return state()?.bet?.[1] >= state()?.wager_limit
+    return pool()?.bet?.[1] >= pool()?.wager_limit
   })
 
-  const [isPending, start] = useTransition();
   const price = createMemo(()=>pool_i && Number(pool_i?.Price))
   const pie_rate = createMemo(()=>{
-    if(1-state()?.bet?.[1] >= state()?.wager_limit){
+    if(1-pool()?.bet?.[1] >= pool()?.wager_limit){
       return 0
     }else{
-     return (1-Math.max(state()?.bet?.[1]/state()?.wager_limit,0.01))*100
+     return (1-Math.max(pool()?.bet?.[1]/pool()?.wager_limit,0.01))*100
     }
     
   })
   const minting = createMemo(()=>{
-    if(state()){
-      const {max_mint,minted,quota} = state()?.minting?state().minting:{max_mint:0,minted:0,quota:0}
+    if(pool()){
+      const {max_mint,minted,quota} = pool()?.minting?pool().minting:{max_mint:0,minted:0,quota:0}
       const speed = (Number(max_mint) - Number(minted)) / Number(max_mint)
       const per_reward = quota[0] * 0.001 * speed
       return {quota,minted, max_mint,per_reward,speed}
@@ -65,17 +67,18 @@ export default props => {
   const [update,setUpdate] = createSignal()
 
 
+
   onMount(()=>{
     document.addEventListener("keydown", (e)=>{
-      if(e.key==="p"&&state.state==="ready"&&state()?.run==1&&state()?.ts_round_start>0){
+      if(e.key==="p"&&pool.state==="ready"&&pool()?.run==1&&pool()?.ts_round_start>0){
         _numpicker.open()
       }
     });
 
     if(window.Worker){
       pool_timer.addEventListener("message",function(evt){
-        if(state.state == "ready"&&state()?.ts_latest_draw>0&&window.Worker){
-          const diff = state().ts_latest_draw - evt.data
+        if(pool.state == "ready"&&pool()?.ts_latest_draw>0&&window.Worker){
+          const diff = pool().ts_latest_draw - evt.data
           if(diff<=0&&!switching()){
             setSwitching(true)
             _numpicker.close()
@@ -86,19 +89,19 @@ export default props => {
           if(evt.data-last_update>=1000 * 60 * 5){
             console.log("update")
             last_update = evt.data
-            fetchPoolState(protocols?.pool_id,{refetch:true}).then(
+            fetchPool(protocols?.pool_id,{refetch:true}).then(
               (res)=>{
-                if(res.round == state().round){
-                  const diff_tickets = res.bet[2] - state()?.bet[2]
+                if(res.round == pool().round){
+                  const diff_tickets = res.bet[2] - pool()?.bet[2]
                   if(diff_tickets>0){
                     setUpdate(diff_tickets)
                   }
                 }else{
                   batch(()=>{
                     setUpdate(null)
-                    refetchBets()
-                    refetchPoolState()
-                    refetchStats()
+                    // refetchBets()
+                    refetchPool()
+                    // refetchStats()
                   })
                 }
               }
@@ -195,9 +198,9 @@ export default props => {
     <>
     <main class="container flex flex-col min-h-lvh/2 overflow-visible">
       
-      <Show when={state.state==="ready" && state()?.run <= 0}>
+      <Show when={pool.state==="ready" && pool()?.run <= 0}>
         <div role="alert" className="alert alert-warning mt-6 flex items-center justify-center">
-          <div>⚠️ {t("maintenace.tip",state()?.round)}</div>
+          <div>⚠️ {t("maintenace.tip",pool()?.round)}</div>
         </div>
       </Show>
       
@@ -208,16 +211,16 @@ export default props => {
           <div class="h-16 flex items-center gap-4 w-fit overflow-visible">
             <span 
               class="border-2 text-xl h-12 w-16 rounded-full inline-flex items-center justify-center tooltip"
-              data-tip={"Round "+state()?.round}
+              data-tip={"Round "+pool()?.round}
             >
-              <Show when={!state.loading} fallback={<Spinner size="sm"/>}>R{state().round}</Show>
+              <Show when={!pool.loading} fallback={<Spinner size="sm"/>}>R{pool().round}</Show>
             </span>
             <span 
               class="text-current/50 uppercase text-sm">
-                <Show when={!state.loading} fallback="...">
+                <Show when={!pool.loading} fallback="...">
                   <Switch>
-                    <Match when={state().ts_round_start<=0}>NOT STARTED</Match>
-                    <Match  when={state().ts_round_start>0}>{t("s.start")} <Datetime ts={state()?.ts_round_start} display={"date"}/></Match>
+                    <Match when={pool().ts_round_start<=0}>NOT STARTED</Match>
+                    <Match  when={pool().ts_round_start>0}>{t("s.start")} <Datetime ts={pool()?.ts_round_start} display={"date"}/></Match>
                   </Switch>
                 </Show>
               </span>
@@ -226,7 +229,7 @@ export default props => {
               className="btn btn-icon btn-ghost rounded-full btn-sm"
               onClick={()=>{
                 setShareData({
-                  title: `🏆$1 to win $${toBalanceValue(state()?.jackpot||0,pay_i?.Denomination||6,0)}! The last bettor gets at least a 50% better odds of WINNING on #Aolotto , ROUND-${state()?.round} is about to draw! 👉`,
+                  title: `🏆$1 to win $${toBalanceValue(pool()?.jackpot||0,pay_i?.Denomination||6,0)}! The last bettor gets at least a 50% better odds of WINNING on #Aolotto , ROUND-${pool()?.round} is about to draw! 👉`,
                   url: "https://aolotto.com",
                 })
                 share(TWITTER)
@@ -239,12 +242,12 @@ export default props => {
             <InfoItem label={t("s.jackpot")}>
               <div class="flex flex-col">
                 <span class="text-3xl truncate w-full flex items-center gap-4 overflow-visible">
-                  <Show when={!state.loading} fallback="...">
-                    {toBalanceValue(state()?.jackpot,pay_i?.Denomination||6,2)}
+                  <Show when={!pool.loading} fallback="...">
+                    {toBalanceValue(pool()?.jackpot,pay_i?.Denomination||6,2)}
                     <button
                       className="tooltip cursor-pointer"
                       data-tip="jackpot pie"
-                      onClick={()=>_prize_pie.open(state())}
+                      onClick={()=>_prize_pie.open(pool())}
                     >
                       <div className="tooltip-content">
                         <div className="animate-bounce text-orange-400 -rotate-2 text-2xl font-black">🍕 Jackpot Pie</div>
@@ -263,25 +266,25 @@ export default props => {
               </div>
             </InfoItem>
             <InfoItem label={t("s.balance")}>
-              <span><Show when={!state.loading} fallback="...">{toBalanceValue(state()?.balance,pay_i?.Denomination||6,2)}</Show> </span> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker>
+              <span><Show when={!pool.loading} fallback="...">{toBalanceValue(pool()?.balance,pay_i?.Denomination||6,2)}</Show> </span> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker>
             </InfoItem>
             <InfoItem label={t("s.wager")}>
-              <span><Show when={!state.loading} fallback="...">{toBalanceValue(state()?.bet?.[1],pay_i?.Denomination||6,2)}</Show></span> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker>
+              <span><Show when={!pool.loading} fallback="...">{toBalanceValue(pool()?.bet?.[1],pay_i?.Denomination||6,2)}</Show></span> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker>
             </InfoItem>
             <InfoItem label={t("s.participation")}>
               <div class="flex gap-2">
-                <span><Show when={!state.loading} fallback="...">{state()?.players}</Show></span>
-                <span class="text-current/50">player{state()?.players>1&&"s"}</span>
+                <span><Show when={!pool.loading} fallback="...">{pool()?.players}</Show></span>
+                <span class="text-current/50">player{pool()?.players>1&&"s"}</span>
                 <span class="text-current/50">/</span>
-                <span><Show when={!state.loading} fallback="...">{state()?.bet?.[2]}</Show></span>
+                <span><Show when={!pool.loading} fallback="...">{pool()?.bet?.[2]}</Show></span>
                 <span class="text-current/50">tickets</span>
               </div>
             </InfoItem>
             <InfoItem label={t("s.draw_time")}>
               <span
                 class="flex items-center gap-2">
-                <Show when={!state.loading} fallback="...">
-                  {new Date(state()?.ts_latest_draw).toLocaleString()} 
+                <Show when={!pool.loading} fallback="...">
+                  {new Date(pool()?.ts_latest_draw).toLocaleString()} 
                   <span
                     class="text-current/60 cursor-help inline-flex items-center text-xs bg-base-200 gap-1 rounded-full px-2 py-1 tooltip"
                     classList={{
@@ -291,8 +294,8 @@ export default props => {
                     <div class="tooltip-content">
                       <div className="text-left p-2">
                       {draw_locker()?
-                        t("tooltop.draw_time_fixed",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)}):
-                        t("tooltop.draw_time_est",{target:toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1)})
+                        t("tooltop.draw_time_fixed",{target:toBalanceValue(pool()?.wager_limit,pay_i?.Denomination||6,1)}):
+                        t("tooltop.draw_time_est",{target:toBalanceValue(pool()?.wager_limit,pay_i?.Denomination||6,1)})
                       }
                       </div>
                       
@@ -311,22 +314,22 @@ export default props => {
           <div class="flex flex-col h-16 justify-center">
               <span class="uppercase text-current/50 text-sm">{t("s.countdown")}</span>
               <span class="inline-flex items-center gap-2">
-                <Show when={state.state=="ready"} fallback="--:--:--">
+                <Show when={pool.state=="ready"} fallback="--:--:--">
                   <Switch>
-                    <Match when={state()?.run>0}>
-                      <Show when={state()?.ts_latest_draw>0} fallback="24:00:00">
-                        <Countdown class="text-xl" end={state()?.ts_latest_draw} />
+                    <Match when={pool()?.run>0}>
+                      <Show when={pool()?.ts_latest_draw>0} fallback="24:00:00">
+                        <Countdown class="text-xl" end={pool()?.ts_latest_draw} />
                       </Show>
                       <Show when={draw_locker()}>
                         <span
                           class="cursor-help inline-flex items-center gap-2 tooltip"
-                          data-tip={t("tooltop.draw_locker",{time:state()?.ts_latest_draw?new Date(state()?.ts_latest_draw).toLocaleString():"..."})}
+                          data-tip={t("tooltop.draw_locker",{time:pool()?.ts_latest_draw?new Date(pool()?.ts_latest_draw).toLocaleString():"..."})}
                         >
                           <Icon icon="iconoir:lock" />
                         </span>
                       </Show>
                     </Match>
-                    <Match when={state()?.run<=0}>
+                    <Match when={pool()?.run<=0}>
                       <span class="text-xl">⏸️ {t("suspended")}</span>
                     </Match>
                   </Switch>
@@ -337,7 +340,7 @@ export default props => {
           </div>
           <div class="flex flex-col justify-between flex-1 gap-4">
             <div class="text-current/50 text-sm">
-              {t("s.draw_tip",{time:state()?.draw_delay?state()?.draw_delay/60000/60:"24",wager:state()?.wager_limit?toBalanceValue(state()?.wager_limit,pay_i?.Denomination||6,1):"..."})}
+              {t("s.draw_tip",{time:pool()?.draw_delay?pool()?.draw_delay/60000/60:"24",wager:pool()?.wager_limit?toBalanceValue(pool()?.wager_limit,pay_i?.Denomination||6,1):"..."})}
               <button class="text-primary cursor-pointer" onClick={()=>_rules?.open()}>
                 {t("b.learn_more")}
               </button>
@@ -346,17 +349,17 @@ export default props => {
               <button 
                 class="btn btn-xl btn-primary bg-linear-to-r/srgb from-indigo-500 to-teal-400"
                 classList = {{
-                  "animate-wiggle" : state.state=="ready" || state()?.run == 1,
-                  "": start.state != "ready" || state()?.run != 1 || state()?.ts_round_start <= 0
+                  "animate-wiggle" : pool.state=="ready" || pool()?.run == 1,
+                  "": pool.state != "ready" || pool()?.run != 1 || pool()?.ts_round_start <= 0
                 }}
-                disabled={state.loading || state()?.run<=0 || state()?.ts_round_start<=0}
+                disabled={pool.loading || pool()?.run<=0 || pool()?.ts_round_start<=0}
                 use:walletConnectionCheck={()=>_numpicker.open()}
               >
                 <Switch fallback={t("b.pick_and_bet")}>
-                  <Match when={state.state =="ready" &&state()?.run == 1 && state()?.ts_round_start > 0}>
+                  <Match when={pool.state =="ready" &&pool()?.run == 1 && pool()?.ts_round_start > 0}>
                     <span class="inline-flex gap-4 items-center"><span>{t("b.pick_and_bet")}</span> <kbd class="kbd kbd-sm text-base-content rounded-xs">P</kbd></span>
                   </Match>
-                  <Match when={state.state =="ready" &&state()?.run == 0}>
+                  <Match when={pool.state =="ready" &&pool()?.run == 0}>
                     <span class="inline-flex gap-4 items-center"><span>{t("b.betting_paused")}</span></span>
                   </Match>
                 </Switch>
@@ -377,7 +380,7 @@ export default props => {
           
       </section>
 
-      <Show when={minting()||!state.loading}>
+      <Show when={minting()||!pool.loading}>
         <section class="response_cols py-8 border-t border-current/20 overflow-visible">
           <div class="col-span-7 flex flex-col">
             <InfoItem
@@ -401,13 +404,13 @@ export default props => {
                   
                 <div class="flex flex-col gap-2">
                   <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.mint_speed")}: <span class="text-base-content tooltip" 
-                    data-tip = {toBalanceValue(state()?.mint_speed*100,0,12)}
-                  >~ <Show when={!state.loading} fallback="...">{toBalanceValue(state()?.mint_speed*100,0,2)}</Show> %</span></div>
+                    data-tip = {toBalanceValue(pool()?.mint_speed*100,0,12)}
+                  >~ <Show when={!pool.loading} fallback="...">{toBalanceValue(pool()?.mint_speed*100,0,2)}</Show> %</span></div>
                   <div class="text-xs flex gap-1"><Icon icon="ph:arrow-elbow-down-right-light"/>{t("m.supply")}: <span 
                     class="text-base-content tooltip"  
-                    data-tip = {toBalanceValue(state()?.minting?.minted,12,12)}
+                    data-tip = {toBalanceValue(pool()?.minting?.minted,12,12)}
                   >
-                    {toBalanceValue(state()?.minting?.minted,12,0)}</span> $ALT
+                    {toBalanceValue(pool()?.minting?.minted,12,0)}</span> $ALT
                   </div>
                 </div>
               </div>
@@ -442,23 +445,21 @@ export default props => {
           </div>
         </section>
       </Show>
-
+ 
       <Bets 
         id={protocols?.pool_id}
+        ref = {_bets}
         update = {update()}
-        state = {state()}
-        onClickJackpotPie = {()=>_prize_pie.open(state())}
+        state = {pool()}
+        pool_loading = {pool.loading}
+        onClickJackpotPie = {()=>_prize_pie.open(pool())}
         onClickUpdate = {()=>{
           batch(()=>{
             setUpdate(null)
-            refetchBets()
-            refetchPoolState()
-            refetchStats()
+            // refetchBets()
+            refetchPool()
+            // refetchStats()
           })
-        }}
-        classList={{
-          "opacity-20":isPending(),
-          "opacity-100":!isPending()
         }}
         onXNumberClick={(v)=>{
           if(v?.length == Number(pool_i?.Digits)){
@@ -470,16 +471,27 @@ export default props => {
 
     <Numpicker 
       ref={_numpicker} 
-      state={state()}
+      state={pool()}
       digits={pool_i?.Digits&&Number(pool_i?.Digits)}
       minting={minting()}
-      onSubmitted={(res)=>{
-        batch(()=>{
-          refetchPoolState()
-          refetchStats()
-          refetchPoolRanks()
+      onSubmitted={async({id,data})=>{
+        console.log("投注成功",id,data)
+        toast.success(
+        <div className="w-full flex items-center justify-between gap-4">
+          <span>Placed a $1 bet </span>
+          <span className="text-current/50 text-sm inline-flex items-center gap-2">
+            {shortStr(id,4)} 
+            <Icon icon="hugeicons:square-arrow-expand-01" />
+          </span>
+        </div>,
+        {
+          duration: 5000,
         })
-        start(()=>refetchBets())
+        await refetchPool()
+        // _bets.refetch()
+        // await refetchStats()
+        
+        
       }}
     />
 
@@ -492,17 +504,15 @@ export default props => {
       }}
     >
       <div className="text-3xl">
-      {t("rw.title",state()?.round)}
+      {t("rw.title",pool()?.round)}
       </div>
       <div>
         <button
           className="btn btn-primary btn-lg"
           onClick={()=>{
-            batch(()=>{
-              refetchPoolState()
-              refetchStats()
-              refetchPoolRanks()
-              refetchBets()
+            batch(async()=>{
+              await refetchPool()
+              await refetchStats()
             })
             setSwitching(false)
           }}

@@ -2,9 +2,9 @@ import { Icon } from "@iconify-icon/solid"
 import { A } from "@solidjs/router"
 import { shortStr } from "../../lib/tool"
 import {  createMemo, For, Show } from "solid-js"
-import { app,protocols } from "../../signals/global"
+import { app,protocols } from "../../data/info"
 import tooltip from "../../components/tooltip"
-import { state,stats } from "../../signals/pool"
+import { pool,stats } from "../../data/resouces"
 import { toBalanceValue } from "../../lib/tool"
 import Balls from "../../components/balls"
 import Aox from "./partners/aox"
@@ -196,13 +196,13 @@ export default props => {
             <div class="flex flex-col justify-center items-center gap-2">
               <span class="text-current/50 uppercase">{t("top.jackpot_title")}</span>
               <span class="text-4xl text-accent font-bold">
-                <Show when={!state.loading} fallback="...">${toBalanceValue(state()?.jackpot, pay_i?.Denomination||6,2)}</Show>
+                <Show when={!pool.loading} fallback="...">${toBalanceValue(pool()?.jackpot, pay_i?.Denomination||6,2)}</Show>
               </span>
             </div>
             <div class="flex flex-col items-center justify-center gap-4">
               <A class="btn btn-primary btn-xl w-fit rounded-full" href="/bets">{t("top.button_bet")} <Icon icon="iconoir:arrow-right"/></A>
-              <Show when={!state.loading} fallback="...">
-                <span class="text-current/50">{t("top.round",{round:state()?.round || 1})} , {t("top.win_tip")}</span>
+              <Show when={!pool.loading} fallback="...">
+                <span class="text-current/50">{t("top.round",{round:pool()?.round || 1})} , {t("top.win_tip")}</span>
               </Show>
             </div>
           </div>

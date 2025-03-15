@@ -114,8 +114,8 @@ export class AO {
     })
   };
 
-  dryrun = async function(params) {
-    return await this.aoconnect.dryrun({
+  dryrun = function(params) {
+    return this.aoconnect.dryrun({
       process: params?.process,
       tags: params?.tags?formatMessageTags(params?.tags):[],
       data: params?.data || "",
