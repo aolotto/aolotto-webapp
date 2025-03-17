@@ -1,17 +1,14 @@
 import { createEffect, createSignal, Match, onMount, Switch, createMemo } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
-import { setDictionarys,t } from "../i18n/index"
 import { protocols } from "../data/info"
-import Spinner from "./spinner"
-import { connected, handleDisconnection ,address, connecting, wsdk, walletConnectionCheck } from "./wallet"
+import {  wsdk } from "./wallet"
 import { InfoItem } from "./infoitem"
-import { createStore } from "solid-js/store"
-import { shortStr, toBalanceValue } from "../lib/tool"
+import { shortStr, toBalanceValue,getDateTimeString } from "../lib/tool"
 import { AO } from "../lib/ao"
-import Vechart from "./vechart"
-import Avatar from "./avatar"
+
 // import {stake_state,refetchStakeState,refetchStaker, staker, balances } from "../data/resouces"
 import { ALT,refetchALT } from "../data/resouces"
+import toast from "solid-toast"
 
 const submitStaking = ({
   agent_id,
@@ -56,40 +53,30 @@ const submitStaking = ({
 export default props => {
   let _locker
   const agent_i = protocols?.details[protocols.agent_id]
-  const modes = [{
-    key : "inputing",
-    title : "ALT locker",
-    closable : true
-  },{
-    key : "comfirming",
-    title : "Lock information",
-    closable : false
-  }]
-  const [fields, setFields] = createStore({days: props?.staker?.locked_time / 86400000});
-  const [errors, setErrors] = createStore();
-  const [mode,setMode] = createSignal(modes[0])
-  // const [now,setNow] = createSignal(new Date().getTime())
-  const enable_lock = createMemo(()=>fields?.amount)
-  const ve_amount = createMemo(()=>Math.min((fields?.days||7) / 1440 , 1) * (fields?.amount||0))
+
+
+  
+
   const [submission,setSubmission] = createSignal()
-  const [submitting,setSubmitting] = createSignal(false)
-  const [submited,setSubmited] = createSignal()
+  const [submitting,setSubmitting] = createSignal()
   
   onMount(()=>{
       props.ref({
-        open:()=>{
-          setMode(modes[0])
-          // setNow(new Date().getTime())
+        open:(data)=>{
+         
+          setSubmitting(false)
+          setSubmission(data)
+          console.log(submission()?.duration)
           _locker.showModal()
         },
         close:()=>{
-          setMode(modes[0])
+          setSubmitting(false)
+          setSubmission(null)
           _locker.close()
         },
       })
       
     })
-  createEffect(()=>console.log("staker()",props?.staker))
   return(
     <dialog
       id="locker"
@@ -108,109 +95,76 @@ export default props => {
             {/* if there is a button in form, it will close the modal */}
             <button
               className="btn btn-circle btn-ghost absolute right-2 top-4"
-              disabled={mode()?.closable == false}
+              disabled={submitting()}
             >
               <Icon icon="iconoir:cancel" class=" scale-150"></Icon>
             </button>
           </form>
-          <h3 className="text-lg">{mode()?.title}</h3>
+          <h3 className="text-lg">Confirm your locking</h3>
         </section>
         {/* main */}
         <div>
-          <Switch>
-            <Match when={mode()?.key == "inputing"}>
-              <section className="px-1 py-6 w-full flex flex-col gap-4">
-                <div className="text-current/50 text-xs">Locking 1 $ALT for ≥1440 days (4 years) yields 1 veALT, while the minimum lock time of 7 days yields 0.005 veALT. veALT decays as time decreases.</div>
-                <div>
-                  <div className="flex items-center gap-2 text-sm justify-between w-full pb-2">
-                    <span class="font-bold text-current/50">Locked Amount</span>
-                    <p class="text-current/50 flex items-center gap-2">
-                      <span className="text-xs">
-                        <Show when={connected() && ALT.state == "ready"} fallback="...">
-                          {toBalanceValue(ALT() || 0, agent_i?.Denomination, agent_i?.Denomination)}
-                        </Show>
-                      </span>
-                      <button
-                        class="btn btn-xs"
-                        disabled={ALT.loading || connecting()}
-                        onClick={() => {
-                          setFields("amount", ALT() / 1000000000000)
-                        }}
-                      >
-                        MAX
-                      </button>
-                    </p>
-                  </div>
-                  <label
-                    className="input input-md w-full"
-                    classList={{
-                      "input-error": errors?.amount
-                    }}
-                  >
-                    <input
-                      type="digit"
-                      placeholder="0"
-                      value={fields?.amount || null}
-                      name="amount"
-                      min={1}
-                      max={ALT() / 1000000000000 || 0}
-                      step={0.000000000001}
-                      onChange={(e) => setFields(e.target.name, e.target.value)}
-                    />
-                    <span className="text-current/50">$ALT</span>
-                  </label>
+        <div className="px-1 py-6 w-full">
+                <div  className=" text-sm text-current/50">
+                Lock <b className="text-base-content">{toBalanceValue(submission()?.amount,12,12)}</b> $ALT for <b className="text-base-content">{submission()?.duration / (24*60*60*1000)}</b> days, The locked position details are as follows:
                 </div>
-
-                <div>
-                  <div className="flex items-center gap-2 text-sm justify-between w-full pb-2">
-                    <span class="font-bold text-current/50">Unlock Time</span>
-                    <p class="text-current/50 flex items-center gap-2">
-                      <span className="text-xs">
-                        <Show when={connected() && ALT.state == "ready"} fallback="...">
-                          {toBalanceValue(ALT() || 0, agent_i?.Denomination, agent_i?.Denomination)}
-                        </Show>
-                      </span>
-                      <button
-                        class="btn btn-xs"
-                        disabled={ALT.loading || connecting()}
-                        onClick={() => {
-                          setFields("amount", ALT() / 1000000000000)
-                        }}
-                      >
-                        MAX
-                      </button>
-                    </p>
-                  </div>
-                  <label
-                    className="input w-full"
-                    classList={{
-                      "input-error": errors?.amount
-                    }}
-                  >
-                    <input
-                      type="datetime-local"
-                      placeholder="0"
-                      value={fields?.date || null}
-                      name="date"
-                      onChange={(e) => setFields(e.target.name, e.target.value)}
-                    />
-                  </label>
+                <div className=" pt-4">
+                  <InfoItem label="Total locked" value={<span>{toBalanceValue((submission()?.amount||0)+(submission()?.staker?.amount || 0),12,12)} <span class="text-current/50">$ALT</span></span>} className="text-sm"/>
+                  <InfoItem label="Unlock time" value={()=>new Date(Date.now()+(submission()?.duration || 7*24*60*60*1000)).toLocaleString()} className="text-sm"/>
+                  <InfoItem label="Boosting" value={submission()?.staker?.boost || "-"} className="text-sm"/>
+                  <InfoItem label="veBalance" value={<span>{toBalanceValue((submission()?.amount + (props?.staker?.amount || 0)) * (submission()?.duration/(1440*24*60*60*1000)) * (submission()?.staker?.boost||1) ,12,12)} <span className="text-current/50">veALT</span></span>} className="text-sm"/>
                 </div>
-
-              </section>
-            </Match>
-            <Match when={mode()?.key =="comfirming"}>
-              <div>
-                condfsdssg
               </div>
-            </Match>
-          </Switch>
 
           
         </div>
         {/* bottom */}
-        <section className="modal-action">
-          <button className="btn btn-primary">Lock</button>
+        <section className="modal-action flex justify-between items-center">
+        <div className="flex justify-end items-center gap-2 w-full">
+                  <button 
+                    className="btn"
+                    onClick={()=>_locker.close()}
+                    disabled={submitting()}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    disabled={submitting()} 
+                    className="btn btn-primary"
+                    onClick={async()=>{
+                      setSubmitting(true)
+                      await refetchALT()
+                      if(ALT()>= submission()?.amount){
+                        submitStaking({
+                          agent_id : protocols?.agent_id,
+                          stake_id : protocols?.stake_id,
+                          quantity : submission()?.amount,
+                          duration : submission()?.duration
+                        })
+                        .then((res)=>{
+                          console.log(res)
+                          _locker.close()
+                          if(props?.onSubmited){
+                            props.onSubmited(res)
+                          }
+                          toast.success("Locked successfull")
+                        })
+                        .catch((err)=>{
+                          console.error(err)
+                        })
+                        .finally(()=>setSubmitting(false))
+                      }else{
+                        setSubmitting(false)
+                        _locker.close()
+                        toast.error("余额不足")
+                      }
+                      
+                    }}
+                  >
+                    {submitting()?"Submiting...":"Submit"}
+                  </button>
+                </div>
+          
         </section>
       </div>
     </dialog>

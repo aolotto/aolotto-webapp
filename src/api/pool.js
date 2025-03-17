@@ -33,19 +33,28 @@ export const fetchStats = async(id,{refetch}) => {
   }
 }
 
-export const fetchPoolRanks = async(id,{refetch}) => {
+export const fetchPoolRanks = async(id,{value,refetching}) => {
   if(!id) {
     return
   }
   console.log("⏳ fetch [ranks] from :" + id)
-  const { Messages } = await ao.dryrun({
-    process: id,
-    tags: {Action:"Ranks"}
-  })
-  if(Messages?.length>0&&Messages[0]){
-    console.log(" ✅ [ranks] ")
-    return JSON.parse(Messages[0]?.Data)
+  const key = "RANKS_"+id
+  const session = sessionStorage.getItem(key)&&JSON.parse(sessionStorage.getItem(key))
+  let ranks
+  if(!session || refetching){
+    const { Messages } = await ao.dryrun({
+      process: id,
+      tags: {Action:"Ranks"}
+    })
+    if(Messages?.length>0&&Messages[0]){
+      console.log(" ✅ [ranks] ")
+      sessionStorage.setItem(key,Messages[0]?.Data)
+      ranks = JSON.parse(Messages[0]?.Data)
+    }
+  }else{
+    ranks = session
   }
+  return ranks
 }
 
 

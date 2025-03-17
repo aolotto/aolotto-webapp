@@ -1,46 +1,46 @@
 import { AO } from "../lib/ao"
 let ao = new AO()
 
-export async function fetchTokenBalance(params,{value,refetching}){
-  const{player_id,token_id} = params
-  if(!player_id || !token_id) return null
-  let localData = localStorage?.getItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id)
-  if(!localData || refetching){
-    return await ao.dryrun({
-      process: token_id,
-      tags: { Action: "Balance", Recipient: player_id }
-    })
-    .then(({ Messages }) => {
-      console.log("余额查询",token_id,player_id,Messages)
-      if (Messages?.length >= 1&& Messages?.[0]?.Data) {
-        const data = JSON.parse(Messages?.[0]?.Data)
-        if(data){
-          document.hasStorageAccess().then((hasAccess) => {
-            if (hasAccess) {
-              localStorage.setItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id,JSON.stringify(data))
-            }
-          })
-          return data
-        }else{
-          return null
-        }
-      }else{
-        return null
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      toast.error("fetch token balance faild")
-      if(refetching){
-        return value
-      }else{
-        throw(err)
-      }
-    })
-  }else{
-    return JSON.parse(localData)
-  }
-}
+// export async function fetchTokenBalance(params,{value,refetching}){
+//   const{player_id,token_id} = params
+//   if(!player_id || !token_id) return null
+//   let localData = localStorage?.getItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id)
+//   if(!localData || refetching){
+//     return await ao.dryrun({
+//       process: token_id,
+//       tags: { Action: "Balance", Recipient: player_id }
+//     })
+//     .then(({ Messages }) => {
+//       console.log("余额查询",token_id,player_id,Messages)
+//       if (Messages?.length >= 1&& Messages?.[0]?.Data) {
+//         const data = JSON.parse(Messages?.[0]?.Data)
+//         if(data){
+//           document.hasStorageAccess().then((hasAccess) => {
+//             if (hasAccess) {
+//               localStorage.setItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id,JSON.stringify(data))
+//             }
+//           })
+//           return data
+//         }else{
+//           return null
+//         }
+//       }else{
+//         return null
+//       }
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       toast.error("fetch token balance faild")
+//       if(refetching){
+//         return value
+//       }else{
+//         throw(err)
+//       }
+//     })
+//   }else{
+//     return JSON.parse(localData)
+//   }
+// }
 
 
 export async function fetchPlayerAccount({player,id},{refetching}){
@@ -88,100 +88,35 @@ export async function fetchPlayerAccount({player,id},{refetching}){
 }
 
 
-export async function fetchStaker({staker,pid},{refetching}){
+export async function fetchStaker({staker,pid},{value,refetching}){
   
   try {
     if(!staker||!pid) return
-    let key ='AOLOTTO-STAKER-'+pid+staker
-    let localData = sessionStorage?.getItem(key)
-    if(true){
-      return await ao.dryrun({
+    console.log("⏳ fetch [staker] from : " + pid + " for : "+staker,refetching)
+    let key ='STAKER-'+pid+"-"+staker
+    let session = sessionStorage?.getItem(key)&&JSON.parse(sessionStorage?.getItem(key))
+    let result
+    if(!session || refetching){
+      const { Messages } = await ao.dryrun({
         process: pid,
         tags: { Action: "Get", Tab: "Stakers", Address: staker }
       })
-      .then(({ Messages,Errors }) => {
-        console.log("fetchStaker-Result",Messages,Errors)
-        if (Messages?.length >= 1&& Messages?.[0]?.Data) {
-          const data = JSON.parse(Messages?.[0]?.Data)
-          if(data){
-            document.hasStorageAccess().then((hasAccess) => {
-              if (hasAccess) {
-                sessionStorage.setItem(key,JSON.stringify(data))
-              }
-            })
-            return data
-          }else{
-            return null
-          }
-        }
-        if(Errors){
-          throw Error(Errors)
-        }
-      })
-      .catch(err => {
-        throw Error(err)
-      })
+      console.log(Messages)
+      if (Messages && Messages?.[0]){
+        sessionStorage.setItem(key,Messages?.[0]?.Data)
+        result = JSON.parse(Messages?.[0]?.Data)
+      }
     }else{
-      return JSON.parse(localData)
+      result = session
     }
-
-  } catch (error) {
-    console.log(error)
-    return null
-  }
-}
-
-export async function fetchUserTokenBalances({player_id,token_ids},{refetching}){
-  console.log("获取余额")
-  if(!player_id||!token_ids||token_ids?.length<2) {
-    // throw Error("missed player id or token ids")
-    return
-  }
-  return Promise.all(token_ids.map((token_id)=>new Promise((resolve, reject) => {
-    if(!token_id||typeof(token_id)!="string"){
-      reject("Invalid token ID")
-    }
-    let key = "tk_bal_"+token_id+"_"+player_id
-    let cached = localStorage?.getItem(key)
-    let now = new Date().getTime()
-    let expire_duration = 1000 * 15
-    if(cached && JSON.parse(cached)?.exipre > now && !refetching){
-      console.log("fetchUserTokenBalances-Cached",JSON.parse(cached)?.data)
-      resolve([token_id,JSON.parse(cached)?.data])
-    }else{
-      ao.dryrun({
-        process: token_id,
-        tags: { Action: "Balance", Recipient: player_id }
-      })
-      .then(({Messages,...rest})=>{
-        if (Messages?.length >= 1 && Messages?.[0].Data) {
-          const data = JSON.parse(Messages?.[0].Data)
-          if(data){
-            document.hasStorageAccess().then((hasAccess) => {
-              if (hasAccess) {
-                localStorage.setItem(key,JSON.stringify({
-                  data,
-                  exipre: now + expire_duration
-                }))
-              }
-            })
-            resolve([token_id,data])
-          }else{
-            resolve([token_id,"0"])
-          }
-        }else{
-          resolve([token_id,"0"])
-          // reject("fetch balance error")
-        }
-      })
-    }
-  })))
-  .then((bals)=>{
-    const result = {}
-    bals?.forEach(([id,balance])=>result[id]=balance)
+    console.log("✅ [staker] fetched",result)
     return result
-  })
+  } catch (error) {
+    console.log(" ❌ [staker] fetch fail")
+    throw error
+  }
 }
+
 
 
 export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{refetching}){

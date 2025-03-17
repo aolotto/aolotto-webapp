@@ -19,7 +19,7 @@ import Home from './pages/home';
 import Bets from './pages/bets';
 import Draws from './pages/draws';
 import Ranks from './pages/ranks';
-// import ALT from './pages/alt';
+import ALT from './pages/alt';
 import Me from './pages/me';
 import Notfound from './pages/notfound';
 import Mobile from './pages/home/mobile';
@@ -100,10 +100,10 @@ render(() => (
     <Route path={["/bets/*"]} component={Bets} />
     <Route path={["/draws/*"]} component={Draws} />
     <Route path={["/rank/*"]} component={Ranks} />
-    {/* <Route path={["/alt/*"]} component={ALT} /> */}
+    <Route path={["/alt/*"]} component={ALT} />
     <Route path={["/me/*"]} component={Me} />
     <Route path={["/alert/*"]} component={Alert}/>
-    {/* <Route path={["/divs/*"]} component={Divs}/> */}
+    <Route path={["/divs/*"]} component={Divs}/>
     <Route path="*paramName" component={Notfound} />
   </HashRouter>
 ),  document.getElementById('root'))

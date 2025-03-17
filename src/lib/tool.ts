@@ -44,7 +44,8 @@ export function getDateTimeString(timestamp?: number) : string {
   d = date.getDate(),
   H = date.getHours(),
   M = date.getMinutes(),
-  S = date.getSeconds()
+  S = date.getSeconds(),
+  MS = date.getMilliseconds()
 
   if (m < 10) { m = '0' + m; }
   if (d < 10) { d = '0' + d; }
