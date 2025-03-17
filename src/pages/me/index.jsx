@@ -34,10 +34,11 @@ export default props=>{
 
   setDictionarys("en",{
     "label.tickets" : "Tickets",
-    "label.bet": "Total Bet",
-    "label.win": "Total Win",
-    "label.mint": "Total Mint",
-    "label.dividends": "Dividends",
+    "label.bet": "Bet",
+    "label.win": "Win",
+    "label.mint": "Mint",
+    "label.dividends": "Dividend",
+    "label.staking": "Stake",
     "action.claim": "Claim",
     "action.disconnect": "Disconnect",
     "action.deposit": "Deposit",
@@ -56,6 +57,7 @@ export default props=>{
     "label.win": "累計獲獎",
     "label.mint": "累計鑄幣",
     "label.dividends": "分紅",
+    "label.staking": "质押",
     "action.claim": "領獎",
     "action.disconnect": "斷開",
     "action.deposit": "儲值",
@@ -109,6 +111,7 @@ export default props=>{
         setActiveClaim(JSON.parse(localActiveClaimsCache))
       }
     }
+    console.log(player())
   })
 
   return(
@@ -136,17 +139,42 @@ export default props=>{
       
       <section class="response_cols py-8 px-1">
         <div class="col-span-full lg:col-span-7 flex flex-col justify-between">
-
-          <InfoItem label={t("label.tickets")}><Show when={!player.loading} fallback="...">{player()?.bet?.[2]||0}</Show></InfoItem>
-          <InfoItem label={t("label.bet")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.win")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.mint")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,12)}</Show> <Ticker class="text-current/50">{agent_i?.Ticker}</Ticker></InfoItem>
-          <InfoItem label={t("label.dividends")}><Show when={!player.loading} fallback="...">{toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,6)}</Show> <Ticker class="text-current/50">{pay_i?.Ticker}</Ticker></InfoItem>
+          <InfoItem label={t("label.bet")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ {player()?.bet?.[2]||0} tickets</span> </Show> </InfoItem>
+          <InfoItem label={t("label.win")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ {player()?.win?.[2]||0} rounds</span></Show> </InfoItem>
+          <InfoItem label={t("label.mint")}><Show when={player.state != "unresolved"} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,12)} <Ticker>{agent_i?.Ticker}</Ticker></Show></InfoItem>
+          <InfoItem label={t("label.dividends")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.div?.[0]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ ${toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,6)}</span> </Show> </InfoItem>
+          <InfoItem label={t("label.staking")}><Show when={player.state != "unresolved"} fallback="...">{toBalanceValue(player()?.stake?.[0]||0,agent_i?.Denomination||12,12)} <Ticker>{agent_i?.Ticker}</Ticker></Show></InfoItem>
           
         </div>
 
         <div class="col-span-full lg:col-span-4 lg:col-end-13">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center w-full justify-between gap-6 border-b border-base-300 pb-4">
+            <div class="flex-1 flex items-center justify-between">
+              <div>
+                <p class="text-current/50 uppercase text-xs">Unclaimed Prize</p>
+                <p><Show when={player.state != "unresolved"} fallback="..."><span classList={{"text-current/50": player()?.win?.[0] == 0}}>${toBalanceValue(player()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show></p>
+              </div>
+              <button 
+                class="btn btn-square"
+                disabled={!player()||!player()?.win||Number(player()?.win?.[0]||0)<=0}
+                onClick={()=>_claimer.open()}
+              >
+                <Icon icon="iconoir:send-dollars" />
+              </button>
+            </div>
+            <div class="flex-1 flex items-center justify-between">
+              <div>
+                <p class="text-current/50 uppercase text-xs">Unclaimed dividends</p>
+                <p><Show when={player.state != "unresolved"} fallback="..."><span classList={{"text-current/50": player()?.div?.[0] < 1}}>${toBalanceValue(player()?.div?.[0]||0,pay_i?.Denomination||6,2)} </span></Show></p>
+              </div>
+              <button class="btn btn-square" disabled={true}><Icon icon="iconoir:send-dollars" /></button>
+            </div>
+          </div>
+          {/* <div class="text-sm flex flex-col gap-2">
+            <div class="flex justify-between items-center"><p>🏆 $2355.00</p><button class="btn btn-sm btn-primary">Claim Prize</button></div>
+            <div class="flex justify-between items-center"><p>💵 $2355.00</p><button class="btn btn-sm btn-primary">Claim Dividends</button></div>
+          </div> */}
+          {/* <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <span class="text-3xl">🏆</span>
               <Show when={!player.loading} fallback="..."><span class="text-xl" classList={{"text-current/50": player()?.win?.[0] == 0}}>${toBalanceValue(player()?.win?.[0]||0,pay_i?.Denomination||6,2)} </span></Show>
@@ -166,7 +194,7 @@ export default props=>{
                 {t("action.claim")}
               </button>
             </div>
-          </div>
+          </div> */}
           <div class="pt-6 flex flex-col gap-4 ">
             <div class="flex items-center gap-2 justify-between">
               <div class="flex items-center gap-2">

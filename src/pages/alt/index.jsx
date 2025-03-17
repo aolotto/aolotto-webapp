@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch } from "solid-js"
+import { createEffect, createMemo, createSignal, Match, onMount, Show, Suspense, Switch,createResource } from "solid-js"
 import { Tabs } from "../../components/tabs"
 import { app ,protocols } from "../../data/info"
 import { shortStr,toBalanceValue } from "../../lib/tool"
@@ -8,12 +8,17 @@ import Dividends from "./dividends"
 import Buybacks from "./buybacks"
 import Spinner from "../../components/spinner"
 import { useSearchParams } from "@solidjs/router"
-import { holders,supply } from "../../data/resouces"
 import { setDictionarys,t,locale } from "../../i18n"
+import { fetchProcessInfo } from "../../api/info"
+import { stats } from "../../data/resouces"
 
 export default props => {
   const pay_i = protocols?.details[protocols.pay_id]
   const agent_i = protocols?.details[protocols.agent_id]
+  const [info,{refetch:refetchProcessInfo}] = createResource(()=>{
+    if(stats()){return protocols.agent_id}
+  },fetchProcessInfo)
+
   setDictionarys("en",{
     "slogan" : "The glue of the community shapes LottoFi's future",
     "desc" : ()=> <span>90% of $ALT is issued to the community via the <a href="https://docs.aolotto.com/en/usdalt#bet2mint" target="_blank" class="inline-flex text-base-content items-center">Bet2Mint<Icon icon="ei:external-link"></Icon></a> mechanism, 10% is rewarded to early users via the <a href="https://docs.aolotto.com/en/faucet" target="_blank" class="inline-flex text-base-content items-center">faucet<Icon icon="ei:external-link"></Icon></a> as minting Buff (ALTb), and 100% of the protocol's profits are used for dividends and buyback.</span>,
@@ -58,7 +63,7 @@ export default props => {
     }
   })
 
-  createEffect(()=>console.log(locale()))
+  // createEffect(()=>console.log(locale()))
   
   return(
     <main className="container">
@@ -75,7 +80,7 @@ export default props => {
       <div class="col-start-auto col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 flex flex-col gap-4">
         <div class="h-12 flex w-full items-center gap-2">
           <span class="text-current/50 uppercase">{t("l.circulation")}: </span> 
-          <span><Show when={!supply.loading} fallback="...">{toBalanceValue(supply(),agent_i?.Denomination)}</Show> </span> 
+          <span><Show when={!info.loading} fallback="...">{toBalanceValue(info()?.['Total-Supply'],agent_i?.Denomination)}</Show> </span> 
           <span class="text-current/50">/ 210000000 ${agent_i?.Ticker}</span>
         </div>
         <p class="text-current/50 ">
