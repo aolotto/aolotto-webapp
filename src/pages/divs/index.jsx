@@ -126,7 +126,7 @@ export default props => {
                 <Icon icon="iconoir:profile-circle" />
                 <Switch>
                   <Match when={connected()}><Show when={address()} fallback="connecting...">{shortStr(address(), 5)}</Show></Match>
-                  <Match when={!connected()}><a type="button">Connect wallet</a></Match>
+                  <Match when={!connected()}>Connect wallet first</Match>
                 </Switch>
               </p>
               <p classList={{
