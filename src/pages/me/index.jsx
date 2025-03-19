@@ -171,7 +171,7 @@ export default props=>{
               </div>
               <button 
                 class="btn btn-square" 
-                disabled={false}
+                disabled={!player()||!player()?.div || Number(player()?.div?.[0])<1}
                 onClick={()=>{
                   _whitdraw.open({
                     amount : player()?.div?.[0]
