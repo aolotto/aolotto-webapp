@@ -29,7 +29,8 @@ export const Claimer = props => {
   onMount(()=>{
     props.ref({
       open:()=>{
-        const cache = localStorage.getItem("ACTIVE_CLAIM_"+address())
+        let key = "ACTIVE_CLAIM_"+protocols.agent_id+"_"+address()
+        const cache = localStorage.getItem(key)
         if(cache){
           const data = JSON.parse(cache)
           console.log(data)
@@ -44,7 +45,7 @@ export const Claimer = props => {
           })
           .then((res)=>{
             setActiveClaimState(true)
-            localStorage.removeItem("ACTIVE_CLAIM_"+address())
+            localStorage.removeItem(key)
           })
           .finally(()=>{
             setFetchClaimResult(false)
@@ -127,7 +128,7 @@ export const Claimer = props => {
                   claim(protocols?.agent_id,recipient()||user())
                   .then(data=>{
                     if(data){
-                      localStorage.setItem("ACTIVE_CLAIM_"+address(),JSON.stringify(data))
+                      localStorage.setItem("ACTIVE_CLAIM_"+protocols.agent_id+"_"+address(),JSON.stringify(data))
                       setActiveClaim(data)
                       setClaimed(true)
                       if(props?.onClaimed){

@@ -22,10 +22,12 @@ import { setDictionarys,t } from "../../i18n"
 import Welcome from "./welcome"
 import { locale } from "../../i18n"
 import Recharger from "../../components/recharger"
+import Withdraw from "../../components/withdraw"
 // import { createUserAntProfile } from "../../signals/player"
 
 export default props=>{
   let _claimer
+  let _whitdraw
   const [searchParams, setSearchParams] = useSearchParams();
   const pay_i = protocols?.details[protocols.pay_id]
   const agent_i = protocols?.details[protocols.agent_id]
@@ -105,7 +107,7 @@ export default props=>{
 
   createEffect(()=>{
     if(connected()){
-      const localActiveClaimsCache = localStorage.getItem("ACTIVE_CLAIM_"+address())
+      const localActiveClaimsCache = localStorage.getItem("ACTIVE_CLAIM_"+protocols.agent_id+"_"+address())
       console.log("localActiveClaimsCache",localActiveClaimsCache)
       if(localActiveClaimsCache){
         setActiveClaim(JSON.parse(localActiveClaimsCache))
@@ -167,7 +169,17 @@ export default props=>{
                 <p class="text-current/50 uppercase text-xs">Unclaimed dividends</p>
                 <p><Show when={player.state != "unresolved"} fallback="..."><span classList={{"text-current/50": player()?.div?.[0] < 1}}>${toBalanceValue(player()?.div?.[0]||0,pay_i?.Denomination||6,2)} </span></Show></p>
               </div>
-              <button class="btn btn-square" disabled={true}><Icon icon="iconoir:send-dollars" /></button>
+              <button 
+                class="btn btn-square" 
+                disabled={false}
+                onClick={()=>{
+                  _whitdraw.open({
+                    amount : player()?.div?.[0]
+                  })
+                }}
+              >
+                  <Icon icon="iconoir:send-dollars" />
+              </button>
             </div>
           </div>
           {/* <div class="text-sm flex flex-col gap-2">
@@ -270,11 +282,21 @@ export default props=>{
         rewards={player()?.win?.[0]}
         tax={player()?.tax?.[0]}
         user={address()}
-        onClaimed ={(e)=>{
+        onClaimed ={async(e)=>{
+          await refetchPlayer()
           batch(()=>{
             refetchALT()
             refetchUSDC()
-            refetchPlayer()
+          })
+        }}
+      />
+      <Withdraw
+        ref={_whitdraw}
+        onWithdrawn={async(msg)=>{
+          await refetchPlayer()
+          batch(()=>{
+            refetchUSDC()
+            refetchALT()
           })
         }}
       />
