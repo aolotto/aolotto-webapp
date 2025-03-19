@@ -2,7 +2,7 @@ import { setDictionarys,t } from "../../i18n"
 import { protocols } from "../../data/info"
 import { Icon } from "@iconify-icon/solid"
 import { createEffect, createMemo, createSignal, Match, onMount, Show, Switch,createResource, Suspense } from "solid-js"
-import { connected ,address, connecting, walletConnectionCheck } from "../../components/wallet"
+import { connected ,address, connecting, walletConnectionCheck,handleConnection } from "../../components/wallet"
 import { getDateTimeString,shortStr,toBalanceValue} from "../../lib/tool"
 import { ALT,refetchALT,refetchStake,stake } from "../../data/resouces"
 import { createStore } from "solid-js/store"
@@ -15,7 +15,7 @@ import Boost from "../../components/boost"
 import { fetchStaker } from "../../api/player"
 import Empty from "../../components/empty"
 import { pool } from "../../data/resouces"
-import { Datetime } from "../../components/moment"
+import { Datetime, Moment } from "../../components/moment"
 
 
 
@@ -33,7 +33,9 @@ export default props => {
     "s.stake" : "Lock",
     "l.lock_amount" : "Locked Amount",
     "l.unlock_time" : "Unlock Time",
-    "l.next_distribution" : "Next Distribution"
+    "l.next_distribution" : "Next Distribution",
+    "s.form_tip" : (v)=><span>Lock {v?.amount || 0} $ALT for {v.days} days</span>,
+    "b.connect_first" : "Connect wallet first"
   })
   setDictionarys("zh",{
     "s.title" : ()=> <span className="leading-2">质押<span class="inline-flex bg-primary/10 p-3 rounded-full items-center text-4xl gap-2 scale-110 font-bold text-primary mx-4"><image src={`https://arweave.net/${agent_i?.Logo}`} class="size-10 rounded-full inline-flex"/>$ALT</span>获取协议的每日分红</span>,
@@ -42,7 +44,9 @@ export default props => {
     "s.stake" : "锁仓",
     "l.lock_amount" : "锁定金额",
     "l.unlock_time" : "解锁时间",
-    "l.next_distribution" : "下一次分红"
+    "l.next_distribution" : "下一次分红",
+    "s.form_tip" : (v)=><span>锁定 {v?.amount || 0} $ALT {v.days} 天</span>,
+    "b.connect_first" : "链接钱包"
   })
   // const [stake,{refetch:refetchStakeState}] = createResource(()=>protocols?.stake_id,fetchStakeState)
   const [dividends,{hasMore,loadingMore}] = createDividends(()=>({pool_id:protocols?.pool_id,agent_id:protocols?.agent_id}))
@@ -127,7 +131,7 @@ export default props => {
                 <Icon icon="iconoir:profile-circle" />
                 <Switch>
                   <Match when={connected()}><Show when={address()} fallback="connecting...">{shortStr(address(), 5)}</Show></Match>
-                  <Match when={!connected()}>Connect wallet first</Match>
+                  <Match when={!connected()||!connecting()}><a role="button" className=" cursor-pointer" onClick={handleConnection}>{t("b.connect_first")}</a></Match>
                 </Switch>
               </p>
               <p classList={{
@@ -219,11 +223,11 @@ export default props => {
               </div>
               <div className="flex justify-between w-full items-center">
                 <div class="text-current/50 text-xs">
-                Lock {fields?.amount || 0} $ALT for {diffdays()} days
+                  {t("s.form_tip",{amount:fields?.amount,days:diffdays()})}
                 </div>
                 <button 
                   className="btn btn-primary"
-                  disabled={!enable_stake()}
+                  disabled={!enable_stake()||!connected()}
                   use:walletConnectionCheck={()=>{
                     if(fields.amount * (10 ** 12) < 10 ** 6 ){
                       setErrors("amount","Amount must be greater than 1 $ALT")
@@ -255,8 +259,8 @@ export default props => {
 
                   </Show>
                   <Switch>
-                    <Match when={!staker()}>No staking</Match>
-                    <Match when={staker()}><span class="text-base-content">{new Date(staker()?.start_time + staker().locked_time).toLocaleTimeString()}</span></Match>
+                    <Match when={!staker()}><span>--:--</span></Match>
+                    <Match when={staker()}><span class="text-base-content"><Moment ts={staker()?.start_time + staker().locked_time}/></span></Match>
                   </Switch>
                 </p>
               </div>
