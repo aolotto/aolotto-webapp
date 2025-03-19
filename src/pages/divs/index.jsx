@@ -15,6 +15,7 @@ import Boost from "../../components/boost"
 import { fetchStaker } from "../../api/player"
 import Empty from "../../components/empty"
 import { pool } from "../../data/resouces"
+import { Datetime } from "../../components/moment"
 
 
 
@@ -26,7 +27,7 @@ export default props => {
   let _unlock
   let _boost
   setDictionarys("en",{
-    "s.title" : ()=><span className="text-balance">Stake <span class="inline-flex bg-primary/10 p-3 rounded-full items-center text-4xl gap-2 scale-110 font-bold text-primary"><image src={`https://arweave.net/${agent_i?.Logo}`} class="size-10 rounded-full inline-flex"/>$ALT</span> for daily dividends</span>,
+    "s.title" : ()=><span className="text-balance">Stake <span class="inline-flex bg-primary/10 p-3 rounded-full items-center text-4xl gap-2 scale-110 font-bold text-primary border border-current/30"><image src={`https://arweave.net/${agent_i?.Logo}`} class="size-10 rounded-full inline-flex"/>$ALT</span> for daily dividends</span>,
     "s.desc" : "Stake $ALT for veALT and earn 20% of the protocol’s total sales revenue (equivalent to 50% of accumulated profits). The veALT amount decays linearly over the remaining lock period—the longer the lock, the more veALT you get.",
     "s.count" : (v)=><span><span className="text-base-content">{v.stakers}</span> stakers have locked a total of <span className="text-base-content">{v.amount}</span> $ALT</span>,
     "s.stake" : "Lock",
@@ -108,7 +109,7 @@ export default props => {
             </div>
             <div className="flex gap-12 items-center divide-base-300 divide-x ">
               <div class="pr-12">
-                <p className="text-2xl "><Show when={stake.state == "ready"} fallback="⋯">{toBalanceValue(stake()?.total_supply,12,12)}</Show></p>
+                <p className="text-lg"><Show when={stake.state == "ready"} fallback="⋯">{toBalanceValue(stake()?.total_supply,12,12)}</Show></p>
                 <label className="text-xs">veALT</label>
               </div>
 
@@ -255,7 +256,7 @@ export default props => {
                   </Show>
                   <Switch>
                     <Match when={!staker()}>No staking</Match>
-                    <Match when={staker()}><span class="text-base-content">{new Date(staker()?.start_time + staker().locked_time).toLocaleString()}</span></Match>
+                    <Match when={staker()}><span class="text-base-content">{new Date(staker()?.start_time + staker().locked_time).toLocaleTimeString()}</span></Match>
                   </Switch>
                 </p>
               </div>
@@ -312,8 +313,8 @@ export default props => {
                     <For each={dividends()}>
                       {item =>
                         <tr>
-                          <th data-label="No" class="w-8">{item.ref}</th>
-                          <td data-label="Date">{new Date(item?.checkpoint ? Number(item?.checkpoint) : item.timestamp * 1000).toLocaleDateString()}</td>
+                          <th data-label="No" class="w-10 text-left">{item.ref}</th>
+                          <td data-label="Date"><Datetime ts={item?.checkpoint ? Number(item?.checkpoint) : item.timestamp * 1000}/></td>
                           <td data-label="Amount">${toBalanceValue(item?.amount || 0, 6, 3)}</td>
                           <td data-label="Addressses" class="text-right">{item?.addresses}</td>
                           <td data-label="Details" class="text-right flex items-center gap-4 justify-end"><span class="text-current/50">{shortStr(item.id, 4)}</span> <a href={`https://www.ao.link/#/message/${item.id}`} target="_blank"><Icon icon="ei:external-link"></Icon></a></td>

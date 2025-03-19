@@ -219,13 +219,13 @@ export async function fetchAltDividends([{pool_id,agent_id},{size,cursor}],{refe
           addresses: tags?.Addresses,
           ref: tags?.['Distributed-No'],
           supply: tags?.Supply,
-          checkpoint : tags?.['Check-Point'],
+          checkpoint : tags?.['Distribute-Time'] || tags?.['Check-Point'],
           timestamp: node?.block?.timestamp,
           cursor
         })
       })
     }
-    // console.log(bets)
+    dividends.sort((a,b)=>{return Number(a.ref) > Number(b.ref)})
     return dividends
   } catch (error) {
     console.error("fetch minings faild.", error)
