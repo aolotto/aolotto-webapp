@@ -142,7 +142,7 @@ export default props=>{
       <section class="response_cols py-8 px-1">
         <div class="col-span-full lg:col-span-7 flex flex-col justify-between">
           <InfoItem label={t("label.bet")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.bet?.[1]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ {player()?.bet?.[2]||0} tickets</span> </Show> </InfoItem>
-          <InfoItem label={t("label.win")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.win?.[1]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ {player()?.win?.[2]||0} rounds</span></Show> </InfoItem>
+          <InfoItem label={t("label.win")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.win?.[0]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ ${player()?.win?.[1]||0}</span></Show> </InfoItem>
           <InfoItem label={t("label.mint")}><Show when={player.state != "unresolved"} fallback="...">{toBalanceValue(player()?.mint / 0.8||0,agent_i?.Denomination||12,12)} <Ticker>{agent_i?.Ticker}</Ticker></Show></InfoItem>
           <InfoItem label={t("label.dividends")}><Show when={player.state != "unresolved"} fallback="...">${toBalanceValue(player()?.div?.[0]||0,pay_i?.Denomination||6,6)} <span class="text-current/50">/ ${toBalanceValue(player()?.div?.[1]||0,pay_i?.Denomination||6,6)}</span> </Show> </InfoItem>
           <InfoItem label={t("label.staking")}><Show when={player.state != "unresolved"} fallback="...">{toBalanceValue(player()?.stake?.[0]||0,agent_i?.Denomination||12,12)} <Ticker>{agent_i?.Ticker}</Ticker></Show></InfoItem>

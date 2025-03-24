@@ -4,7 +4,7 @@ import { Icon } from "@iconify-icon/solid"
 import { createEffect, createMemo, createSignal, Match, onMount, Show, Switch,createResource, Suspense } from "solid-js"
 import { connected ,address, connecting, walletConnectionCheck,handleConnection } from "../../components/wallet"
 import { getDateTimeString,shortStr,toBalanceValue} from "../../lib/tool"
-import { ALT,refetchALT,refetchStake,stake } from "../../data/resouces"
+import { ALT,player,refetchALT,refetchStake,stake } from "../../data/resouces"
 import { createStore } from "solid-js/store"
 import Spinner from "../../components/spinner"
 import toast from "solid-toast"
@@ -38,7 +38,7 @@ export default props => {
     "b.connect_first" : "Connect wallet first"
   })
   setDictionarys("zh",{
-    "s.title" : ()=> <span className="leading-2">质押<span class="inline-flex bg-primary/10 p-3 rounded-full items-center text-4xl gap-2 scale-110 font-bold text-primary mx-4"><image src={`https://arweave.net/${agent_i?.Logo}`} class="size-10 rounded-full inline-flex"/>$ALT</span>获取协议的每日分红</span>,
+    "s.title" : ()=> <span className="leading-2">质押<span class="inline-flex bg-primary/10 p-3 rounded-full items-center text-4xl gap-2 scale-110 font-bold text-primary mx-4 border border-current/30"><image src={`https://arweave.net/${agent_i?.Logo}`} class="size-10 rounded-full inline-flex"/>$ALT</span>获取协议的每日分红</span>,
     "s.desc" : "质押 $ALT 获得 veALT，并享受协议总销售收入的 20% 分红（相当于 50% 的累计利润）。veALT 数量会随锁仓剩余时间线性衰减，锁定时间越长，获得的 veALT 越多。",
     "s.count" : (v)=><span><span className="text-base-content">{v.stakers}</span> 位质押者累计锁定 <span className="text-base-content">{v.amount}</span> $ALT</span>,
     "s.stake" : "锁仓",
@@ -277,8 +277,16 @@ export default props => {
                 <div className="dropdown dropdown-hover dropdown-end">
                   <div tabIndex={0} role="button" className="btn btn-square btn-ghost rounded-full" ><Icon icon="fluent:more-vertical-32-filled" /></div>
                   <ul tabIndex={0} className="dropdown-content menu bg-base-200 border border-base-300 rounded-box z-1 w-36 p-2 shadow-sm">
-                    <li><a role="button" class=""  disabled={true} classList={{"text-current/30" : true}}>Unlock</a></li>
-                    <li><a ole="button"  disabled={true} classList={{"text-current/30" : true}}>Detail</a></li>
+                    <li><a 
+                      role="button"
+                      onClick={() => _unlock.open()}
+                      disabled={staker()?.amount < 1||!staker()||!address()}
+                      classList={{"text-current/30" : staker()?.amount < 1||!staker()||!address()}}
+                    >
+                      Unlock
+                      </a>
+                    </li>
+                    <li><a role="button"  disabled={true} classList={{"text-current/30" : true}}>Detail</a></li>
                   </ul>
                 </div>
               </div>
