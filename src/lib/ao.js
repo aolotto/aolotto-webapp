@@ -1,62 +1,8 @@
 import * as aoconnect  from "@permaweb/aoconnect";
 import { arGql,GQLUrls } from "./argql";
 import { createDataItemSigner } from "@permaweb/aoconnect";
+const processQueue = new Map();
 
-// import { Buffer } from "buffer/index.js";
-// import * as WarpArBundles from "warp-arbundles";
-// if (!globalThis.Buffer) globalThis.Buffer = Buffer;
-// const { DataItem } = WarpArBundles;
-// const pkg = WarpArBundles.default ? WarpArBundles.default : WarpArBundles;
-// const { createData, ArweaveSigner } = pkg;
-
-
-
-// function createSignerByWallet(arweaveWallet) {
-//   console.log("createSignerByWallet",typeof(arweaveWallet),arweaveWallet)
-//   const signer = async ({
-//     data,
-//     tags,
-//     target,
-//     anchor,
-//     createDataItem = (buf) => new DataItem(buf),
-//   }) => {
-//     const view = await arweaveWallet.signDataItem({
-//       data,
-//       tags,
-//       target,
-//       anchor,
-//     });
-//     const dataItem = createDataItem(Buffer.from(view));
-//     return {
-//       id: await dataItem.id,
-//       raw: await dataItem.getRaw(),
-//     };
-//   };
-//   return signer;
-// }
-
-// function createSignerByJwk(wallet) {
-//   const signer = async ({ data, tags, target, anchor }) => {
-//     const signer = new ArweaveSigner(wallet);
-//     const dataItem = createData(data, signer, { tags, target, anchor });
-//     return dataItem.sign(signer).then(async () => ({
-//       id: await dataItem.id,
-//       raw: await dataItem.getRaw(),
-//     }));
-//   };
-
-//   return signer;
-// }
-
-// function createDataItemSigner(wallet) {
-//   let signer
-//   if(!wallet["p"]){
-//     signer = createSignerByWallet(wallet)
-//   }else{
-//     signer = createSignerByJwk(wallet)
-//   }
-//   return signer
-// }
 
 export const formatMessageTags = (tags) =>{
   if(tags instanceof Array){
@@ -115,13 +61,23 @@ export class AO {
   };
 
   dryrun = function(params) {
-    return this.aoconnect.dryrun({
-      process: params?.process,
-      tags: params?.tags?formatMessageTags(params?.tags):[],
+    const pid = params?.process;
+    if (!pid) {return}
+    const lastPromise = processQueue.get(pid) || Promise.resolve();
+    const fetchPromise = lastPromise.then(async () => this.aoconnect.dryrun({
+      process: pid,
+      tags: params?.tags ? formatMessageTags(params?.tags) : [],
       data: params?.data || "",
       anchor: params?.anchor || ""
+    })).then(result => {
+      if (processQueue.get(pid) === fetchPromise) {
+        processQueue.delete(pid);
+      }
+      return result;
     })
-  };
+    processQueue.set(pid, fetchPromise);
+    return fetchPromise;
+  }
 
   spawn = async function(params) {
     this.module = params?.module || this.module
