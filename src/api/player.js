@@ -105,6 +105,9 @@ export async function fetchStaker({staker,pid},{value,refetching}){
       if (Messages && Messages?.[0]){
         sessionStorage.setItem(key,Messages?.[0]?.Data)
         result = JSON.parse(Messages?.[0]?.Data)
+      }else{
+        sessionStorage.removeItem(key)
+        result = null
       }
     }else{
       result = session

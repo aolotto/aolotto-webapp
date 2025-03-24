@@ -126,7 +126,7 @@ export default props => {
               </div>
               <button
                 className="btn btn-error"
-                disabled={()=>!receive()||receive()?.amount<1}
+                disabled={()=>receive()?.amount<=0}
                 onClick={()=>{
                   setMode("confirm")
                 }}
