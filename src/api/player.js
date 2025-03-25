@@ -1,54 +1,15 @@
 import { AO } from "../lib/ao"
 let ao = new AO()
+import { storage } from "../lib/storage"
 
-// export async function fetchTokenBalance(params,{value,refetching}){
-//   const{player_id,token_id} = params
-//   if(!player_id || !token_id) return null
-//   let localData = localStorage?.getItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id)
-//   if(!localData || refetching){
-//     return await ao.dryrun({
-//       process: token_id,
-//       tags: { Action: "Balance", Recipient: player_id }
-//     })
-//     .then(({ Messages }) => {
-//       console.log("余额查询",token_id,player_id,Messages)
-//       if (Messages?.length >= 1&& Messages?.[0]?.Data) {
-//         const data = JSON.parse(Messages?.[0]?.Data)
-//         if(data){
-//           document.hasStorageAccess().then((hasAccess) => {
-//             if (hasAccess) {
-//               localStorage.setItem('AOLOTTO-TOKENBALANCE-'+token_id+player_id,JSON.stringify(data))
-//             }
-//           })
-//           return data
-//         }else{
-//           return null
-//         }
-//       }else{
-//         return null
-//       }
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       toast.error("fetch token balance faild")
-//       if(refetching){
-//         return value
-//       }else{
-//         throw(err)
-//       }
-//     })
-//   }else{
-//     return JSON.parse(localData)
-//   }
-// }
 
 
 export async function fetchPlayerAccount({player,id},{refetching}){
   try {
     if(!player||!id) return
     console.log("⏳ fetch [ player ] from : " + id + " with address " + player)
-    let key ='AOLOTTO-ACCOUNT-'+id+player
-    let localData = sessionStorage?.getItem(key)
+    let key ='aolotto-player-'+id+"-"+player
+    let localData = storage.get(key,"sessionStorage")
     if(!localData || refetching){
       return await ao.dryrun({
         process: id,
@@ -59,13 +20,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
         if (Messages?.length >= 1&& Messages?.[0]?.Data) {
           const data = JSON.parse(Messages?.[0]?.Data)
           if(data){
-            document.hasStorageAccess().then((hasAccess) => {
-              if (hasAccess) {
-                sessionStorage.setItem(key,JSON.stringify(data))
-              }
-            })
-
-            
+            storage.set(key,data,{type:"sessionStorage",ttl : 120000})
             return data
           }else{
             return null
@@ -79,7 +34,7 @@ export async function fetchPlayerAccount({player,id},{refetching}){
         throw Error(err)
       })
     }else{
-      return JSON.parse(localData)
+      return localData
     }
   } catch (error) {
     console.log(error)
@@ -93,8 +48,8 @@ export async function fetchStaker({staker,pid},{value,refetching}){
   try {
     if(!staker||!pid) return
     console.log("⏳ fetch [staker] from : " + pid + " for : "+staker,refetching)
-    let key ='STAKER-'+pid+"-"+staker
-    let session = sessionStorage?.getItem(key)&&JSON.parse(sessionStorage?.getItem(key))
+    let key ='aolotto-staker-'+pid+"-"+staker
+    let session = storage.get(key,"sessionStorage")
     let result
     if(!session || refetching){
       const { Messages } = await ao.dryrun({
@@ -103,10 +58,9 @@ export async function fetchStaker({staker,pid},{value,refetching}){
       })
       console.log(Messages)
       if (Messages && Messages?.[0]){
-        sessionStorage.setItem(key,Messages?.[0]?.Data)
+        storage.set(key,JSON.parse(Messages?.[0]?.Data),{type:"sessionStorage",ttl : 120000})
         result = JSON.parse(Messages?.[0]?.Data)
       }else{
-        sessionStorage.removeItem(key)
         result = null
       }
     }else{
