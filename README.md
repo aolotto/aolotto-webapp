@@ -1,3 +1,3 @@
 ## Usage
 
-aolotto
+aolotto 2.0
