@@ -1,2 +1,2 @@
 # aolotto-webapp
- The Aolotto webapp deploy to the permaweb.
+ The Aolotto webapp deploy to the permaweb.:
