@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
-  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass;
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass,skeleton,hero;
 }
 
 @theme {
@@ -69,8 +69,8 @@
   prefersdark: true;
   color-scheme: "dark";
   --color-base-100: oklch(18.35% 0.033 297.47);
-  --color-base-200: oklch(23% 0.039 296.92);
-  --color-base-300: oklch(27% 0.044 297.16);
+  --color-base-200: oklch(27% 0.039 296.92);
+  --color-base-300: oklch(32% 0.044 297.16);
   --color-base-content: oklch(94% 0.029 294.588);
   --color-primary: oklch(54.52% 0.222 292.08);
   --color-primary-content: oklch(96% 0.018 272.314);
@@ -126,6 +126,26 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+@layer base{
+  .container{
+    @apply mx-auto max-w-7xl px-4 lg:px-6 overflow-x-visible;
+  }
+  .response_cols{
+    @apply grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 md:grid-cols-10 md:gap-6 sm:grid-cols-6 sm:gap-4 grid-flow-dense overflow-x-auto;
+  }
+  a{
+    @apply text-primary hover:text-base-content inline-flex gap-1 ;
+  }
+  a.active{
+    @apply text-base-content font-medium;
+  }
+}
+@layer utilities {
+  .pb-safe {
+    padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS 旧版本 */
+    padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS 现代浏览器 */
+  }
+}
 @layer components{
   .panel {
     @apply bg-base-200/50 shadow-md outline-1 outline-base-content/10 backdrop-blur-3xl;

@@ -66,15 +66,25 @@ export class AO {
 
   
 
-  dryrun = function(params) {
-    const pid = params?.process;
+  /**
+   * Executes a dry run for a specific process with optional tags, data, and anchor.
+   * Ensures that the process is queued and executed sequentially.
+   *
+   * @function
+   * @param {string} pid - The process ID to execute the dry run for. Required.
+   * @param {Array<string>} [tags] - Optional tags to include in the dry run request.
+   * @param {string} [data] - Optional data payload for the dry run request.
+   * @param {string} [anchor] - Optional anchor value for the dry run request.
+   * @returns {Promise<any>} A promise that resolves with the result of the dry run.
+   */
+  dryrun = function(pid,tags,data,anchor) {
     if (!pid) {return}
     const lastPromise = processQueue.get(pid) || Promise.resolve();
     const fetchPromise = lastPromise.then(async () => this.aoconnect.dryrun({
       process: pid,
-      tags: params?.tags ? formatMessageTags(params?.tags) : [],
-      data: params?.data || "",
-      anchor: params?.anchor || ""
+      tags: tags ? formatMessageTags(tags) : [],
+      data: data || "",
+      anchor: anchor || ""
     })).then(result => {
       if (processQueue.get(pid) === fetchPromise) {
         processQueue.delete(pid);

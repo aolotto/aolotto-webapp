@@ -1,9 +1,11 @@
 import Logo from "./logo";
 import { Icon } from "@iconify-icon/solid"
 import { t,setDictionarys,locale,setLocale,locales } from "../i18n"
-import { Index,createMemo } from "solid-js";
+import { Index,createMemo,createSignal,onMount,onCleanup } from "solid-js";
 import { A } from "@solidjs/router";
-import label from "daisyui/components/label";
+import { useWallet } from "ar-wallet-kit";
+import Avatar from "./avatar";
+import Spinner from "./spinner"
 export default props => {
   let _header
   setDictionarys("en",{
@@ -44,32 +46,40 @@ export default props => {
     name: "alt",
     path: "/alt"
   },{
-    name: "faucet",
-    path: locale()=="en"?"https://docs.aolotto.com/en/faucet":"https://docs.aolotto.com/cn/shui-long-tou",
-    new: true
-  },{
     name: "docs",
     path: locale()=="en"?"https://docs.aolotto.com/en":"https://docs.aolotto.com/cn",
     new: true,
     out: true
   }])
+  const [stickied,setStickied] = createSignal(false)
 
-  // const menus = [{
-  //   group_name: "Onchain lottery",
-  //   items : [{
-  //     label: "github",
-  //     url: ""}],
-  // },{}]
+  const { connected, address, connecting, showConnector } = useWallet()
+
+  onMount(()=>{
+    window.onscroll = function (e) {
+      setStickied(window.scrollY > _header.getBoundingClientRect().height)
+    };
+  })
+
+  onCleanup(()=>{
+    window.onscroll = null
+  })
 
 
   return (
-    <header className="navbar bg-base-100 w-full h-16 sticky z-1 top-0 py-0 px-1 lg:px-4">
-      <div className="flex-1">
+    <header
+      ref={_header}
+      className="navbar bg-base-100 w-full h-16 sticky z-1 top-0 py-0 px-1 lg:px-4 gap-4"
+      classList = {{
+        "bg-base-100/100 shadow-gray-1000/5 shadow-xs" : stickied()
+      }}
+    >
+      <div className=" flex-none">
         <A className="btn btn-ghost rounded-full" href="/"><Logo type="full" className=" scale-110"/></A>
         
       </div>
       
-      <div className="flex-none navbar-end gap-1 lg:gap-2">
+      <div className=" flex-1 gap-1 lg:gap-2 items-center flex justify-end">
         <div class="dropdown dropdown-bottom dropdown-center lg:hidden">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block h-5 w-5 stroke-current"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path> </svg>
@@ -111,8 +121,29 @@ export default props => {
             }
           </Index>        
         </ul>
+      </div>
+      <div className=" flex-none flex items-center">
         <div>
-          <button className="btn rounded-full min-w-[2em]">{t("h.connect")}</button>
+          <Show when={address()} fallback={
+            <button 
+              disabled={connecting()||connected()}
+              className="btn rounded-full min-w-[2em]"
+              onClick={showConnector}
+            >
+              {connecting()?<Spinner size="sm"/>:t("h.connect")}
+            </button>
+          }>
+            <div class="tooltip tooltip-left">
+              <div class="tooltip-content text-left w-[20em] break-words">{address()}</div>
+              <a 
+                href="/me" 
+                class="btn btn-circle btn-ghost"
+              >
+                <Avatar username={address()} class="size-6"></Avatar>
+              </a>
+            </div>
+          </Show>
+          
         </div>
         <div className="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost rounded-full">

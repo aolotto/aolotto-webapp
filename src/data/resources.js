@@ -12,16 +12,17 @@ export const [pool, { refetch: refetchPool, mutate: mutatePool }] = createRoot((
       const key = `pool_${pid}`;
       let data = storage.get(key);
       if (data && !refetching) return data;
-      return ao.dryrun({ process: pid, tags: { Action: "State" } })
-        .then(({ Messages }) => {
-          if (Messages?.[0]?.Data) {
-            storage.set(key, JSON.parse(Messages?.[0]?.Data), { ttl: 60000, type: 'sessionStorage' });
-            return JSON.parse(Messages?.[0]?.Data);
-          }
-        });
+      return ao.dryrun(pid,{Action: "State"})
+      .then(({ Messages }) => {
+        if (Messages?.[0]?.Data) {
+          storage.set(key, JSON.parse(Messages?.[0]?.Data), { ttl: 60000, type: 'sessionStorage' });
+          return JSON.parse(Messages?.[0]?.Data);
+        }
+      });
     } catch (error) {
       throw error;
     }
   }
 ));
+
 
