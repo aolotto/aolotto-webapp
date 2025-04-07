@@ -4,7 +4,7 @@ import { Suspense } from 'solid-js'
 import './index.css'
 import { HashRouter, Route } from "@solidjs/router"
 import { AppProvider } from './data'
-import { WalletProvider,WanderStrategy } from "ar-wallet-kit"
+import { WalletProvider,WanderStrategy } from "arwallet-solid-kit"
 import AoSyncStrategy from "@vela-ventures/aosync-strategy";
 import WebWalletStrategy from "@arweave-wallet-kit/webwallet-strategy";
 import OthentStrategy from "@arweave-wallet-kit/othent-strategy";
@@ -16,12 +16,13 @@ import Footer from './compontents/footer'
 
 import Home from './pages/home'
 import Bets from './pages/bets'
+import Me from './pages/me'
 
 
 
 const App = props => {
   return (
-    <Suspense fallback={<Spinner/>}>
+    <Suspense fallback={<Spinner className="w-full h-[100vh] flex-col">Aolotto</Spinner>}>
       <AppProvider>
         <div className='flex flex-col min-h-screen w-full items-center justify-between'>
           <Header/>
@@ -53,6 +54,7 @@ render(() => (
     <HashRouter root={App}>
       <Route path={["/", "/home"]} component={Home} />
       <Route path="/bets/*" component={Bets} />
+      <Route path="/me/*" component={Me} />
     </HashRouter>
   </WalletProvider>
 ),  document.getElementById('root'))

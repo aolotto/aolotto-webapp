@@ -24,6 +24,11 @@
       transform: rotate(0deg); 
     }
   }
+  @keyframes heartbeat {
+    0% { opacity: 1; } 
+    50% { opacity: 0.5;} 
+    100% { opacity: 1;} 
+  }
 }
 
 
@@ -100,6 +105,7 @@
 
 
 
+
 :root {
   @apply bg-base-100 text-base-content font-mono font-normal text-[1rem] min-w-[360px];
   color-scheme: light dark;
@@ -139,6 +145,18 @@ input[type='number'] {
   a.active{
     @apply text-base-content font-medium;
   }
+  dl.dlist{
+    @apply flex flex-col md:flex-row gap-1 md:gap-2 flex-wrap py-2;
+    &:is(.dlist-divide){
+      @apply border-b-1 border-base-content/10  last:border-b-0;
+    }
+    dt{
+      @apply w-full md:w-1/2 text-current/50 ; 
+    }
+    dd{
+      @apply flex-1;
+    }
+  }
 }
 @layer utilities {
   .pb-safe {
@@ -150,4 +168,69 @@ input[type='number'] {
   .panel {
     @apply bg-base-200/50 shadow-md outline-1 outline-base-content/10 backdrop-blur-3xl;
   }
+  .ball{
+    @apply inline-flex font-bold border-current border text-base-content rounded-full items-center justify-center size-[2rem];
+    
+    &:is(.ball-sm){
+      @apply text-sm size-[1.8em];
+    }
+    &:is(.ball-outline){
+      @apply bg-transparent;
+    }
+    &:is(.ball-fill){
+      @apply text-base-100;
+      background: radial-gradient(60.71% 60.71% at 30.36% 21.43%, #e86500 0%, #812de6 100%);
+      &:hover{
+        @apply bg-base-content/10;
+      }
+    }
+  }
+  
+  .number{
+    @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
+  }
+
+  .rsps_table{
+    @apply w-full border-collapse overflow-auto table-auto;
+    caption{
+      @apply table-caption;
+    }
+    thead{
+      @apply hidden md:table-header-group text-current/50 text-left w-full h-0;
+    }
+    tr{
+      clip-path: xywh(0 0 100% 100% round 0.5em);
+      @apply rounded-md flex flex-col gap-1 md:table-row border-b-1 border-base-200 last:border-b-0 p-2 md:p-0;
+      &:hover{
+        @apply bg-base-200;
+      }
+    }
+    td{
+      @apply flex md:table-cell justify-start items-center;
+      &::before{
+        @apply text-base-content/50 block md:hidden mr-2;
+        content: attr(data-label);
+      }
+    }
+  }
+
+  .responsive-table{
+    @apply w-full border-collapse;
+    thead{
+      @apply text-current/50 uppercase text-left w-full h-0 hidden md:table-header-group;
+    }
+    tr{
+      &:hover{
+        @apply bg-base-200;
+      }
+    }
+    th,td{
+      @apply p-2
+    }
+    td::before{
+        @apply text-base-content/50 inline-flex md:hidden;
+        content: attr(data-label);
+      }
+  }
+  
 }

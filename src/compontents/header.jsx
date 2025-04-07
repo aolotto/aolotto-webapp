@@ -3,7 +3,7 @@ import { Icon } from "@iconify-icon/solid"
 import { t,setDictionarys,locale,setLocale,locales } from "../i18n"
 import { Index,createMemo,createSignal,onMount,onCleanup } from "solid-js";
 import { A } from "@solidjs/router";
-import { useWallet } from "ar-wallet-kit";
+import { useWallet } from "arwallet-solid-kit";
 import Avatar from "./avatar";
 import Spinner from "./spinner"
 export default props => {
@@ -168,6 +168,19 @@ export default props => {
           </ul>
         </div>
       </div>
+      <Show when={stickied()}>
+        <div className=" fixed bottom-2 right-2 md:hidden">
+          <button className="btn btn-circle" onClick={()=>{
+            window.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: "smooth",
+            });
+          }}>
+          <Icon icon="lsicon:top-outline" />
+          </button>
+        </div>
+      </Show>
     </header>
   );
 }

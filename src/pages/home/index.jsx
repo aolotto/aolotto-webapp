@@ -3,7 +3,7 @@ import { useApp } from "../../data";
 
 export default props => {
 
-  const {agent} = useApp()
+  const {agent_stats} = useApp()
   return (
     <>
     <section className="hero min-w-screen h-[60vh] max-h-[540px]">
@@ -28,7 +28,7 @@ export default props => {
           
           <div>
             <div className="text-current/50 uppercase text-sm">Progressive Jackpot</div>
-            <div className="text-secondary font-bold text-xl">$2345.00</div>
+            <div className="text-secondary font-bold text-xl">{agent_stats()?.total_sales_amount}</div>
           </div>
           <div className=" border inline-flex rounded-full text-xl font-bold px-[1em] py-[0.5em]">R7</div>
         </div>

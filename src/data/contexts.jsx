@@ -1,5 +1,5 @@
-import { createContext, useContext, Suspense, createResource, createEffect,createRoot } from "solid-js";
-import { useWallet } from "ar-wallet-kit";
+import { createContext, useContext, Suspense, createResource, createEffect,createRoot, onMount } from "solid-js";
+import { useWallet } from "arwallet-solid-kit";
 import { fetchAgentStats } from "../api/fetchers/agent"
 const AppContext = createContext()
 
@@ -15,14 +15,18 @@ export const AppProvider = (props) => {
     buyback_process :import.meta.env.VITE_BUYBACK_PROCESS,
     stake_process : import.meta.env.VITE_STAKE_PROCESS
   }
-  const [agent] = createRoot(()=>createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchAgentStats))
+  const [agent_stats,{refetch:refetchAgentStats}] = createRoot(()=>createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchAgentStats))
   const hooks = {
     address,
     connected,
     info,
-    agent,
+    agent_stats,
+    refetchAgentStats
   }
-  createEffect(()=>console.log("agent",agent()))
+  // createEffect(()=>console.log("agent",agent()))
+  onMount(()=>{
+    console.log(agent_stats())
+  })
   return(
     <AppContext.Provider value={hooks}>
       {props.children}

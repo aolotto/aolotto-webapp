@@ -33,7 +33,7 @@ export default props => {
       </div>
       <div class="py-4 lg:py-0">
         <ul class="flex justify-end gap-1">
-          {links.map((item)=><li><a href={item.url} className="btn btn-ghost btn-sm lg:btn-md btn-circle"><Icon icon={item.logo} /></a></li>)}
+          {links.map((item)=><li><a href={item.url} target="_blank" className="btn btn-ghost btn-sm lg:btn-md btn-circle"><Icon icon={item.logo} /></a></li>)}
         </ul>
       </div>
     </footer>
