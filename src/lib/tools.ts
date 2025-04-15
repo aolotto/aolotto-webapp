@@ -9,12 +9,18 @@
  *          and rounded to the specified precision.
  */
 export function toBalanceValue(balance: number, precision: number, len?: number): string {
-  precision = precision || 0
-  const n = (balance / (10 ** precision)).toFixed(len || precision);
-  const regexp = /(?:\.0*|(\.\d+?)0+)$/;
-  const _n = parseFloat(String(n))
-  return _n.toLocaleString()
+  balance = balance || 0;
+  precision = precision || 0;
+  const v: number = balance / (10 ** precision);
+  const options: Intl.NumberFormatOptions = {
+    notation:(len && len >= precision) ? "standard" :"compact",
+    roundingPriority: (len && len >= precision) ? "morePrecision" : "lessPrecision"
+  };
+
+  return new Intl.NumberFormat("en-US", options).format(v);
 }
+
+
 
 /**
  * Shortens a string by keeping the first and last parts of the string,
@@ -26,7 +32,39 @@ export function toBalanceValue(balance: number, precision: number, len?: number)
  * @returns The shortened string with the specified format.
  */
 export function shortStr(text: string, len?: number, space?: string): string {
+  if(text == null ){return "" }
   const first = len || 8;
   const end = len ? -len - 1 : -7;
-  return text.slice(0, first) + (space || "...") + text.slice(end);
+  if(text.length<=first){
+    return text
+  }else{
+    return text.slice(0, first) + (space || "...") + text.slice(end);
+  }
+}
+
+
+/**
+ * Generates a formatted date-time string in ISO-like format (YYYY-MM-DDTHH:mm:ss).
+ *
+ * @param timestamp - An optional Unix timestamp (in milliseconds) to convert. 
+ * If not provided, the current date and time will be used.
+ * @returns A string representing the formatted date and time.
+ */
+export function getDateTimeString(timestamp?: number) : string {
+  var date = new Date(timestamp);
+  var y = date.getFullYear(),
+  m = date.getMonth() + 1,
+  d = date.getDate(),
+  H = date.getHours(),
+  M = date.getMinutes(),
+  S = date.getSeconds(),
+  MS = date.getMilliseconds()
+
+  if (m < 10) { m = '0' + m; }
+  if (d < 10) { d = '0' + d; }
+  if (H < 10) { H = '0' + H; }
+  if (M < 10) { M = '0' + M; }
+  if (S < 10) { S = '0' + S; }
+  var t = y + '-' + m + '-' + d + 'T' + H + ":" + M + ":" + S 
+  return t;
 }

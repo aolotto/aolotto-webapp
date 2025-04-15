@@ -1,9 +1,9 @@
 
-import { useApp } from "../../data";
+import { useApp } from "../../contexts";
 
 export default props => {
 
-  const {agent_stats} = useApp()
+  const {agentStats} = useApp()
   return (
     <>
     <section className="hero min-w-screen h-[60vh] max-h-[540px]">
@@ -28,7 +28,7 @@ export default props => {
           
           <div>
             <div className="text-current/50 uppercase text-sm">Progressive Jackpot</div>
-            <div className="text-secondary font-bold text-xl">{agent_stats()?.total_sales_amount}</div>
+            <div className="text-secondary font-bold text-xl">{agentStats()?.total_sales_amount}</div>
           </div>
           <div className=" border inline-flex rounded-full text-xl font-bold px-[1em] py-[0.5em]">R7</div>
         </div>
@@ -37,6 +37,20 @@ export default props => {
         </div>
       </div>
     </section>
+
+    <div class="drawer drawer-end">
+  <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
+    <label for="my-drawer-4" class="drawer-button btn btn-primary">Open drawer</label>
+  </div>
+  <div class="drawer-side">
+    <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+    <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+      <li><a>Sidebar Item 1</a></li>
+      <li><a>Sidebar Item 2</a></li>
+    </ul>
+  </div>
+</div>
     
     </>
   );

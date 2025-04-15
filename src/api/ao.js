@@ -47,12 +47,12 @@ export class AO {
     this.module = import.meta.env.VITE_AO_MODULE
   }
 
-  message = async function(params) {
+  message = async function(pid,tags,data,params) {
     this.wallet = params?.wallet || this.wallet
     return await this.aoconnect.message({
-      process: params?.process || this.process,
-      tags: params?.tags?formatMessageTags(params?.tags):[],
-      data: params?.data || "",
+      process: pid,
+      tags: tags?formatMessageTags(tags):[],
+      data: data || "",
       signer: createDataItemSigner(this.wallet)
     })
   };

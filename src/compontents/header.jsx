@@ -6,8 +6,10 @@ import { A } from "@solidjs/router";
 import { useWallet } from "arwallet-solid-kit";
 import Avatar from "./avatar";
 import Spinner from "./spinner"
+import { useApp,useUser } from "../contexts";
 export default props => {
   let _header
+  
   setDictionarys("en",{
     "nav.bets": "Bets",
     "nav.draws":"Draws",
@@ -23,7 +25,7 @@ export default props => {
     "nav.bets": "投注",
     "nav.draws":"開獎",
     "nav.rank":"排行",
-    "nav.divs":"分红",
+    "nav.divs":"分紅",
     "nav.alt": "$ALT",
     "nav.docs":"文檔",
     "nav.faucet":"🚰",
@@ -52,7 +54,7 @@ export default props => {
     out: true
   }])
   const [stickied,setStickied] = createSignal(false)
-
+  const { openAccount } = useUser()
   const { connected, address, connecting, showConnector } = useWallet()
 
   onMount(()=>{
@@ -74,6 +76,7 @@ export default props => {
         "bg-base-100/100 shadow-gray-1000/5 shadow-xs" : stickied()
       }}
     >
+      
       <div className=" flex-none">
         <A className="btn btn-ghost rounded-full" href="/"><Logo type="full" className=" scale-110"/></A>
         
@@ -135,13 +138,22 @@ export default props => {
           }>
             <div class="tooltip tooltip-left">
               <div class="tooltip-content text-left w-[20em] break-words">{address()}</div>
-              <a 
-                href="/me" 
+              <btn 
+                onClick = {openAccount}
                 class="btn btn-circle btn-ghost"
               >
                 <Avatar username={address()} class="size-6"></Avatar>
-              </a>
+              </btn>
             </div>
+            {/* <div class=" ">
+              
+              <div class="drawer-content">
+                <label for="drawer-account" class="drawer-button btn btn-circle btn-ghost">
+                <Avatar username={address()} class="size-6"></Avatar>
+                </label>
+              </div>
+              
+            </div> */}
           </Show>
           
         </div>

@@ -1,0 +1,1 @@
+export { storeResource } from "./storeResource"

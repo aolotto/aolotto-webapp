@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
-  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass,skeleton,hero;
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass,skeleton,hero, drawer,rootscrollgutter,divider;
 }
 
 @theme {
@@ -118,7 +118,7 @@ iconify-icon {
   display: inline-flex;
   width: 1em;
   height: 1em;
-  font-size: 1em;
+  font-size: 1.2em;
   justify-items: center;
   align-items: center;
 }
@@ -163,6 +163,18 @@ input[type='number'] {
     padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS 旧版本 */
     padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS 现代浏览器 */
   }
+  .mask-right {
+    -webkit-mask-image: linear-gradient(to right,transparent 0%, black 2%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%,black 2%, black 90%,black 90%, transparent 100%);
+  }
+  .hide-scorllbar{
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+  } 
 }
 @layer components{
   .panel {
@@ -190,47 +202,6 @@ input[type='number'] {
     @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
   }
 
-  .rsps_table{
-    @apply w-full border-collapse overflow-auto table-auto;
-    caption{
-      @apply table-caption;
-    }
-    thead{
-      @apply hidden md:table-header-group text-current/50 text-left w-full h-0;
-    }
-    tr{
-      clip-path: xywh(0 0 100% 100% round 0.5em);
-      @apply rounded-md flex flex-col gap-1 md:table-row border-b-1 border-base-200 last:border-b-0 p-2 md:p-0;
-      &:hover{
-        @apply bg-base-200;
-      }
-    }
-    td{
-      @apply flex md:table-cell justify-start items-center;
-      &::before{
-        @apply text-base-content/50 block md:hidden mr-2;
-        content: attr(data-label);
-      }
-    }
-  }
-
-  .responsive-table{
-    @apply w-full border-collapse;
-    thead{
-      @apply text-current/50 uppercase text-left w-full h-0 hidden md:table-header-group;
-    }
-    tr{
-      &:hover{
-        @apply bg-base-200;
-      }
-    }
-    th,td{
-      @apply p-2
-    }
-    td::before{
-        @apply text-base-content/50 inline-flex md:hidden;
-        content: attr(data-label);
-      }
-  }
   
+
 }
