@@ -228,7 +228,8 @@ export default props => {
                 <span>
                   <span class="text-current/50">{t("picked")}:</span> {picked()} 
                   <button class="btn btn-ghost btn-xs rounded-full btn-icon" onClick={()=>setPicked(generateRandomNumber(3))}>
-                    <Icon icon="iconoir:shuffle"></Icon></button>
+                    <Icon icon="iconoir:shuffle"></Icon>
+                  </button>
                 </span>
               </Show>
 

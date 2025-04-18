@@ -304,7 +304,8 @@ export default props => {
                       {draw_locker()?"Fixed":"Est."}
                       </span>
                     
-                  </span></Show> 
+                  </span>
+                  </Show> 
               </span>
             </InfoItem>
           </div>

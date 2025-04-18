@@ -58,7 +58,7 @@ export async function fetchStaker({staker,pid},{value,refetching}){
       })
       console.log(Messages)
       if (Messages && Messages?.[0]){
-        storage.set(key,JSON.parse(Messages?.[0]?.Data),{type:"sessionStorage",ttl : 120000})
+        storage.set(key,JSON.parse(Messages?.[0]?.Data),{type:"sessionStorage",ttl : 6000})
         result = JSON.parse(Messages?.[0]?.Data)
       }else{
         result = null

@@ -26,7 +26,10 @@ export const Modal = props =>{
 
   onMount(()=>{
     props?.ref({
-      open:handleOpen,
+      open:()=>{
+        console.log("打开")
+        handleOpen()
+      },
       close:handleClose,
     })
   })
