@@ -65,7 +65,6 @@ export default props => {
       },
     })
   })
-  createEffect(() => console.log(props?.staker))
   const receive = createMemo(()=>{
     if(!props?.staker?.start_time){
       return {
@@ -126,7 +125,7 @@ export default props => {
               </div>
               <button
                 className="btn btn-error"
-                disabled={()=>receive()?.amount<=0}
+                disabled={receive()?.amount<=0}
                 onClick={()=>{
                   setMode("confirm")
                 }}
