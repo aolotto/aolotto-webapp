@@ -9,8 +9,7 @@ import { useApp,useUser } from "../contexts";
 import { shortStr, toBalanceValue } from "../lib/tools";
 import Spinner from "./spinner";
 import Mintlevel from "./mintlevel";
-import { postBet } from "../api";
-import { AO } from "../api";
+import { postBet,AO } from "../api";
 import DepositUSD from "./depositUSD";
 
 
@@ -39,7 +38,9 @@ export default props => {
     "in_balance" : "in balance",
     "bet_sucess" : (v)=> <span>Bet <span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span> to round {v.val.round} <Show when={v.mint}> and minted: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
     "np.tap_tip" : "Double-tap to randomize.",
-    "np.press_r" :  <span>Press <span className="kbd kbd-sm">R</span> to randomize</span>
+    "np.press_r" :  <span>Press <span className="kbd kbd-sm">R</span> to randomize</span>,
+    "np.bet2mint" : "Check Bet2Mint reward after selection",
+    "np.b2m_tip" : (v)=>v.buff&&v.buff>0?`The Bet2Mint reward for this bet is Level ${v.level}, with an amount of ${v.amount} $ALT. An additional ${v.buff} $ALT is added from the release of ALTb in your account. ALTb is a minting buff designed for new users.`:`The Bet2Mint reward for this bet is Level ${v.level}, with an amount of ${v.amount} $ALT.`
   })
   setDictionarys("zh",{
     "np.title" : (v)=> "投注到第"+v+"轮",
@@ -63,16 +64,19 @@ export default props => {
     "bet_sucess" : (v)=><span>成功投注<span class="inline-flex bg-current/10 rounded-full px-2 py-1">{v.val.x_numbers}*{v.val.count}</span>到第{v.val.round}轮 <Show when={v.mint}> 并铸币: {toBalanceValue(v.mint.total,v.mint.denomination,12)} ${v.mint.ticker}</Show></span>,
     "np.querying" : "查询投注结果...",
     "np.tap_tip" : "雙擊隨機選號",
-    "np.press_r" :  <span>按鍵 <span className="kbd kbd-sm">R</span> 隨機選號</span>
+    "np.press_r" :  <span>按鍵 <span className="kbd kbd-sm">R</span> 隨機選號</span>,
+     "np.bet2mint" : "选择号码后显示Bet2Mint奖励数量",
+     "np.b2m_tip" : (v)=>v.buff&&v.buff>0?`这笔投注的 Bet2Mint 奖励等级为 Level-${v.level}, 奖励金额为 ${v.amount} $ALT. 同步从账户中解锁 ${v.buff} ALTB为$ALT. ALTb 是面向新用户的铸币buff`:`这笔投注的 Bet2Mint 奖励等级为 Level- ${v.level}, 奖励金额为 ${v.amount} $ALT.`
   })
   const [{pool},others] = splitProps(props,["pool"])
   const { address,walletConnectionCheck,wallet } = useWallet()
   const { poolProcess,info,notify } = useApp()
-  const { usdcBalance, refetchUsdcBalance } = useUser()
+  const { usdcBalance, refetchUsdcBalance, player } = useUser()
   const [opened,setOpened] = createSignal(false)
   const [picked, setPicked] = createSignal([])
   const [quantity, setQuantity] = createSignal()
   const [submiting,setSubmiting] = createSignal(false)
+  const [signing,setSigning] = createSignal(false)
   const generateRandomNumber = (digits) => {
     const randomNumbers = [];
     for (let i = 0; i < digits; i++) {
@@ -150,6 +154,7 @@ export default props => {
   
   const handleSubmitTicket = () => {
     setSubmiting(true)
+    setSigning(true)
     postBet({
       token_id : info.pay_process,
       agent_id : info.agent_process,
@@ -159,6 +164,7 @@ export default props => {
       wallet : wallet()
     })
     .then(async(msgid)=>{
+      setSigning(false)
       await refetchUsdcBalance()
       const { Messages } = await new AO().dryrun(info.pool_process,{
         Action : "Query",
@@ -178,9 +184,10 @@ export default props => {
       setOpened(false)
     })
     .catch((err)=>{
-      notify("bet error")
+      notify(err.message,"error")
     })
     .finally(()=>{
+      setSigning(true)
       setSubmiting(false)
     })
   }
@@ -188,10 +195,16 @@ export default props => {
   return(
     <Dialog ref={_number_picker} id={props?.id} className="w-[480px] h-[600px]" fullscreen responsive title={<span>{t("np.title",pool()?.round)}</span>}>
       <Show when={submiting()}>
-        <div className="w-full h-full absolute inset-0 z-1010 bg-base-100/50 backdrop-blur-xl flex items-center justify-center">
+        <div 
+          className="w-full h-full absolute inset-0 z-1010  flex items-center justify-center"
+          classList={{
+            "bg-base-100/50 backdrop-blur-md" : signing(),
+            "bg-base-100/20 backdrop-blur-sm" : !signing()
+          }}
+        >
           <Spinner className="flex-col justify-center items-center w-full">
             <div className="w-full flex justify-center">
-              <p className="text-center w-2/3">Confirm the transaction in the popup window.</p>
+              <p className="text-center w-2/3">{signing()?"Confirm the transaction in the popup window.":"Placing your bet"}</p>
             </div>
           </Spinner>
         </div>
@@ -252,10 +265,18 @@ export default props => {
           </div>
           {/* mint */}
           <div className="py-6 px-2 border-t border-current/20 w-full">
-            <div className="text-center text-sm md:text-md">
-              <Show when={!pool.loading} fallback={<span className=" skeleton w-[10em] h-[1em]"></span>}>
+            <div className="text-center text-sm md:text-md flex justify-center items-center gap-2">
+              <Show when={!pool.loading && minting()?.level} fallback={<span className="text-current/50 text-sm">{t("np.bet2mint")}</span>}>
                 <Mintlevel level={minting()?.level}/>
-              <span className="text-current/50"> Bet ${quantity()} to mint <span className="text-base-content">{toBalanceValue(minting()?.amount,12)}</span> $ALT</span>
+                <p className=" inline-flex items-center gap-2">
+                  <span className="text-current/50">→</span>
+                  <span className="text-base-content">{toBalanceValue(minting()?.amount,12)}</span>
+                  <Show when={player.state == "ready" && player()?.faucet?.[0]>0}>
+                    <span> + {toBalanceValue(Math.min(minting()?.amount,(player()?.faucet?.[0]||0)),12)}</span>
+                  </Show>
+                  <span className="text-current/50">$ALT</span>
+                </p>
+                {/* <span className="text-current/50"> → <span className="text-base-content">{toBalanceValue(minting()?.amount,12)}</span> + 20 $ALT</span> */}
               <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button" className="btn btn-circle btn-ghost btn-xs">
                   <svg
@@ -275,8 +296,7 @@ export default props => {
                   tabIndex={0}
                   className="card card-sm dropdown-content bg-base-100 rounded-box z-1 w-64 shadow-sm">
                   <div tabIndex={0} className="card-body">
-                    <h2 className="card-title">You needed more info?</h2>
-                    <p>Here is a description!</p>
+                    <p>{t("np.b2m_tip",{level:minting()?.level, amount: toBalanceValue(minting()?.amount,12),buff: toBalanceValue(Math.min(minting()?.amount,(player()?.faucet?.[0]||0)),12)})}</p>
                   </div>
                 </div>
               </div>

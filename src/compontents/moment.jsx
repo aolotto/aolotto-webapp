@@ -23,20 +23,16 @@ function convertTimeToHumanReadable(dateTime) {
 	let weekC = timestamp_diff / week;
 	let monthC = timestamp_diff / month;
  
-	if (monthC >= 1 && monthC < 4) {
-		return parseInt(monthC) + (monthC==1?" month":" months") + " ago";
-	} else if (weekC >= 1 && weekC < 4) {
-		return parseInt(weekC) + (weekC==1?" week":" weeks") + " ago";
-	} else if (dayC >= 1 && dayC < 7) {
-		return parseInt(dayC) + (dayC==1?" day":" days") + " ago";
+	if (dayC >= 1 && dayC < 7) {
+		return parseInt(dayC) + (dayC==1?"d":"d") + " ago";
 	} else if (hourC >= 1 && hourC < 24) {
-		return parseInt(hourC) + (hourC==1?" hour":" hours") + " ago";
+		return parseInt(hourC) + (hourC==1?"h":"h") + " ago";
 	} else if (minC >= 1 && minC < 60) {
-		return parseInt(minC) + (minC==1?" minute":" minutes") + " ago";
+		return parseInt(minC) + (minC==1?"m":"m") + " ago";
 	} else if ((timestamp_diff >= 0) && (timestamp_diff <= minute)) {
 		return "Just now";
 	} else {
-		return new Date(timestamp_input).toLocaleString()
+		return new Date(timestamp_input).toLocaleDateString()
 	}
 }
  
@@ -46,7 +42,7 @@ export const Moment = props => {
   const date = createMemo(()=>{
     return convertTimeToHumanReadable(ts)
   })
-  return <div className="lg:tooltip" data-tip={new Date(ts).toLocaleString()}><button>{date}</button></div>
+  return <div class={mergeClasses("lg:tooltip",props?.class || props?.className)} data-tip={new Date(ts).toLocaleString()}><button>{date}</button></div>
 }
 
 export const Datetime = props => {
@@ -58,5 +54,5 @@ export const Datetime = props => {
 	}else if(props?.display == "time"){
 		display = new Date(ts).toLocaleTimeString()
 	}
-	return <span className="lg:tooltip" class={mergeClasses("",props?.class || props?.className)} data-tip={full}>{display}</span>
+	return <span class={mergeClasses("lg:tooltip",props?.class || props?.className)} data-tip={full}>{display}</span>
 }

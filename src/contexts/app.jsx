@@ -1,10 +1,14 @@
-import { createContext, useContext, Suspense, createResource, createEffect} from "solid-js";
+import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match} from "solid-js";
 import { useWallet } from "arwallet-solid-kit";
 import { fetchStats,fetchProcessInfo } from "../api";
 import toast from "solid-toast";
+import intervalWorker from "../lib/interval_worker"
+import swap from "daisyui/components/swap";
+
 const AppContext = createContext()
 
 export const AppProvider = (props) => {
+  let timer = new Worker(intervalWorker);
   const {address, connected} = useWallet()
   
   const info = {
@@ -15,7 +19,9 @@ export const AppProvider = (props) => {
     faucet_process : import.meta.env.VITE_FAUCET_PROCESS,
     fundation_process : import.meta.env.VITE_FUNDATION_PROCESS,
     buyback_process :import.meta.env.VITE_BUYBACK_PROCESS,
-    stake_process : import.meta.env.VITE_STAKE_PROCESS
+    stake_process : import.meta.env.VITE_STAKE_PROCESS,
+    swap_process : import.meta.env.VITE_ALT_WUSDC_PROCESS,
+    ao_link_url : import.meta.env.VITE_AO_LINK_URL || "https://ao.link",
   }
   const [agentProcess,{refetch:refetchAgentProcess}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchProcessInfo)
   const [payProcess,{refetch:refetchPayProcess}] = createResource(()=>info?.pay_process || import.meta.env.VITE_PAY_PROCESS,fetchProcessInfo)
@@ -23,6 +29,7 @@ export const AppProvider = (props) => {
   const [poolProcess,{refetch:refetchPoolProcess}] = createResource(()=>info?.pool_process || import.meta.env.VITE_POOL_PROCESS,fetchProcessInfo)
   const [agentStats,{refetch:refetchAgentStats}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchStats)
   const hooks = {
+    timer,
     address,
     connected,
     info,
@@ -37,15 +44,24 @@ export const AppProvider = (props) => {
     refetchPoolProcess,
     refetchAgentStats,
     notify : (value,type) => {
-      return toast.custom((t)=>(
-        <div role="alert" className="alert alert-info w-full md:w-fit">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="h-6 w-6 shrink-0 stroke-current">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <span>{value}</span>
-        </div>
-      ),{
-        duration: 6000, 
+      const genAlertBox = (type) => {
+        switch(type){
+          case "error":
+            return <div role="alert" className={`alert alert-error w-fit max-w-[360px] shadow-sm`}><div>{value}</div></div>
+          case "success":
+            return <div role="alert" className={`alert alert-success w-fit max-w-[360px] shadow-sm`}><div>{value}</div></div>
+          default:
+            return <div role="alert" className={`alert alert-info w-fit max-w-[360px] shadow-sm`}><div>{value}</div></div>
+        }
+      }
+      return toast.custom((t)=>{
+        return(
+          <div className={`${t.visible ? 'animate-scale-in' : 'animate-scale-out'}`}>
+            {genAlertBox(type)}
+          </div>
+        )
+      },{
+        duration: 6000
       })
     }
   }

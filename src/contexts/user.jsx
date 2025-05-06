@@ -1,18 +1,19 @@
 import { createContext, useContext, Suspense, createResource, createEffect,createRoot, onMount,createMemo } from "solid-js";
 import { useWallet } from "arwallet-solid-kit";
 import { useApp } from "./index";
-import { fetchBalance } from "../api";
-import Account from "../compontents/account";
+import { fetchBalance,fetchAccount } from "../api";
+import Account from "../compontents/account/index";
 const UserContext = createContext()
 
 export const UserProvider = (props) => {
   let _account
   const {address, connected} = useWallet()
   const {info,agentProcess,payProcess,stakeProcess} = useApp()
-  const [player,{refetch:refetchPlayer}] = createResource(()=>({pid:info?.agent_process,address:address()}),({address})=>{address})
+  const [player,{refetch:refetchPlayer}] = createResource(()=>({id:info?.agent_process,player:address()}),fetchAccount)
   const [usdcBalance,{refetch:refetchUsdcBalance}] = createResource(()=>({pid:info?.pay_process,address:address()}),fetchBalance)
   const [altBalance,{refetch:refetchAltBalance}] = createResource(()=>({pid:info?.agent_process,address:address()}),fetchBalance)
   const [veAltBalance,{refetch:refetchVeAltBalance}] = createResource(()=>({pid:info?.stake_process,address:address()}),fetchBalance)
+  
 
   const balances = createMemo(()=>([{
       Ticker : payProcess()?.Ticker || "wUSDC",
@@ -50,7 +51,9 @@ export const UserProvider = (props) => {
   return(
     <UserContext.Provider value={hooks}>
       {props.children}
-      <Account ref={_account}/>
+      <Show when={connected()}>
+        <Account ref={_account}/>
+      </Show>
     </UserContext.Provider>
   )
 }

@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js"
+import { ErrorBoundary, For, Show } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { useApp,useUser } from "../../contexts"
 import { toBalanceValue } from "../../lib/tools"
@@ -39,6 +39,7 @@ export default props => {
               </div>
               <div className="flex justify-end gap-1 items-center">
                 <div>
+                <ErrorBoundary fallback={"error"}>
                   <Show when={!item.resource.loading} fallback={<span className="skeleton w-[4em] h-[1em] inline-block"></span>}>
                     <span classList={{
                       "text-current" : item.resource() > 0,
@@ -47,15 +48,12 @@ export default props => {
                       {toBalanceValue(item.resource()||0,item.Denomination,item.Denomination)}
                     </span>
                   </Show>
+                  </ErrorBoundary>
                 </div>
-                <div className="dropdown dropdown-end">
-                  <div tabIndex={0} role="button" className="btn btn-sm btn-ghost btn-circle"><Icon icon="ri:more-2-fill" /></div>
-                  <ul tabIndex={0} className="dropdown-content menu panel z-1 w-36 rounded-xl">
-                    <li><button role="button" onClick={item.refetch} disabled={item.resource.loading}>Refresh</button></li>
-                    <li><a>Deposit</a></li>
-                    <li><a>Buy/Sell</a></li>
-                  </ul>
-                </div>
+
+                <button role="button" onClick={item.refetch} disabled={item.resource.loading} className="btn btn-circle btn-ghost btn-sm">
+                <Icon icon="material-symbols-light:refresh-rounded" />
+                </button>
               </div>
            </li>
           )

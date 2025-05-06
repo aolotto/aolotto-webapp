@@ -15,6 +15,14 @@ export const formatMessageTags = (tags) =>{
   }
 }
 
+export const tagsArrayToObject = (arr) =>{
+  let tags = {}
+  arr.map((item)=>{
+    tags[item.name] = item.value
+  })
+  return tags
+}
+
 /**
  * 
  * @param {array} keys 
@@ -64,7 +72,26 @@ export class AO {
     })
   };
 
-  
+  read = async function(pid,msgid) {
+    return await this.aoconnect.result({
+      process: pid,
+      message: msgid 
+    })
+  }
+
+  checkMessage = async function([pid,msg],fn) {
+    if(typeof(fn)!=="function") return [false,null]
+    if(!pid) return [false,null]
+    if(!msg) return [false,null]
+    const res = await this.aoconnect.result({
+      process: pid,
+      message: msg
+    })
+    if(res.Error) return [false,null]
+    const checked = await fn(res)
+    console.log(checked)
+    return [checked,res]
+  }
 
   /**
    * Executes a dry run for a specific process with optional tags, data, and anchor.
@@ -78,7 +105,7 @@ export class AO {
    * @returns {Promise<any>} A promise that resolves with the result of the dry run.
    */
   dryrun = function(pid,tags,data,anchor) {
-    if (!pid) {return}
+    if (!pid) return
     const lastPromise = processQueue.get(pid) || Promise.resolve();
     const fetchPromise = lastPromise.then(async () => this.aoconnect.dryrun({
       process: pid,

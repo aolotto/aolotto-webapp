@@ -1,4 +1,4 @@
-import { Suspense, ErrorBoundary, createResource,Show, Switch, Match, createSignal, onMount, onCleanup,createMemo, createEffect} from "solid-js"
+import { Suspense, ErrorBoundary, createResource,Show, Switch, Match, createSignal, onMount, onCleanup,createMemo, useTransition} from "solid-js"
 import { useApp } from "../../contexts"
 import { Icon } from "@iconify-icon/solid"
 import Spinner from "../../compontents/spinner"
@@ -9,20 +9,22 @@ import { Datetime } from "../../compontents/moment"
 import { InfoItem } from "../../compontents/infoitem"
 import Numpicker from "../../compontents/numpicker"
 import { useWallet } from "arwallet-solid-kit"
-import BetDetail from "../../compontents/betdetail"
 import Mint from "./mint"
 import Tickets from "./tickets"
 import { fetchState } from "../../api"
 import Errorbox from "../../compontents/errorbox"
 import { storeResource } from "../../store"
 import Countdown from "../../compontents/countdown"
-
+import Skeleton from "../../compontents/skeleton"
 
 export default props => {
   let _numpicker
   let _kbd_p_event
   let _tickets
-  const { info,notify } = useApp()
+  let last_update
+  const { info,notify,timer } = useApp()
+  const {walletConnectionCheck} = useWallet()
+  const [isTransition,start] = useTransition()
   setDictionarys("en",{
     "s.start" : "Started at ",
     "b.jackpot" : "Progressive Jackpot",
@@ -40,6 +42,7 @@ export default props => {
     "b.draw_time_est" : (v)=> <span>When the wager volume is less than the target of ${v.target}, the draw time is only estimated,as it will be extended if new bets are placed</span>,
     "b.draw_time_fixed" : (v)=> <span>The wager volume has reached the target of ${v.target}, the draw time is fixed.</span>,
     "tooltop.draw_locker" : (v)=> `The draw time has been locked to ${v.time}`,
+    "b.placed_successfully" : "Bet Placed Successfully!"
   })
   setDictionarys("zh",{
     "s.start" : "開始於 ",
@@ -58,11 +61,11 @@ export default props => {
     "b.draw_time_est" : (v)=> <span>当投注量低于目标${v.target}时，开奖时间仅为预估, 因为一旦有新的投注追加时间将被延长</span>,
     "b.draw_time_fixed" : (v)=> <span>投注量已达到目标${v.target}，开奖时间已固定。</span>,
     "tooltop.draw_locker" : (v)=> `开奖时间已锁定至${v.time}`,
+    "b.placed_successfully" : "投注成功!"
   })
   
 
-  // const [pool,{refetch:refetchPool}] = createResource(()=>id(),fetchState)
-  const [pool,{refetch:refetchPool}]  = storeResource("pool_state",()=>createResource(()=>info?.pool_process,fetchState))
+  const [pool,{refetch:refetchPool,mutate:mutatePool}]  = storeResource("pool_state",()=>createResource(()=>info?.pool_process,fetchState))
   const draw_locker = createMemo(()=>{
     if(pool.state === "ready"){
       return pool()?.bet?.[1] >= pool()?.wager_limit
@@ -74,23 +77,58 @@ export default props => {
     url: "https://aolotto.com",
   })
   const [share, close] = createSocialShare(() => shareData());
-  const {walletConnectionCheck} = useWallet()
+  const [switching,setSwitching] = createSignal(false)
+  const [update,setUpdate] = createSignal(0)
+  
+
+  const handleUpdate = (evt) => {
+    if(pool.state == "ready"&&pool()?.ts_latest_draw>0&&window.Worker){
+      const diff = pool().ts_latest_draw - evt.data
+      if(diff<=0&&!switching()){
+        console.log("Switching Round")
+        setSwitching(true)
+        _numpicker.close()
+      }
+      if(!last_update){
+        last_update = evt.data
+      }
+      if(evt.data-last_update>=1000 * 60 * 1){
+        last_update = evt.data
+        fetchState(info?.pool_process,{refetching:true})
+        .then(res=>{
+          console.log(res)
+          if(pool()?.round == res?.round){
+            const diff_tickets = res?.bet?.[2] - pool()?.bet?.[2]
+            console.log('diff_tickets: ', diff_tickets);
+            if(diff_tickets>0){
+              // mutatePool(res)
+              setUpdate(diff_tickets)
+            }else{
+              setUpdate(null)
+            }
+          }
+        })
+      }
+    }
+  }
+
   onMount(()=>{
     _kbd_p_event = document.addEventListener("keydown", (e)=>{
       if(e.key==="p"&&pool.state==="ready"&&pool()?.run==1&&pool()?.ts_round_start>0){
         _numpicker.open()
       }
     });
-    createEffect(()=>console.log("pool=>",pool()))
+    timer.addEventListener("message",handleUpdate)
   })
   onCleanup(()=>{
     document.removeEventListener("keydown",_kbd_p_event)
+    timer.removeEventListener("message",handleUpdate)
   })
 
   
 
   return(
-  <ErrorBoundary fallback={<div className="container"><Errorbox value="Network Error"/></div>}>
+  <ErrorBoundary fallback={(err,reset)=><div className="container"><Errorbox value={err}/></div>}>
     <>
     <div className="container">
       {/* round state */}
@@ -98,7 +136,7 @@ export default props => {
         <div className=" col-span-full lg:col-span-7">
           {/* round info top */}
           <div class="h-16 flex items-center gap-4 w-full md:w-fit justify-between md:justify-normal overflow-visible">
-            <Show when={!pool.loading} fallback={<Spinner size="sm"/>}>
+            <Show when={pool.state == "ready"} fallback={<span className="inline-block text-xl h-10 w-14 md:h-12 md:w-16 rounded-full skeleton"/>}>
               <span 
                 class="border-2 text-xl h-10 w-14 md:h-12 md:w-16 rounded-full inline-flex items-center justify-center tooltip"
                 data-tip={"Round "+pool()?.round}
@@ -108,7 +146,7 @@ export default props => {
             </Show>
             <span 
               class="text-current/50 uppercase text-sm">
-                <Show when={!pool.loading} fallback={<div className=" skeleton w-[12em] h-[1em]"></div>}>
+                <Show when={!pool.loading} fallback={<Skeleton w="10" h="1"/>}>
                   <Switch>
                     <Match when={pool()?.ts_round_start<=0}>NOT STARTED</Match>
                     <Match  when={pool()?.ts_round_start>0}>{t("s.start")} <Datetime ts={pool()?.ts_round_start} display={"date"}/></Match>
@@ -118,6 +156,7 @@ export default props => {
       
             <button 
               className="btn btn-icon btn-ghost rounded-full btn-circle"
+              disabled={pool.loading}
               onClick={()=>{
                 setShareData({
                   title: `🏆$1 to win $${toBalanceValue(pool()?.jackpot,6,0)}! The last bettor gets at least a 50% better odds of WINNING on #Aolotto , ROUND-${pool()?.round} is about to draw! 👉`,
@@ -134,7 +173,7 @@ export default props => {
           <div className="flex flex-col md:hidden gap-4">
             <div className="w-full flex flex-col items-center justify-center gap-2">
               <div className="text-3xl">
-                <Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1.2em]"></div>}>${toBalanceValue(pool()?.jackpot,6)}</Show>
+                <Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1.2em]"></div>}>${toBalanceValue(pool()?.jackpot,6,4)}</Show>
               </div>
               <div className="text-sm text-current/50">{t("b.jackpot")}</div>
             </div>
@@ -152,7 +191,7 @@ export default props => {
           {/* round info items for desktop */}
 
           <div className=" flex-col hidden md:col-span-6 lg:col-span-7 md:flex mt-4">
-            <InfoItem label={()=>t("b.jackpot")} ><div className="text-3xl mb-4"><Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1.2em]"></div>}>${toBalanceValue(pool()?.jackpot,6)}</Show></div></InfoItem>
+            <InfoItem label={()=>t("b.jackpot")} ><div className="text-3xl mb-4"><Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1.2em]"></div>}>${toBalanceValue(pool()?.jackpot,6,4)}</Show></div></InfoItem>
             <InfoItem label={()=>t("b.balance")} ><Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1em]"></div>}>${toBalanceValue(pool()?.balance,6)}</Show></InfoItem>
               <InfoItem label={()=>t("b.wager")}  ><Show when={!pool.loading} fallback={<div className="skeleton w-[6em] h-[1em]"></div>}>${toBalanceValue(pool()?.bet?.[1],6)}</Show></InfoItem>
               <InfoItem label={()=>t("b.players")} ><Show when={!pool.loading} fallback={<div className="skeleton w-[3em] h-[1em]"></div>}>{pool()?.players}</Show></InfoItem>
@@ -243,7 +282,10 @@ export default props => {
         </div>
       </section>
       <Mint pool={pool}/>
-      <Tickets pool={pool} ref={_tickets}/>
+      <Tickets pool={pool} ref={_tickets} update={update} onClickUpdate={()=>{
+        setUpdate(null)
+        refetchPool()
+      }}/>
       
     </div>
     <Show when={!pool.loading}>
@@ -254,7 +296,7 @@ export default props => {
         onSubmitted={(data)=>{
           refetchPool()
           _tickets.refetch()
-          notify("Bet placed successfully.")
+          notify(t("b.placed_successfully"),"success")
         }}
       />
     </Show>

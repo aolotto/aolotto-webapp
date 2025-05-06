@@ -1,4 +1,3 @@
-import { createRoot, createResource } from "solid-js";
 import { createStore } from "solid-js/store";
 
 // 全局资源存储

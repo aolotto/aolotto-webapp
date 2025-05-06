@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
@@ -7,6 +8,10 @@
 @theme {
   --font-mono: "Noto Sans Mono",ui-monospace,monospace;
   --animate-wiggle: wiggle 1s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.2s ease-out forwards;
+  --animate-scale-in: scale-in 0.2s ease-out forwards;
+  --animate-fade-out: fade-out 0.2s ease-in forwards;
+  --animate-scale-out: scale-out 0.2s ease-in forwards;
   @keyframes wiggle {
     10% { 
       transform: rotate(1.5deg); 
@@ -28,6 +33,34 @@
     0% { opacity: 1; } 
     50% { opacity: 0.5;} 
     100% { opacity: 1;} 
+  }
+  @keyframes scale-in {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+  }
+  @keyframes scale-out {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+      0% {
+          opacity: 1;
+      }
+      100% {
+          opacity: 0;
+      }
   }
 }
 
@@ -65,6 +98,7 @@
   --border: 1px;
   --depth: 1;
   --noise: 0;
+  --radius-box : 1em;
 }
 
 
@@ -101,6 +135,7 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+  --radius-box : 1em;
 }
 
 
@@ -157,6 +192,38 @@ input[type='number'] {
       @apply flex-1;
     }
   }
+
+  .popup-animate{
+    transition-timing-function:ease-in-out;
+    transition: all .2s allow-discrete;
+    transform: translateY(100%);
+    opacity: 0;
+
+    &::backdrop{
+      transition-timing-function: ease;
+      transition: all .2s allow-discrete;
+      opacity: 0;
+    }
+
+    &[open]{
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    &[open]::backdrop{
+      opacity: 1;
+    }
+    @starting-style{
+      &[open]{
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      &[open]::backdrop{
+        opacity: 0;
+      }
+    }
+  }
+  
+
 }
 @layer utilities {
   .pb-safe {
@@ -196,8 +263,11 @@ input[type='number'] {
         @apply bg-base-content/10;
       }
     }
+   
+ 
+
   }
-  
+
   .number{
     @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
   }

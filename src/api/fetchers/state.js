@@ -28,12 +28,10 @@ export const fetchState = (pid, { refetching, value }) => {
       .then(({ Messages }) => {
         if (Messages?.[0]?.Data) {
           return JSON.parse(Messages?.[0]?.Data)
-        } else {
-          return null
         }
-      });
+      })
+      .catch((error)=>{throw new Error(error)} );
   } catch (error) {
-    console.error(error)
-    throw error;
+    throw new Error(error)
   }
 }

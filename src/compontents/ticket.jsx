@@ -1,6 +1,6 @@
 export const Ticket = props => {
   return(
-  <a href={"https://www.ao.link/#/message/"+props?.id} target="_blank" className="flex justify-center items-center w-full hover:scale-105 transition-all duration-200">
+  <a href={"https://www.ao.link/#/message/"+props?.id+"?tab=linked"} target="_blank" className="flex justify-center items-center w-full hover:scale-105 transition-all duration-200">
     <svg fill="none" className="max-w-120 w-[90%]" viewBox="0 0 1167 687" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#c)">
     <path d="m81 136c31.48 0 57-25.296 57-56.5 0-6.8535-1.231-13.422-3.486-19.5h895.98c-2.26 6.0781-3.49 12.646-3.49 19.5 0 31.204 25.52 56.5 57 56.5 7.04 0 13.78-1.264 20-3.576v417.15c-6.22-2.312-12.96-3.576-20-3.576-31.48 0-57 25.296-57 56.5 0 7.231 1.37 14.145 3.87 20.5h-896.74c2.498-6.355 3.868-13.269 3.868-20.5 0-31.204-25.52-56.5-57-56.5-7.0374 0-13.777 1.264-20 3.576v-417.15c6.2231 2.312 12.963 3.576 20 3.576z" clip-rule="evenodd" fill="url(#b)" fill-rule="evenodd" className="stroke-current"/>

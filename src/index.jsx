@@ -20,6 +20,8 @@ import Bets from './pages/bets'
 import Me from './pages/me'
 import Ranks from "./pages/ranks"
 import Divs from "./pages/divs"
+import Draws from './pages/draws';
+import ALT from './pages/alt';
 
 
 
@@ -63,6 +65,8 @@ render(() => (
       <Route path="/me/*" component={Me} />
       <Route path="/rank/*" component={Ranks} />
       <Route path="/divs/*" component={Divs} />
+      <Route path="/draws/*" component={Draws} />
+      <Route path="/alt/*" component={ALT} />
     </HashRouter>
   </WalletProvider>
 ),  document.getElementById('root'))

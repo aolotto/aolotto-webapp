@@ -7,6 +7,7 @@ import { useWallet } from "arwallet-solid-kit";
 import Avatar from "./avatar";
 import Spinner from "./spinner"
 import { useApp,useUser } from "../contexts";
+import { Portal } from "solid-js/web";
 export default props => {
   let _header
   
@@ -71,9 +72,9 @@ export default props => {
   return (
     <header
       ref={_header}
-      className="navbar bg-base-100 w-full h-16 sticky z-1 top-0 py-0 px-1 lg:px-4 gap-4"
+      className="navbar w-full h-16 sticky z-1 top-0 py-0 px-1 lg:px-4 gap-4 "
       classList = {{
-        "bg-base-100/100 shadow-gray-1000/5 shadow-xs" : stickied()
+        "bg-base-100 backdrop-blur-2xl shadow-gray-1000/5  shadow-xs" : stickied()
       }}
     >
       
@@ -181,6 +182,7 @@ export default props => {
         </div>
       </div>
       <Show when={stickied()}>
+        <Portal>
         <div className=" fixed bottom-2 right-2 md:hidden">
           <button className="btn btn-circle" onClick={()=>{
             window.scrollTo({
@@ -192,6 +194,7 @@ export default props => {
           <Icon icon="lsicon:top-outline" />
           </button>
         </div>
+        </Portal>
       </Show>
     </header>
   );

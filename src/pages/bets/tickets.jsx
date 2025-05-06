@@ -1,5 +1,5 @@
 import { createStore } from "solid-js/store"
-import { For,createRoot,Suspense, onMount,useTransition, createEffect } from "solid-js"
+import { For,createRoot,Suspense, onMount,useTransition, createEffect, splitProps, createMemo, Switch, Match, ErrorBoundary } from "solid-js"
 import Avatar from "../../compontents/avatar"
 import { Icon } from "@iconify-icon/solid"
 import { Table,Caption,Head,Cols,Col,Body,Row,Cell,Actions } from "../../compontents/table"
@@ -13,8 +13,10 @@ import Spinner from "../../compontents/spinner"
 import { storeResource } from "../../store"
 import { t,setDictionarys } from "../../i18n"
 import Ticket from "../../compontents/betdetail"
+import Pie from "../../compontents/pie"
 export default props => {
   let _ticket
+  let _pie
   setDictionarys("en",{
     "t.win_rate" : "The last bettor has a higher chance to win since they get 100% of the jackpot if no bets match.",
     "t.no_bets" : "No bets yet, earlier bets mint more.",
@@ -24,7 +26,8 @@ export default props => {
     "tooltip.first_gap_reward": (v)=><span>The {v.count>1?"next":"first"} Gap-Reward is expected to be received at {v.time} if no new bets are added in time. After the time, refresh the list to check!</span>,
     "th.player" : "Player",
     "th.number" : "Number",
-    "th.date" : "Date"
+    "th.date" : "Date",
+    "i.new_tickets" : (v) => <span>{v} new tickets</span>
   })
   setDictionarys("zh",{
     "t.win_rate" : "最後下注的赢率更大，开奖若无中奖投注的情况下，奖金100%由最后下注者一人所得。",
@@ -35,12 +38,33 @@ export default props => {
     "details" : "详情",
     "th.player" : "玩家",
     "th.number" : "号码",
-    "th.date" : "日期"
+    "th.date" : "日期",
+    "i.new_tickets" : (v) => <span>{v}笔新投注</span>
   })
   const [isPending, start] = useTransition();
-  const { info,  } = useApp()
+  const { info } = useApp()
   const [tickets,{refetch,hasMore,loadingMore,loadMore},{size,page}] = storeResource("tickets",()=>createPagination(()=>info.pool_process,fetchActiveBets,{size:100}))
-  // const [tickets,{refetch,hasMore,loadingMore,loadMore},{size,page}] = createPagination(()=>info.pool_process,fetchActiveBets,{size:100})
+  const [{pool,update},others] = splitProps(props,["pool","update"])
+  const reached_target = createMemo(()=>{
+    if(pool.state == "ready"){
+      return pool()?.bet?.[1]>=pool()?.wager_limit
+    }
+  })
+  const lastreward = createMemo(()=>{
+    if(pool.state == "ready"){
+      return pool()?.jackpot * (1-pool()?.bet?.[1]/pool()?.wager_limit)
+    }
+  })
+  const lastreward_rate = createMemo(()=>{
+    if(pool.state == "ready"){
+      return (Math.max(1-pool()?.bet?.[1]/pool()?.wager_limit,0.01)*100).toFixed(2)
+    }
+  })
+  const winreward_rate = createMemo(()=>{
+    if(pool.state == "ready"){
+      return ((pool()?.bet?.[1]/pool()?.wager_limit)*100).toFixed(2)
+    }
+  })
   onMount(()=>{
     if(props.ref){
       props?.ref({
@@ -55,7 +79,10 @@ export default props => {
 
   createEffect(()=>console.log(tickets.state))
   return(
-    <Suspense fallback={<Spinner className="w-full py-10"/>}>
+    <ErrorBoundary fallback={(err,reset)=><div role="alert" className="alert alert-error alert-soft">
+      <span>{err.message}</span>
+    </div>}>
+    <Suspense fallback={<Spinner className="w-full py-20"/>}>
     <section 
       className="w-full"
       classList = {{
@@ -63,13 +90,55 @@ export default props => {
       }}
     >  
       <Table>
-        <Caption>👇If no more bets, 42.61% (🍕~$653.96) of the jackpot goes to the last bettor, 57.39% to the winners.</Caption>
+        <Caption>
+        <div class="w-full flex flex-col md:flex-row justify-center items-center pt-4 text-sm gap-2">
+          <Switch>
+            <Match when={update()}><div class="w-full flex justify-center items-center h-10 pb-4 text-sm">
+              <button 
+                className="btn btn-sm rounded-full"
+                onClick={()=>{
+                  if(tickets.state == "ready"){
+                    start(refetch)
+                  }
+                  if(others?.onClickUpdate){
+                    others.onClickUpdate()
+                  }
+                }}
+              >
+                <div className="inline-grid *:[grid-area:1/1]">
+                  <div className="status status-accent animate-ping"></div>
+                  <div className="status status-accent"></div>
+                </div>
+                {t("i.new_tickets",update())}
+              </button>
+              </div>
+            </Match>
+            <Match when={!update()}>
+              <span className=" animate-bounce inline-flex items-center justify-center">👇</span> 
+              <Show when={!reached_target()} fallback={
+                <span>
+                  {t("t.win_rate")}
+                </span>}>
+                <span>
+                {t("t.win_rate2",{
+                  last_bettor_rate: lastreward_rate(),
+                  last_bettor_amount: toBalanceValue(lastreward()||0,6),
+                  winner_rate: winreward_rate()
+                })}
+                </span>
+              </Show>
+              <button className="btn btn-link p-0" onClick={()=>_pie?.open(pool())}>{t("details")}</button>
+            </Match>
+          </Switch>
+          
+        </div>
+        </Caption>
         <Head>
           <Cols>
-            <Col className="text-left p-2 w-8 md:w-[20%]">User</Col>
+            <Col className="text-left p-2 w-8 md:w-[20%]">{t("th.player")}</Col>
             <Col className="text-left p-2">bet2mint</Col>
             <Col className="text-right p-2">Gap-Reward</Col>
-            <Col className="hidden md:table-cell text-right p-2 w-10 md:w-[18%]">Date</Col>
+            <Col className="hidden md:table-cell text-right p-2 w-10 md:w-[18%]">{t("th.date")}</Col>
             <Col className="p-2 w-8 text-center">-</Col>
           </Cols>
         </Head>
@@ -121,7 +190,7 @@ export default props => {
                     className="btn btn-circle btn-sm lg:btn-md btn-ghost text-primary"
                     onClick={()=>_ticket.open(item)}
                   >
-                    <Icon icon="hugeicons:square-arrow-expand-01" />
+                    <Icon icon="iconoir:arrow-right" />
                   </button>
                 </Cell>
             </Row>
@@ -139,6 +208,8 @@ export default props => {
       </Actions>
     </section>
     <Ticket ref={_ticket}/>
+    <Pie ref={_pie}/>
     </Suspense>
+    </ErrorBoundary>
   )
 }

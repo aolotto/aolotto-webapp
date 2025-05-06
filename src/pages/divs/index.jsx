@@ -1,18 +1,28 @@
-import { createResource,createSignal,createMemo } from "solid-js"
+import { createResource,createSignal,createMemo, createEffect, ErrorBoundary, Suspense, Show, batch,Match } from "solid-js"
 import { useApp, useWallet,useUser } from "../../contexts"
 import { t,setDictionarys } from "../../i18n"
 import { Icon } from "@iconify-icon/solid"
 import { shortStr,toBalanceValue,getDateTimeString } from "../../lib/tools"
-import { createStore } from "solid-js/store"
+import { createStore,unwrap,reconcile } from "solid-js/store"
 import Distrubutions from "./distrubutions"
+import { fetchState,fetchStaker } from "../../api"
+import { Moment } from "../../compontents/moment"
+import { storeResource } from "../../store"
+import Skeleton from "../../compontents/skeleton"
+import Locker from "../../compontents/locker"
+import Unlocker from "../../compontents/unlocker"
+
 
 export default props => {
-  const {notify,agentProcess} = useApp()
+  let _locker
+  let _unlock
+  const {notify,agentProcess,info} = useApp()
   const {address,connected,showConnector,connecting,walletConnectionCheck} = useWallet()
-  const {altBalance} = useUser()
+  const {altBalance, refetchAltBalance,refetchVeAltBalance,refetchPlayer } = useUser()
+
   
   setDictionarys("en",{
-    "s.title" : (v)=><span className="text-balance">Stake <span class="inline-flex bg-primary/10 p-2 lg:p-2 rounded-full items-center gap-2 scale-110 font-bold text-primary border border-current/30 text-[0.8em]"><image src={`https://arweave.net/${v?.Logo}`} class="size-[1em] rounded-full inline-flex"/>$ALT</span> for daily dividends</span>,
+    "s.title" : (v)=><span className="text-balance">Stake <span class="inline-flex bg-primary/10 p-2 lg:p-4 rounded-full items-center gap-2 font-bold text-primary border border-current/30 text-[0.8em]"><image src={`https://arweave.net/${v?.Logo}`} class="size-[1em] rounded-full inline-flex"/>$ALT</span> for daily dividends</span>,
     "s.desc" : "Stake $ALT for veALT and earn 20% of the protocol’s total sales revenue (equivalent to 50% of accumulated profits). The veALT amount decays linearly over the remaining lock period—the longer the lock, the more veALT you get.",
     "s.count" : (v)=><span><span className="text-base-content">{v.stakers}</span> stakers have locked a total of <span className="text-base-content">{v.amount}</span> $ALT</span>,
     "s.stake" : "Lock",
@@ -23,7 +33,7 @@ export default props => {
     "s.connect_first" : "Connect wallet first"
   })
   setDictionarys("zh",{
-    "s.title" : (v)=> <span className="leading-2">质押 <span class="inline-flex bg-primary/10 p-2 lg:p-2 rounded-full items-center gap-2 scale-110 font-bold text-primary border border-current/30 text-[0.8em]"><image src={`https://arweave.net/${v?.Logo}`} class="size-[1em] rounded-full inline-flex"/>$ALT</span> 获取协议的每日分红</span>,
+    "s.title" : (v)=> <span className="leading-2">质押 <span class="inline-flex bg-primary/10 p-2 lg:p-4 rounded-full items-center gap-2 font-bold text-primary border border-current/30 text-[0.8em]"><image src={`https://arweave.net/${v?.Logo}`} class="size-[1em] rounded-full inline-flex"/>$ALT</span> 获取协议的每日分红</span>,
     "s.desc" : "质押 $ALT 获得 veALT，并享受协议总销售收入的 20% 分红（相当于 50% 的累计利润）。veALT 数量会随锁仓剩余时间线性衰减，锁定时间越长，获得的 veALT 越多。",
     "s.count" : (v)=><span><span className="text-base-content">{v.stakers}</span> 位质押者累计锁定 <span className="text-base-content">{v.amount}</span> $ALT</span>,
     "s.stake" : "锁仓",
@@ -33,10 +43,12 @@ export default props => {
     "s.form_tip" : (v)=><span>锁定 {v?.amount || 0} $ALT {v.days} 天</span>,
     "s.connect_first" : "链接钱包"
   })
-
-  const [staker,{refetch:refetchStaker}] = createResource(()=>({address:address()}),()=>null)
-  const [stake,{refetch:refetchStake}] = createResource(()=>({address:address()}),()=>null)
+  const [stake,{refetch:refetchStake}] =storeResource("stake",()=>createResource(()=>info.stake_process,fetchState)) 
+  const [staker,{refetch:refetchStaker}] = storeResource("stake_"+address(),()=>createResource(()=>({pid : info.stake_process, staker : address()}),fetchStaker)) 
+ 
   const [now,setNow] = createSignal(Date.now())
+
+
 
   const Heading = props => {
     return (
@@ -49,16 +61,14 @@ export default props => {
 
   const Stakebar = props => {
     return (
-      <div className="flex flex-col md:flex-row gap-4  md:gap-12 items-center divide-base-300 divide-x ">
-        <div class="pr-0 md:pr-12 flex flex-row md:flex-col items-center md:items-start">
-          <p className="text-lg"><Show when={stake.state == "ready"} fallback="⋯">{toBalanceValue(stake()?.total_supply, 12, 12)}</Show></p>
+      <div className="flex flex-col md:flex-row gap-4  md:gap-12 items-center md:divide-base-300 md:divide-x ">
+        <div class="pr-0 md:pr-12 flex flex-col items-center md:items-start justify-center">
+          <p className="text-lg"><Show when={stake.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>{toBalanceValue(stake()?.total_supply, 12)}</Show></p>
           <p className="text-xs">veALT</p>
         </div>
 
-        <div class="text-current/50">
-          <Show when={stake.state == "ready"} fallback="⋯">{t("s.count", { stakers: stake()?.stakers, amount: toBalanceValue(stake()?.stake_amount?.[0], 12, 12) })}</Show>
-          {/* <Show when={stake.state == "ready"} fallback="⋯">
-                <span class="text-base-content">{stake()?.stakers}</span></Show> stakers have locked a total of <Show when={stake.state == "ready"} fallback="⋯"><span class="text-base-content">{toBalanceValue(stake()?.stake_amount?.[0],12,12)}</span></Show> $ALT */}
+        <div class="text-current/50 text-center">
+          <Show when={stake.state == "ready"} fallback={<div className="flex flex-col items-center md:items-start gap-1"><Skeleton w={15} h={1}/><Skeleton w={6} h={1}/></div>}>{t("s.count", { stakers: stake()?.stakers, amount: toBalanceValue(stake()?.stake_amount?.[0], 12) })}</Show>
         </div>
       </div>
     )
@@ -74,14 +84,14 @@ export default props => {
             <Match when={!connected() || !connecting()}><a role="button" className=" cursor-pointer" onClick={showConnector}>{t("s.connect_first")}</a></Match>
           </Switch>
         </p>
-        <p classList={{
-          "text-current/50": !staker()?.balance,
-          "text-current": Number(staker()?.balance) > 0
-        }}>
-          <Show when={staker.state == "ready"} fallback="⋯">
+        <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}>
+          <p classList={{
+            "text-current/50": !staker()?.balance,
+            "text-current": Number(staker()?.balance) > 0
+          }}>
             {toBalanceValue(Number(staker()?.balance) || 0, 12, 12)} <span class="text-xs">veALT</span>
-          </Show>
-        </p>
+          </p>
+        </Show>
       </div>
     )
   }
@@ -93,7 +103,7 @@ export default props => {
     const min_time_ts = createMemo(()=>{
       const min_dur = 604800000 // 7 * 24 * 60 * 60 * 1000
       let reslut
-      if(staker()?.locked_time){
+      if(staker.state == "ready" && staker()?.locked_time){
         reslut = Math.max(now()+min_dur, now() + staker()?.locked_time)
       }else{
         reslut = now()+min_dur
@@ -102,7 +112,7 @@ export default props => {
       return reslut
     })
   
-    const enable_stake = createMemo(()=>fields?.date&&fields?.amount)
+    const enable_stake = createMemo(()=>fields?.date&&fields?.amount&&staker.state=="ready")
     return(
       <fieldset className="w-full p-6 rounded-2xl bg-current/5 fieldset border border-base-300 flex flex-col gap-4">
         <div>
@@ -110,7 +120,7 @@ export default props => {
               <span class="font-bold text-current/50">{t("s.lock_amount")}</span>
               <p class="text-current/50 flex items-center gap-2">
                 <span className="text-xs">
-                  <Show when={connected() && altBalance.state == "ready"} fallback="...">
+                  <Show when={connected() && altBalance.state == "ready"} fallback={<Skeleton w={4} h={1} />}>
                     {toBalanceValue(altBalance() || 0, agentProcess()?.Denomination, agentProcess()?.Denomination)}
                   </Show>
                 </span>
@@ -118,7 +128,7 @@ export default props => {
                   class="btn btn-xs"
                   disabled={altBalance.loading || connecting()}
                   onClick={() => {
-                    setFields("amount", altBalance() / 1000000000000)
+                    setFields("amount", altBalance.state == "ready" && (altBalance() / 1000000000000))
                   }}
                 >
                   MAX
@@ -137,7 +147,7 @@ export default props => {
                 value={fields?.amount || null}
                 name="amount"
                 min={1}
-                max={altBalance() / 1000000000000 || 0}
+                max={altBalance.state == "ready" && (altBalance() / 1000000000000) || 0}
                 step={0.000000000001}
                 onChange={(e) => {
                   setFields(e.target.name, e.target.value)
@@ -153,16 +163,16 @@ export default props => {
             <span class="font-bold text-current/50">{t("s.unlock_time")}</span>
             <div className="flex gap-1 items-center">
               <div className="tooltip" data-tip="1 week">
-                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+604800000))} disabled={staker()?.locked_time > 604800000}>1W</button>
+                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+604800000))} disabled={staker.loading || staker()?.locked_time > 604800000}>1W</button>
               </div>
               <div className="tooltip" data-tip="1 month">
-                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+2592000000))} disabled={staker()?.locked_time > 2592000000}>1M</button>
+                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+2592000000))} disabled={staker.loading || staker()?.locked_time > 2592000000}>1M</button>
               </div>
               <div className="tooltip" data-tip="1 year">
-                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+31104000000))} disabled={staker()?.locked_time > 31104000000}>1Y</button>
+                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+31104000000))} disabled={staker.loading || staker()?.locked_time > 31104000000}>1Y</button>
               </div>
               <div className="tooltip" data-tip="4 years">
-                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+124416000000))} disabled={staker()?.locked_time > 124416000000}>4Y</button>
+                <button class="btn btn-xs  uppercase " onClick={()=>setFields("date", getDateTimeString(now()+124416000000))} disabled={staker.loading || staker()?.locked_time > 124416000000}>4Y</button>
               </div>
             </div>
           </div>
@@ -214,38 +224,45 @@ export default props => {
 
   const Position = props => {
     return(
+      
       <div class="flex items-center justify-between pt-6">
       <div class="text-sm flex flex-col gap-2">
-        <p class="text-current/50 inline-flex gap-2 items-center uppercase"><Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:lock" /> <Show when={staker.state != "unresolved"} fallback="..."><span class="text-base-content" classList={{"text-base-content/50" : !staker()?.amount }}>{toBalanceValue(staker()?.amount||0,12,12)} $ALT</span></Show></p>
+        <p class="text-current/50 inline-flex gap-2 items-center uppercase"><Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:lock" /> <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}><span class="text-base-content" classList={{"text-base-content/50" : !staker()?.amount }}>{toBalanceValue(staker()?.amount||0,12,12)} $ALT</span></Show></p>
         <p class="text-current/50 inline-flex gap-2 items-center uppercase">
           <Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:timer" /> 
-          <Show>
-
+          <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}>          
+            <Switch>
+              <Match when={!staker()}><span>--:--</span></Match>
+              <Match when={staker()}><span class="text-base-content"><Moment ts={staker()?.start_time + staker().locked_time}/></span></Match>
+            </Switch>
           </Show>
-          <Switch>
-            <Match when={!staker()}><span>--:--</span></Match>
-            <Match when={staker()}><span class="text-base-content"><Moment ts={staker()?.start_time + staker().locked_time}/></span></Match>
-          </Switch>
         </p>
       </div>
       <div class="flex min-w-16">
         <div className="tooltip" data-tip="Boost">
           <button
-            className="btn btn-square rounded-full btn-ghost"
-            disabled={!staker()}
+            className="btn btn-circle btn-ghost"
+            disabled={staker.loading || !staker()}
             onClick={() => _boost?.open()}
           >
             <Icon icon="iconoir:flash" />
           </button>
         </div>
-        <div className="dropdown dropdown-hover dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-square btn-ghost rounded-full" ><Icon icon="fluent:more-vertical-32-filled" /></div>
+        <div className="dropdown dropdown-end">
+          <div 
+            tabIndex={0} 
+            role="button" 
+            className="btn btn-circle btn-ghost" 
+            disabled={staker.loading || !staker()}
+          >
+            <Icon icon="fluent:more-vertical-32-filled" />
+          </div>
           <ul tabIndex={0} className="dropdown-content menu bg-base-200 border border-base-300 rounded-box z-1 w-36 p-2 shadow-sm">
             <li><a 
               role="button"
               onClick={() => _unlock?.open()}
-              disabled={staker()?.amount < 1||!staker()||!address()}
-              classList={{"text-current/30" : staker()?.amount < 1||!staker()||!address()}}
+              disabled={staker.loading || staker()?.amount < 1||!staker()||!address()}
+              classList={{"text-current/30" : staker.loading || staker()?.amount < 1||!staker()||!address()}}
             >
               Unlock
               </a>
@@ -255,31 +272,49 @@ export default props => {
         </div>
       </div>
     </div>
+    
     )
   }
   return(
     <>
     <main class="container flex flex-col min-h-lvh/2 overflow-visible py-4 md:py-6 lg:py-10">
-      {/* top-left */}
-      <section class="response_cols overflow-visible py-6">
-        <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col justify-between">
-          <Heading/>
-          <Stakebar/>
-        </div>
-        {/* top-right */}
-        <div class="col-span-full md:col-span-4 md:col-start-8 lg:col-start-9">
-          {/* user */}
-          <Userbar/>
-          {/* form */}
-          <StakeForm/>
-          <Position/>
-        </div>
+      
+      <ErrorBoundary fallback={(err,reset)=><div>{err.message}</div>}>
+      {/* top */}
+        <section class="response_cols overflow-visible py-6">
+          <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col justify-between">
+            <Heading/>
+            <Stakebar/>
+          </div>
+          {/* top-right */}
+          <div class="col-span-full md:col-span-4 md:col-start-8 lg:col-start-9">
+            {/* user */}
+            <Userbar/>
+            {/* form */}
+            <StakeForm/>
+            <Position/>
+          </div>
 
-        
-      </section>
-      <section className="w-full border-t border-base-300 py-4">
-        <Distrubutions/>
-      </section>
+          
+        </section>
+        <section className="w-full border-t border-base-300 py-4">
+          <Distrubutions/>
+        </section>
+
+        <Suspense>
+          <Locker ref={_locker} onSubmited={(res)=>{
+            notify("Locked","success")
+            batch(()=>{
+              refetchStaker()
+              refetchStake()
+              refetchAltBalance()
+              refetchVeAltBalance()
+              refetchPlayer()
+            })
+          }}/>
+          <Unlocker ref={_unlock} />
+        </Suspense>
+      </ErrorBoundary>
     </main>
     </>
    
