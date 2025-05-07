@@ -5,10 +5,11 @@ import { Suspense } from 'solid-js'
 import { Toaster } from 'solid-toast';
 import { HashRouter, Route } from "@solidjs/router"
 import { AppProvider,UserProvider } from './contexts'
-import { WalletProvider,WanderStrategy } from "arwallet-solid-kit"
+import { WalletProvider } from "arwallet-solid-kit"
 import AoSyncStrategy from "@vela-ventures/aosync-strategy";
 import WebWalletStrategy from "@arweave-wallet-kit/webwallet-strategy";
 import OthentStrategy from "@arweave-wallet-kit/othent-strategy";
+import WanderStrategy from "@arweave-wallet-kit/wander-strategy"
 
 
 import Spinner from './compontents/spinner'
