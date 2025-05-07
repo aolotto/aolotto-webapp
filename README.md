@@ -1,2 +1,3 @@
-# aolotto-webapp
- The Aolotto webapp deploy to the permaweb.:
+## Usage
+
+aolotto 2.0

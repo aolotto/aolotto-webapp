@@ -1,12 +1,17 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
-  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,textarea;
+  include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass,skeleton,hero, drawer,rootscrollgutter,divider;
 }
 
 @theme {
   --font-mono: "Noto Sans Mono",ui-monospace,monospace;
   --animate-wiggle: wiggle 1s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.2s ease-out forwards;
+  --animate-scale-in: scale-in 0.2s ease-out forwards;
+  --animate-fade-out: fade-out 0.2s ease-in forwards;
+  --animate-scale-out: scale-out 0.2s ease-in forwards;
   @keyframes wiggle {
     10% { 
       transform: rotate(1.5deg); 
@@ -24,6 +29,39 @@
       transform: rotate(0deg); 
     }
   }
+  @keyframes heartbeat {
+    0% { opacity: 1; } 
+    50% { opacity: 0.5;} 
+    100% { opacity: 1;} 
+  }
+  @keyframes scale-in {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+  }
+  @keyframes scale-out {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+      0% {
+          opacity: 1;
+      }
+      100% {
+          opacity: 0;
+      }
+  }
 }
 
 
@@ -34,7 +72,7 @@
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(97% 0 0);
-  --color-base-300: oklch(92% 0 0);
+  --color-base-300: oklch(93% 0 0);
   --color-base-content: oklch(21% 0.006 285.885);
   --color-primary: oklch(54.52% 0.222 292.08);
   --color-primary-content: oklch(98% 0.003 247.858);
@@ -58,8 +96,9 @@
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
-  --depth: 0;
+  --depth: 1;
   --noise: 0;
+  --radius-box : 1em;
 }
 
 
@@ -69,8 +108,8 @@
   prefersdark: true;
   color-scheme: "dark";
   --color-base-100: oklch(18.35% 0.033 297.47);
-  --color-base-200: oklch(22.22% 0.039 296.92);
-  --color-base-300: oklch(25.05% 0.044 297.16);
+  --color-base-200: oklch(27% 0.039 296.92);
+  --color-base-300: oklch(32% 0.044 297.16);
   --color-base-content: oklch(94% 0.029 294.588);
   --color-primary: oklch(54.52% 0.222 292.08);
   --color-primary-content: oklch(96% 0.018 272.314);
@@ -96,6 +135,7 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+  --radius-box : 1em;
 }
 
 
@@ -112,7 +152,7 @@ iconify-icon {
   display: inline-flex;
   width: 1em;
   height: 1em;
-  font-size: 1em;
+  font-size: 1.2em;
   justify-items: center;
   align-items: center;
 }
@@ -126,19 +166,7 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
-
-
 @layer base{
-  input,
-  textarea,
-  select,
-  button {
-    border: 0px solid;
-    border-radius: 0;
-    padding: 0;
-    color: inherit;
-    background-color: transparent;
-  }
   .container{
     @apply mx-auto max-w-7xl px-4 lg:px-6 overflow-x-visible;
   }
@@ -151,16 +179,73 @@ input[type='number'] {
   a.active{
     @apply text-base-content font-medium;
   }
-}
-
-
-
-@layer components {
-  .tipy{
-    @apply bg-base-200 p-3 rounded-2xl border border-base-300 text-sm;
+  dl.dlist{
+    @apply flex flex-col md:flex-row gap-1 md:gap-2 flex-wrap py-2;
+    &:is(.dlist-divide){
+      @apply border-b-1 border-base-content/10  last:border-b-0;
+    }
+    dt{
+      @apply w-full md:w-1/2 text-current/50 ; 
+    }
+    dd{
+      @apply flex-1;
+    }
   }
 
+  .popup-animate{
+    transition-timing-function:ease-in-out;
+    transition: all .2s allow-discrete;
+    transform: translateY(100%);
+    opacity: 0;
 
+    &::backdrop{
+      transition-timing-function: ease;
+      transition: all .2s allow-discrete;
+      opacity: 0;
+    }
+
+    &[open]{
+      transform: translateY(0%);
+      opacity: 1;
+    }
+    &[open]::backdrop{
+      opacity: 1;
+    }
+    @starting-style{
+      &[open]{
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      &[open]::backdrop{
+        opacity: 0;
+      }
+    }
+  }
+  
+
+}
+@layer utilities {
+  .pb-safe {
+    padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS 旧版本 */
+    padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS 现代浏览器 */
+  }
+  .mask-right {
+    -webkit-mask-image: linear-gradient(to right,transparent 0%, black 2%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%,black 2%, black 90%,black 90%, transparent 100%);
+  }
+  .hide-scorllbar{
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+  } 
+}
+@layer components{
+  .panel {
+    @apply bg-base-200/50 shadow-md outline-1 outline-base-content/10 backdrop-blur-3xl;
+  }
   .ball{
     @apply inline-flex font-bold border-current border text-base-content rounded-full items-center justify-center size-[2rem];
     
@@ -177,46 +262,15 @@ input[type='number'] {
         @apply bg-base-content/10;
       }
     }
+   
+ 
+
   }
-  
+
   .number{
     @apply text-center p-1 overflow-hidden bg-base-100 text-xs rounded-full static hover:bg-base-200 cursor-pointer;
   }
 
-  .response_table{
-    @apply w-full border-collapse;
-    thead{
-      @apply text-current/50 uppercase text-left w-full h-0;
-    }
-    tr{
-      @apply rounded-2xl;
-      &:hover{
-        @apply bg-base-200;
-      }
-    }
-    th,td{
-      @apply p-2
-    }
-  }
-}
+  
 
-@keyframes contentShow {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes contentHide {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
 }

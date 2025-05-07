@@ -19,6 +19,13 @@ jobs:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
           VITE_APP_NAME: Aolotto
           VITE_AGENT_PROCESS: 3IYRZBvph5Xx9566RuGWdLvUHnOcG8cHXT95s1CYRBo
+          VITE_PAY_PROCESS : 7zH9dlMNoxprab9loshv3Y7WG45DOny_Vrq9KrXObdQ
+          VITE_POOL_PROCESS : 7vTXHQK2yJJHDwFyJRSoXXU5fF4FQYLd8PjTNlHpVj0
+          VITE_FAUCET_PROCESS : sgUlcgRzGgpvDm8gBZxc_PmtKqUWAru7SdGZJlWJZJw
+          VITE_FUNDATION_PROCESS : BuuJeuWan3Z_cN6KH6vh2eajGd6H7UlLg4bOOe1Iyr0
+          VITE_BUYBACK_PROCESS : luqPiuNdj3T5hHMYmq_vpz2owGO3fcfVLHN7IiACvVg
+          VITE_STAKE_PROCESS : kqDiKjXCwO16RJmjJqSNDbqdMVbrCaplEh7KnUHinlA
+          VITE_ALT_WUSDC_PROCESS : 2sWVPeUTYuB0VMrkgC9m_0MwljaZqEJdAfgJXNZgEIw
           VITE_LAUNCH_TIME: 1735689601000
           VITE_GATEWAY_URL: https://arweave.net
           VITE_GATEWAY: arweave.net
@@ -28,5 +35,6 @@ jobs:
           VITE_SCHEDULER: _GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA
           VITE_AO_LINK: https://www.ao.link
           VITE_AO_MODULE: Do_Uc2Sju_ffp6Ev0AnLVdPtot15rvMjP-a9VVaA5fM
+
 
           
