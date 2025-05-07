@@ -10,6 +10,7 @@
     "deploy-main": "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
+    "@arweave-wallet-kit/core": "^0.1.1",
     "@arweave-wallet-kit/othent-strategy": "^0.1.1",
     "@arweave-wallet-kit/wander-strategy": "^0.1.2",
     "@arweave-wallet-kit/webwallet-strategy": "^0.0.1-beta.4",
@@ -29,11 +30,11 @@
   },
   "devDependencies": {
     "@permaweb/aoconnect": "^0.0.60",
+    "daisyui": "^5.0.9",
     "permaweb-deploy": "^1.1.10",
     "rollup-plugin-visualizer": "^5.14.0",
+    "tailwindcss": "^4.0.15",
     "vite": "^6.2.0",
-    "vite-plugin-solid": "^2.11.2",
-    "daisyui": "^5.0.9",
-    "tailwindcss": "^4.0.15"
+    "vite-plugin-solid": "^2.11.2"
   }
 }

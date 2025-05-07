@@ -26,9 +26,9 @@ export default defineConfig({
           if (id.includes('bignumber.js')) {
             return 'bignumber.js'
           }
-          // if (id.includes('solid-js')) {
-          //   return 'solid-js'
-          // }
+          if (id.includes('@arweave-wallet-kit/core')) {
+            return '@arweave-wallet-kit/core'
+          }
           if (id.includes('@solidjs/router')) {
             return '@solidjs/router'
           }
