@@ -16,7 +16,7 @@ import Spinner from "../../compontents/spinner";
 export default function ALT() {
   setDictionarys("en",{
     "slogan" : "The glue of the community shapes LottoFi's future",
-    "desc" : ()=> <span>21M $ALT is issued to the community via the <a href="https://docs.aolotto.com/en/usdalt#bet2mint" target="_blank" class="inline-flex text-base-content items-center">Bet2Mint<Icon icon="ei:external-link"></Icon></a> mechanism, 10% is rewarded to early users via the <a href="https://docs.aolotto.com/en/faucet" target="_blank" class="inline-flex text-base-content items-center">faucet<Icon icon="ei:external-link"></Icon></a> as minting Buff (ALTb), and 100% of the protocol's profits are used for dividends and buyback.</span>,
+    "desc" : ()=> <span>210M $ALT is issued to the community via the <a href="https://docs.aolotto.com/en/usdalt#bet2mint" target="_blank" class="inline-flex text-base-content items-center">Bet2Mint<Icon icon="ei:external-link"></Icon></a> mechanism, 10% is rewarded to early users via the <a href="https://docs.aolotto.com/en/faucet" target="_blank" class="inline-flex text-base-content items-center">faucet<Icon icon="ei:external-link"></Icon></a> as minting Buff (ALTb), and 100% of the protocol's profits are used for dividends and buyback.</span>,
     "l.holders" : "Holders",
     "l.circulation" : "Circulation",
     "l.price" : "Price",
