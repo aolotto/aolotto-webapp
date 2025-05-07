@@ -23,8 +23,8 @@ export default props => {
     "top.button_bet": "Let's bet to WIN!",
     "top.round": "Round-{{round}}",
     "top.win_tip": "Last bet, higher win rate!",
-    "second.title": "$ALT fairly issued via Bet2Mint, unlock dividends and LottoFi benefits by holding",
-    "second.desc": "The jackpot tax on winners supports the value of $ALT. Profits from the platform are fully returned to $ALT holders via dividends and buyback&burn. The total supply is capped at 210 million, and anyone can access the Bet2Mint mechanism for free.",
+    "second.title": "100% profit return through $ALT-powered community governance",
+    "second.desc": "The total supply of 210 million $ALT is fully issued through the Bet2Mint mechanism. Users can earn it for free by participating in bets. All profits from the Aolotto protocol and ecosystem are 100% returned to the community through dividends and buybacks.",
     "second.label_sold":"Total sold",
     "second.label_profit":"Profits",
     "second.label_dividends":"Dividends",
@@ -32,7 +32,7 @@ export default props => {
     "third.title": "Simple, Permissionless and Transparent",
     "third.second_title": "Beyond a lottery — a thriving LottoFi ecosystem powered by the $ALT community",
     "third.second_desc": "LottoFi is an ecosystem of apps, games, and content publishing driven by $ALT staking. By staking $ALT, users unlock free tools or skills, while creators or developers earn dividend rewards. We aim to return profits monopolized by traditional lottery issuers to the community, fostering quality content creation and strengthening community consensus.",
-    "third.build_btn" : "Let's build together",
+    "third.build_btn" : "Build together",
     "learn_more": "Learn More",
     "faq.what_t": "What is Aolotto?",
     "faq.what_c": ()=><>
@@ -81,8 +81,8 @@ export default props => {
     "top.button_bet": "立即投注中大獎!",
     "top.round": "回合-{{round}}",
     "top.win_tip": "最後下注，贏率更高!",
-    "second.title":"$ALT透過Bet2Mint機制公平發行,持有獲得持續性分紅, 享受LottoFi生態紅利",
-    "second.desc": "向贏家徵收大獎稅锚定了$ALT的價值根基,協議產生的利潤通過分紅和回購銷毀機制100%回饋給$ALT代幣持有者，發行總量上限為2.1億，任何人都可以通過Bet2Mint機制免費取得.",
+    "second.title":"由$ALT驱动的社區治理實現100%利潤回報",
+    "second.desc": "$ALT 總供應量 2.1 億，全部透過 Bet2Mint 機制發行。用戶可以參與投注即可免費賺取它。 Aolotto協議和生態系統的所有利潤通过分红和回購的方式100%回馈社區。",
     "second.label_sold":"累計銷售",
     "third.title": "簡單, 無許可且公平透明",
     "third.second_title": "不只是彩票，一個繁榮的LottoFi生態將在$ALT社區的支持下持續發展",
@@ -205,13 +205,22 @@ export default props => {
     </section>
 
     <section className="container py-16 border-y border-base-300">
-      <div className="text-center text-3xl pb-8 ">100% profit return through $ALT-powered community governance</div>
-      <div className="p-10 text-center">The total supply of 210 million $ALT is fully issued through the Bet2Mint mechanism. Users can earn it for free by participating in bets. All profits from the Aolotto protocol and ecosystem are 100% returned to the community through dividends and buybacks.</div>
-      <div className=" flex items-center justify-center flex-col md:flex-row p-8">
+      <div className="text-center text-3xl leading-12  px-8 lg:px-10 ">{t("second.title")}</div>
+      <div className="p-8 lg:p-10 text-center">{t("second.desc")}</div>
+      <div className=" flex items-center justify-center flex-col md:flex-row divide-base-300 divide-y divide-x-0 md:divide-x md:divide-y-0">
 
-        <div className="w-full md:w-[10em] flex flex-col items-center justify-center">1</div>
-        <div className="w-full md:w-[10em] flex flex-col items-center justify-center">2</div>
-        <div className="w-full md:w-[10em] flex flex-col items-center justify-center">3</div>
+        <div className="w-full md:w-[14em] flex flex-col items-center justify-center p-4">
+          <p className="text-sm text-current/50">Realized Profit</p>
+          <p className="text-2xl font-bold"><Show when={agentStats.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>${toBalanceValue(agentStats()?.total_sales_amount,6)}</Show></p>
+        </div>
+        <div className="w-full md:w-[14em] flex flex-col items-center justify-center p-4">
+          <p className="text-sm text-current/50">Dividends distributed</p>
+          <p className="text-2xl font-bold"><Show when={agentStats.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>${toBalanceValue(agentStats()?.dividends?.[2],6)}</Show></p>
+        </div>
+        <div className="w-full md:w-[14em] flex flex-col items-center justify-center p-4">
+          <p className="text-sm text-current/50">Used for buyback</p>
+          <p className="text-2xl font-bold"><Show when={agentStats.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>${toBalanceValue(agentStats()?.buybacks?.[2],6)}</Show></p>
+        </div>
       
       {/* <div className="stats stats-vertical lg:stats-horizontal ">
         <div className="stat min-w-[10em] flex ">
@@ -233,7 +242,7 @@ export default props => {
       </div>
     </section>
 
-    <section class="py-16 response_cols px-2 container">
+    <section class="py-10 md:py-12 lg:py-16 response_cols px-2 container">
       <div class="col-span-full px-16 text-center flex flex-col justify-center items-center gap-4">        
         <div class="text-3xl leading-12 ">{t("third.title")}</div>
       </div>
@@ -265,14 +274,14 @@ export default props => {
       
     </section>
 
-    <section class="flex justify-center flex-col items-center gap-8  p-16  text-center container">
+    <section class="flex justify-center flex-col items-center gap-8  p-8 md:p-10 lg:p-16  text-center container">
               <p class="flex items-center gap-2">
               <Icon icon="arcticons:apps" />
               <Icon icon="arcticons:games-2" />
               <Icon icon="arcticons:bookshelf" />
               <Icon icon="arcticons:leafpic" />
               </p>
-              <p class="text-2xl ">{t("third.second_title")}</p>
+              <p class="text-3xl leading-12">{t("third.second_title")}</p>
               <a href="https://docs.aolotto.com/en/lottofi" target="_blank" class="btn btn-xl rounded-full w-fit gap-4 items-center btn-accent"><Icon icon="iconoir:app-store" />{t("third.build_btn")}</a>
               <p class="text-current/50">{t("third.second_desc")}</p>
            

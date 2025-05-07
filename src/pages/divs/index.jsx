@@ -89,7 +89,7 @@ export default props => {
             "text-current/50": !staker()?.balance,
             "text-current": Number(staker()?.balance) > 0
           }}>
-            {toBalanceValue(Number(staker()?.balance) || 0, 12, 12)} <span class="text-xs">veALT</span>
+            {toBalanceValue(Number(staker()?.balance) || 0, 12)} <span class="text-xs">veALT</span>
           </p>
         </Show>
       </div>
