@@ -1,130 +1,91 @@
-import tooltip from "../../components/tooltip"
-import { createEffect, For, Show, Suspense, createResource } from "solid-js"
-import Empty from "../../components/empty"
+import { createEffect, For } from "solid-js"
+import { Table,Head,Body,Cols,Col,Row,Cell,Caption } from "../../compontents/table"
+import Avatar from "../../compontents/avatar"
+import { createResource } from "solid-js"
+import { storeResource } from "../../store"
+import { fetchRanks } from "../../api"
+import { useApp } from "../../contexts"
 import { setDictionarys,t } from "../../i18n"
-import Spinner from "../../components/spinner"
-import { protocols } from "../../data/info"
-// import { ranks } from "../../signals/pool"
-import Rankitem from "./rankitem"
-import { fetchPoolRanks } from "../../api/pool"
+import Spinner from "../../compontents/spinner"
+import { toBalanceValue } from "../../lib/tools"
 
 export default props => {
+  const {info} = useApp()
   setDictionarys("en",{
-    "top.bettings": "Top Bettings",
-    "top.mintings": "Top Mintings",
-    "top.winnings": "Top Winnings",
-    "top.dividends": "Top Dividends",
+    "r.bettings": "Top Bettings",
+    "r.mintings": "Top Mintings",
+    "r.winnings": "Top Winnings",
+    "r.dividends": "Top Dividends",
   })
   setDictionarys("zh",{
-    "top.bettings": "投注排行",
-    "top.mintings": "鑄幣排行",
-    "top.winnings": "獲獎排行",
-    "top.dividends": "分紅排行",
+    "r.bettings": "投注排行",
+    "r.mintings": "鑄幣排行",
+    "r.winnings": "獲獎排行",
+    "r.dividends": "分紅排行",
   })
-
-  const [ranks,{refetch:refetchPoolRanks}] = createResource(()=>protocols?.agent_id,fetchPoolRanks)
-
-  return(
-    <main class="container py-8">
-      <div>
+  const[ranks,{refetch}] = storeResource("ranks",()=>createResource(()=>info.agent_process,fetchRanks))
+  createEffect(()=>console.log(ranks(),info.agent_process))
+  return (
+    
+    <main className="container pb-12">
       <Suspense 
-        fallback={<div className="w-full h-40 flex flex-col items-center justify-center"><Spinner/></div>}>
-        <Show when={ranks()?.bettings?.length == 0 && ranks()?.mintings?.length == 0 && ranks()?.winnings?.length == 0 && ranks()?.dividends?.length == 0}>
-          <Empty tips="No rankings yet."/>
-        </Show>
-        <Show when={ranks()?.winnings?.length > 0}>
-          <section>
-            <h2 class="col-span-full py-4 mt-4">
-              <span class="size-6 inline-flex mr-6 ml-2">🏆</span> 
-              <span class="text-current/50 uppercase">{t("top.winnings")}</span>
-            </h2>
-            <For each={ranks()?.winnings}>
-              {(item,index)=>{
-                const [i] = Object.entries(item)
-                return(
-                  <Rankitem 
-                    index={index}
-                    user={i[0]}
-                    amount={i[1]}
-                    token={protocols?.details[protocols.pay_id]}
-                    key={index()}
-                  />
-                )
-              }}
-            </For>
-          </section>
-        </Show>
-        <Show when={ranks()?.bettings?.length > 0}>
-          <section>
-            <h2 class="col-span-full py-4 mt-4">
-              <span class="size-6 inline-flex mr-6 ml-2">🎲</span> 
-              <span class="text-current/50 uppercase">{t("top.bettings")}</span>
-            </h2>
-            <For each={ranks()?.bettings}>
-              {(item,index)=>{
-                const [i] = Object.entries(item)
-                return(
-                  <Rankitem 
-                    index={index}
-                    user={i[0]}
-                    amount={i[1]}
-                    token={protocols?.details[protocols.pay_id]}
-                    key={index()}
-                  />
-                )
-              }}
-            </For>
-          </section>
-        </Show>
-        <Show when={ranks()?.mintings?.length > 0}>
-          <section>
-            <h2 class="col-span-full py-4 mt-4">
-              <span class="size-6 inline-flex mr-6 ml-2">🪙</span> 
-              <span class="text-current/50 uppercase">{t("top.mintings")}</span>
-            </h2>
-            <For each={ranks()?.mintings}>
-              {(item,index)=>{
-                const [i] = Object.entries(item)
-                return(
-                  <Rankitem 
-                    index={index}
-                    user={i[0]}
-                    amount={i[1]}
-                    token={protocols?.details[protocols.agent_id]}
-                    key={index()}
-                  />
-                )
-              }}
-            </For>
-          </section>
-        </Show>
+        fallback={<Spinner className="w-full h-[40vh]"/>}>
+
        
-        <Show when={ranks()?.dividends?.length > 0}>
-          <section>
-            <h2 class="col-span-full py-4 mt-4">
-              <span class="size-6 inline-flex mr-6 ml-2">💰</span> 
-              <span class="text-current/50 uppercase">{t("top.dividends")}</span>
-            </h2>
-            <For each={ranks()?.dividends}>
-              {(item,index)=>{
-                const [i] = Object.entries(item)
-                return(
-                  <Rankitem 
-                    index={index}
-                    user={i[0]}
-                    amount={i[1]}
-                    token={protocols?.details[protocols.pay_id]}
-                    key={index()}
-                  />
-                )
-              }}
-            </For>
-          </section>
-        </Show>
+      <For each={[{
+        emoji : "🏆",
+        title : t("r.winnings"),
+        data : ranks()?.winnings,
+        format : (v)=> ("$"+toBalanceValue(v,6))
+      },{
+        emoji : "🎲",
+        title : t("r.bettings"),
+        data : ranks()?.bettings,
+        format : (v)=> ("$"+toBalanceValue(v,6))
+      },{
+        emoji : "🪙",
+        title : t("r.mintings"),
+        data : ranks()?.mintings,
+        format : (v)=> (toBalanceValue(v,12)+ " $ALT")
+      }]}>
+        {rank=>{
+          return(
+            <section>
+              <Table>
+                <Caption className="text-left px-1">
+                  <div className="flex items-center gap-2">
+                    <span className=" inline-block w-[2em]">{rank.emoji}</span>
+                    <span className="text-current/50 uppercase">{rank.title}</span>
+                  </div>
+                </Caption>
+                <Body>
+                  <For each={rank.data}>
+                    {(item,index)=>{
+                      const [i] = Object.entries(item)
+                      return(
+                        <Row>
+                          <Cell className="w-[2em]">{index()+1}</Cell>
+                          <Cell>
+                            <div className=" truncate flex items-center gap-2 max-w-[40vw]">
+                            <Avatar username={i[0]} className=" size-6"/>
+                            <span>{i[0]}</span>
+                            </div>
+                            
+                          </Cell>
+                          <Cell className="text-right">{rank.format(i[1])}</Cell>
+                        </Row>
+                      )
+                    }}
+                  </For>
+                  
+                </Body>
+              </Table>
+            </section>
+          )
+        }}
+
+      </For>
       </Suspense>
-        
-      </div>
-      
     </main>
   )
 }
