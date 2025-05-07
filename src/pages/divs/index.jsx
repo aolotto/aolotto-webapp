@@ -227,7 +227,7 @@ export default props => {
       
       <div class="flex items-center justify-between pt-6">
       <div class="text-sm flex flex-col gap-2">
-        <p class="text-current/50 inline-flex gap-2 items-center uppercase"><Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:lock" /> <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}><span class="text-base-content" classList={{"text-base-content/50" : !staker()?.amount }}>{toBalanceValue(staker()?.amount||0,12,12)} $ALT</span></Show></p>
+        <p class="text-current/50 inline-flex gap-2 items-center uppercase"><Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:lock" /> <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}><span class="text-base-content" classList={{"text-base-content/50" : !staker()?.amount }}>{toBalanceValue(staker()?.amount||0,12)} $ALT</span></Show></p>
         <p class="text-current/50 inline-flex gap-2 items-center uppercase">
           <Icon icon="ph:arrow-elbow-down-right-light"/> <Icon icon="iconoir:timer" /> 
           <Show when={staker.state == "ready"} fallback={<Skeleton w={6} h={1} />}>          
