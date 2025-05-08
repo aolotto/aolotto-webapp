@@ -1,4 +1,5 @@
 import { Suspense, ErrorBoundary, createResource,Show, Switch, Match, createSignal, onMount, onCleanup,createMemo, useTransition} from "solid-js"
+import { Portal } from "solid-js/web"
 import { useApp } from "../../contexts"
 import { Icon } from "@iconify-icon/solid"
 import Spinner from "../../compontents/spinner"
@@ -16,6 +17,7 @@ import Errorbox from "../../compontents/errorbox"
 import { storeResource } from "../../store"
 import Countdown from "../../compontents/countdown"
 import Skeleton from "../../compontents/skeleton"
+import DepositUSD from "../../compontents/depositUSD"
 
 export default props => {
   let _numpicker
@@ -276,7 +278,7 @@ export default props => {
             </div>
             <div className=" flex items-center gap-4 justify-center md:justify-start divide-x divide-base-200  ">
               <div><span className="text-current/50">{t("b.price")} :</span> $1-$100</div>
-              <a href="">Deposit</a>
+              <div><DepositUSD/></div>
             </div>
           </div>
         </div>
@@ -289,16 +291,18 @@ export default props => {
       
     </div>
     <Show when={!pool.loading}>
-      <Numpicker 
-        ref={_numpicker} 
-        id="numpicker" 
-        pool={pool}
-        onSubmitted={(data)=>{
-          refetchPool()
-          _tickets.refetch()
-          notify(t("b.placed_successfully"),"success")
-        }}
-      />
+      <Portal>
+        <Numpicker 
+          ref={_numpicker} 
+          id="numpicker" 
+          pool={pool}
+          onSubmitted={(data)=>{
+            refetchPool()
+            _tickets.refetch()
+            notify(t("b.placed_successfully"),"success")
+          }}
+        />
+      </Portal>
     </Show>
     
     </>

@@ -15,7 +15,6 @@ export default defineConfig({
       plugins: [visualizer({ open: false })],
       output: {
         manualChunks: (id) => {
-          console.log("-:",id)
           if (id.includes('@permaweb/aoconnect')) {
             return '@permaweb/aoconnect'
           }

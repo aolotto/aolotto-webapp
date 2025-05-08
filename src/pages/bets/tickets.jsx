@@ -190,7 +190,7 @@ export default props => {
                     className="btn btn-circle btn-sm lg:btn-md btn-ghost text-primary"
                     onClick={()=>_ticket.open(item)}
                   >
-                    <Icon icon="iconoir:arrow-right" />
+                    <Icon icon="hugeicons:square-arrow-expand-01" />
                   </button>
                 </Cell>
             </Row>
