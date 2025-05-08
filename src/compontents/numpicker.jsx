@@ -317,7 +317,7 @@ export default props => {
         </div>
         
       </div>
-      <div className=" absolute bottom-0  left-0 w-full flex justify-between items-center p-4">
+      <div className=" w-full flex justify-between items-center p-4">
         <div className="flex items-center gap-3">
           <span class="text-current/50">
             <img src="https://arweave.net/VL4_2p40RKvFOQynAMilDQ4lcwjtlK3Ll-xtRhv9GSY" alt="" className="size-6 rounded-full"/>
@@ -331,7 +331,7 @@ export default props => {
           >
             Deposit
           </button> */}
-          <DepositUSD className=" dropdown-top"/>
+          <DepositUSD/>
           <button 
             className="btn btn-primary" 
             disabled={!enableSubmit() || submiting()}

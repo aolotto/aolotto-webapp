@@ -100,32 +100,7 @@ export default function Draws() {
                 )
               }}
             </For>
-            {/* {draws()?.map(({id,round,timestamp,height,lucky_number,jackpot,denomination, winners,created} = item)=>(
-              <Row key={id}>
-                <Cell><span className=" inline-block px-[0.8em] py-[0.3em] rounded-full border">R{round}</span></Cell>
-                <Cell>
-                  <div className="py-2">
-                    <For each={lucky_number?.split('')||["*","*","*"]}>
-                      {(num)=><span class="ball ball-fill size-9 text-xl">{num}</span>}
-                    </For>
-                  </div>
-                  
-                </Cell>
-                <Cell className="hidden md:table-cell"><div class="">${toBalanceValue(jackpot,denomination||6)}</div></Cell>
-                <Cell className="hidden md:table-cell">{winners}</Cell>
-                <Cell>{new Date(Number(created)).toLocaleString()}</Cell>
-                <Cell className=" size-6 md:size-8 text-center">
-                  <button 
-                    className="btn btn-circle btn-sm lg:btn-md btn-ghost text-primary"
-                    onClick={()=>{
-                      _draw_detail.open(item)
-                    }}
-                  >
-                    <Icon icon="hugeicons:square-arrow-expand-01" />
-                  </button>
-                </Cell>
-              </Row>
-            ))} */}
+
           </Body>
         </Table>
 
