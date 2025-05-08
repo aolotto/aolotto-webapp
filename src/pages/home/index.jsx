@@ -211,7 +211,7 @@ export default props => {
 
         <div className="w-full md:w-[14em] flex flex-col items-center justify-center p-4">
           <p className="text-sm text-current/50">Realized Profit</p>
-          <p className="text-2xl font-bold"><Show when={agentStats.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>${toBalanceValue(agentStats()?.total_sales_amount,6)}</Show></p>
+          <p className="text-2xl font-bold"><Show when={agentStats.state == "ready"} fallback={<Skeleton w={6} h={1}/>}>${toBalanceValue(agentStats()?.total_sales_amount*0.4,6)}</Show></p>
         </div>
         <div className="w-full md:w-[14em] flex flex-col items-center justify-center p-4">
           <p className="text-sm text-current/50">Dividends distributed</p>
