@@ -42,7 +42,7 @@ export default function Tickets(props) {
                         {(num) => <span class="ball ball-fill size-6 text-md">{num}</span>}
                       </For>
                     </span>
-                    <span>on R7</span>
+                    <span>on R{ticket?.round}</span>
                   </div>
                   
                   <div className="text-sm text-current/50 flex items-center gap-2">
