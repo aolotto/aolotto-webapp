@@ -2,11 +2,18 @@ import { createEffect, createMemo, createSignal, Match, onMount, Show, Switch } 
 import { createStore } from "solid-js/store"
 import Modal from "./modal"
 import { useWallet } from "arwallet-solid-kit"
+import { Icon } from "@iconify-icon/solid"
+import {InfoItem} from "./infoitem"
+import { toBalanceValue } from "../lib/tools"
+import { AO } from "../api"
+import { useApp } from "../contexts"
+
 
 
 export default props => {
   let _unlock
-  const { address } = useWallet()
+  const { address,wallet } = useWallet()
+  const {info} = useApp()
   const [unlocking,setUnlocking] = createSignal(false)
   const [mode,setMode] = createSignal("unlock")
   const [fields, setFields] = createStore({})
@@ -42,10 +49,109 @@ export default props => {
       penalty: props?.staker?.amount * (1-rate)
     }
   })
+
+  const Unlock = ({
+    stake_id,
+  }) => new Promise(async(resovle,reject)=>{
+    try {
+      console.log("unlocking......")
+      if(!stake_id){
+        reject(new Error("Missed stake id"))
+      }
+      const ao = new AO({wallet:wallet()})
+      const tags = {
+        Action: "Unstake"
+      }
+  
+      const msg =  await ao.message(stake_id,tags)
+      if(!msg){reject("Send message error")}
+      const {Messages} = await ao.result({
+        process: stake_id,
+        message: msg
+      })
+      console.log(Messages)
+      if(!Messages||Messages?.length<1){
+        reject(new Error("Transaction error"))
+      }else{
+        resovle(msg)
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
+
   return (
     <Modal ref={_unlock} className="w-[360px] max-[360px]" title="Unlock" closable>
       <div className="p-4">
-        ddddd
+         <Switch>
+         <Match when={mode() === "unlock"}>
+              {/* main */}
+              <section class="">
+              <p>
+              Unstaking before the lock-up expires will incur a penalty, which will be burned.
+              </p>
+              <div class="pt-4">
+              <InfoItem label={"Amount"} class="text-sm"> {toBalanceValue(props?.staker?.amount,12,12)} $ALT</InfoItem>
+              <InfoItem label={"Unlock time"} class="text-sm"> {new Date(props?.staker?.start_time + props?.staker?.locked_time)?.toLocaleString()}</InfoItem>
+              <InfoItem label={"Penalty"} class="text-sm"> -{toBalanceValue(receive()?.penalty,12,12)} $ALT</InfoItem>
+              </div>
+              
+            </section>
+            {/* action */}
+            <section className="modal-action justify-between items-center">
+              <div>
+                <p class="text-xs uppercase text-current/50">Received</p>
+                <p>{toBalanceValue(receive()?.amount,12,12)} $ALT</p>
+              </div>
+              <button
+                className="btn btn-error"
+                disabled={receive()?.amount<=0}
+                onClick={()=>{
+                  setMode("confirm")
+                }}
+              >
+                Unlock
+              </button>
+            </section>
+        </Match>
+        <Match when={mode() === "confirm"}>
+        <section class=" flex flex-col gap-4">
+              <p class="text-xs text-current/50">
+                <span>{address()}</span>
+              </p>
+              <textarea className="textarea w-full" placeholder="Input your address" name="address" onChange={(e) => setFields(e.target.name, e.target.value)}></textarea>
+            </section>
+            <section class="pt-6 flex flex-col gap-4">
+              <button
+                className="btn btn-error w-full"
+                disabled={!enable_submit() || unlocking()}
+                onClick={()=>{
+                setUnlocking(true)
+                Unlock({
+                  stake_id: info?.stake_process,
+                })
+                .then((result) => {
+                  console.log("unLockeed",result)
+                  _unlock.close()
+                  if(props?.onSubmited){
+                    props.onSubmited(result)
+                  }
+                  // toast.success("Unlocked successfull")
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+                .finally(()=>setUnlocking(false))
+              }}>{unlocking()?"Unlocking...":"Confirm"}</button>
+              <button
+                className="btn w-full"
+                onClick={()=>{
+                  setMode("unlock")
+                  setFields("address","")
+                }}>Cancel</button>
+            </section>
+        </Match>
+      </Switch>
       </div>
     </Modal>
     // <dialog

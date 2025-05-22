@@ -219,7 +219,7 @@ export default function Account(props) {
             <div className="flex flex-col gap-2 justify-center items-center w-full p-6">
             <h3 className="text-lg text-center">🚰</h3>
             <p className=" text-sm text-center">Newly joined addresses can claim minting buff (ALTB) via the faucet.</p>
-            <a href="" className=" btn btn-primary">Learn more</a>
+            <a href="https://docs.aolotto.com/en/faucet" target="_blank" className=" btn btn-primary">Learn more</a>
 
             </div>
             

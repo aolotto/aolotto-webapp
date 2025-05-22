@@ -312,7 +312,20 @@ export default props => {
               refetchPlayer()
             })
           }}/>
-          <Unlocker ref={_unlock} />
+          <Unlocker 
+            ref={_unlock} 
+            staker={staker()}
+            onSubmited={(res)=>{
+              notify("UnLocked","success")
+              batch(()=>{
+                refetchStaker()
+                refetchStake()
+                refetchAltBalance()
+                refetchVeAltBalance()
+                refetchPlayer()
+              })
+            }}
+          />
         </Suspense>
       </ErrorBoundary>
     </main>

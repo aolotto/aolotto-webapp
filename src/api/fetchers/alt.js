@@ -298,7 +298,7 @@ export async function fetchAltUnStakings([{stake_id,agent_id},{size,cursor}],{re
           quantity: tags?.Quantity,
           address: tags?.['X-Staker'],
           amount: tags?.['X-Unstake-Amount'],
-          timestamp: node.block.timestamp,
+          timestamp: node?.block?.timestamp,
           cursor
         })
       })
