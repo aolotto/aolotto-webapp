@@ -39,14 +39,15 @@ export default function Draws() {
     ()=>createPagination(
       ()=>({
         pool_id : info.pool_process,
-        agent_id : info.agent_process
+        agent_id : info.agent_process,
+        alt_id : info.alt_process,
       }),
       fetchDraws,
       {size: 100}
     )
   )
 
-  createEffect(()=>console.log(agentStats()))
+  // createEffect(()=>console.log(agentStats()))
   return(
     <main className="container py-8 md:py-10">
       <Suspense fallback={<Spinner className="w-full py-10"/>}>

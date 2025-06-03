@@ -2,15 +2,15 @@
 import { AO } from "../ao"
 
 export const submitStaking = ({
-  agent_id,
+  alt_id,
   stake_id,
   quantity,
   duration,
   wallet
 }) => new Promise(async(resovle,reject)=>{
   try {
-    if(!agent_id){
-      reject(new Error("Missed agent id"))
+    if(!alt_id){
+      reject(new Error("Missed alt id"))
     }
     const ao = new AO({wallet:wallet})
     const tags = {
@@ -21,10 +21,10 @@ export const submitStaking = ({
       ['X-Transfer-Type'] : "Stake"
     }
 
-    const msg =  await ao.message(agent_id,tags)
+    const msg =  await ao.message(alt_id,tags)
     if(!msg){reject("Send message error")}
     const {Messages} = await ao.result({
-      process: agent_id,
+      process: alt_id,
       message: msg
     })
     console.log(Messages)
