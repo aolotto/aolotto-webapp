@@ -1,7 +1,7 @@
 import { AO } from "../ao";
 let ao = new AO()
 
-export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}){
+export async function fetchDraws([{pool_id,agent_id,alt_id},{size,cursor}],{refetching}){
 
   if(!pool_id||!agent_id) return null
 
@@ -11,7 +11,7 @@ export async function fetchDraws([{pool_id,agent_id},{size,cursor}],{refetching}
     const query_str =  `
       query{
         transactions(
-          recipients: ["${agent_id}"],
+          recipients: ["${agent_id}","${alt_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{

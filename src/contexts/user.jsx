@@ -8,10 +8,10 @@ const UserContext = createContext()
 export const UserProvider = (props) => {
   let _account
   const {address, connected} = useWallet()
-  const {info,agentProcess,payProcess,stakeProcess} = useApp()
+  const {info,agentProcess,payProcess,stakeProcess,altProcess} = useApp()
   const [player,{refetch:refetchPlayer}] = createResource(()=>({id:info?.agent_process,player:address()}),fetchAccount)
   const [usdcBalance,{refetch:refetchUsdcBalance}] = createResource(()=>({pid:info?.pay_process,address:address()}),fetchBalance)
-  const [altBalance,{refetch:refetchAltBalance}] = createResource(()=>({pid:info?.agent_process,address:address()}),fetchBalance)
+  const [altBalance,{refetch:refetchAltBalance}] = createResource(()=>({pid:info?.alt_process,address:address()}),fetchBalance)
   const [veAltBalance,{refetch:refetchVeAltBalance}] = createResource(()=>({pid:info?.stake_process,address:address()}),fetchBalance)
   
 
@@ -22,9 +22,9 @@ export const UserProvider = (props) => {
       resource : usdcBalance,
       refetch : refetchUsdcBalance
     },{
-      Ticker : agentProcess()?.Ticker || "ALT",
-      Denomination : agentProcess()?.Denomination || "12",
-      Logo : agentProcess()?.Logo || "KmN0EfZguGLBPg4z5zz3JfEAgVs6v1MSMKFlqb_wF-I",
+      Ticker : altProcess()?.Ticker || "ALT",
+      Denomination : altProcess()?.Denomination || "12",
+      Logo : altProcess()?.Logo || "KmN0EfZguGLBPg4z5zz3JfEAgVs6v1MSMKFlqb_wF-I",
       resource : altBalance,
       refetch : refetchAltBalance
     },{

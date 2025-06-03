@@ -21,12 +21,14 @@ export const AppProvider = (props) => {
     buyback_process :import.meta.env.VITE_BUYBACK_PROCESS,
     stake_process : import.meta.env.VITE_STAKE_PROCESS,
     swap_process : import.meta.env.VITE_ALT_WUSDC_PROCESS,
+    alt_process : import.meta.env.VITE_ALT_PROCESS,
     ao_link_url : import.meta.env.VITE_AO_LINK_URL || "https://ao.link",
   }
   const [agentProcess,{refetch:refetchAgentProcess}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchProcessInfo)
   const [payProcess,{refetch:refetchPayProcess}] = createResource(()=>info?.pay_process || import.meta.env.VITE_PAY_PROCESS,fetchProcessInfo)
   const [stakeProcess,{refetch:refetchStakeProcess}] = createResource(()=>info?.stake_process || import.meta.env.VITE_STAKE_PROCESS,fetchProcessInfo)
   const [poolProcess,{refetch:refetchPoolProcess}] = createResource(()=>info?.pool_process || import.meta.env.VITE_POOL_PROCESS,fetchProcessInfo)
+  const [altProcess,{refetch:refetchAltProcess}] = createResource(()=>info?.alt_process || import.meta.env.VITE_ALT_PROCESS,fetchProcessInfo)
   const [agentStats,{refetch:refetchAgentStats}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchStats)
   const hooks = {
     timer,
@@ -38,7 +40,9 @@ export const AppProvider = (props) => {
     payProcess,
     stakeProcess,
     poolProcess,
+    altProcess,
     refetchAgentProcess,
+    refetchAltProcess,
     refetchPayProcess,
     refetchStakeProcess,
     refetchPoolProcess,

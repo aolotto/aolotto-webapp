@@ -108,7 +108,7 @@ export default props => {
                 if(altBalance()>= submission()?.amount){
                   console.log("提交锁仓",submission())
                   submitStaking({
-                    agent_id : info.agent_process,
+                    alt_id : info.alt_process,
                     stake_id : info.stake_process,
                     quantity : submission()?.amount,
                     duration : submission()?.duration,

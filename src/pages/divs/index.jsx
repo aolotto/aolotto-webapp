@@ -16,7 +16,7 @@ import Unlocker from "../../compontents/unlocker"
 export default props => {
   let _locker
   let _unlock
-  const {notify,agentProcess,info} = useApp()
+  const {notify,agentProcess,info,altProcess} = useApp()
   const {address,connected,showConnector,connecting,walletConnectionCheck} = useWallet()
   const {altBalance, refetchAltBalance,refetchVeAltBalance,refetchPlayer } = useUser()
 
@@ -53,7 +53,7 @@ export default props => {
   const Heading = props => {
     return (
       <div className="text-center md:text-left">
-        <h1 class=" text-4xl md:text-5xl lg:text-6xl font-medium text-balance">{t("s.title", { Logo: agentProcess()?.Logo })}</h1>
+        <h1 class=" text-4xl md:text-5xl lg:text-6xl font-medium text-balance">{t("s.title", { Logo: altProcess()?.Logo })}</h1>
         <p class=" py-10">{t("s.desc")}<a href="https://docs.aolotto.com/en/staking" target="_blank" class="inline-flex pl-2 items-center">Learn more <Icon icon="ei:external-link"></Icon></a></p>
       </div>
     )
@@ -121,7 +121,7 @@ export default props => {
               <p class="text-current/50 flex items-center gap-2">
                 <span className="text-xs">
                   <Show when={connected() && altBalance.state == "ready"} fallback={<Skeleton w={4} h={1} />}>
-                    {toBalanceValue(altBalance() || 0, agentProcess()?.Denomination, agentProcess()?.Denomination)}
+                    {toBalanceValue(altBalance() || 0, altProcess()?.Denomination, altProcess()?.Denomination)}
                   </Show>
                 </span>
                 <button
