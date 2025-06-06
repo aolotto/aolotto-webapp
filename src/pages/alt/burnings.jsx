@@ -15,7 +15,7 @@ import Loadmore from '../../compontents/loadmore';
 export default function Stakings(props) {
   const { info } = useApp()
   const [burnings,{loadMore,loadingMore,hasMore}] = storeResource("alt_burnings",()=>createPagination(
-    ()=>({ agent_id : info?.agent_process}),
+    ()=>({ agent_id : info?.agent_process, alt_id : info?.alt_process }),
     fetchAltBurnings,
     {size: 100}
   ))

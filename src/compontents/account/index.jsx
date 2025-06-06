@@ -1,4 +1,4 @@
-import { createEffect, createSignal,onMount, Suspense,batch, createMemo,Match, Switch } from "solid-js"
+import { createEffect, createSignal,onMount, Suspense,batch, createMemo,Match, Switch, For, createResource, Show } from "solid-js"
 import { Portal } from "solid-js/web"
 import Balances from "./balances"
 import { useWallet } from "arwallet-solid-kit"
@@ -8,6 +8,8 @@ import Avatar from "../avatar"
 import { Copyable } from "../copyable"
 import { Icon } from "@iconify-icon/solid"
 import { t,setDictionarys } from "../../i18n"
+import { fetchClaimApproveResult } from "../../api"
+
 
 import Spinner from "../spinner"
 import Tabs from "../tabs"
@@ -15,21 +17,23 @@ import Withdraw from "./withdraw"
 
 import Tickets from "./tickets"
 import Mintings from "./mintings"
-import Dividends from "./dividends"
 import Stakings from "./stakings"
 import Wins from "./wins"
 import Claims from "./cliams"
 import Overview from "./overview"
+import Claimer from "./claimer"
 
 export default function Account(props) {
   let _account_inner
   let _dividend_claimer
-  const {notify} = useApp()
+  let _prize_claimer
+  const {notify,info} = useApp()
   const { address,disconnect } = useWallet()
   const { player,refetchPlayer,refetchUsdcBalance } = useUser()
   const [ visible, setVisible ] = createSignal(false)
   const [ tab, setTab ] = createSignal()
   const [ offset, setOffset ] = createSignal(0)
+  const [ prizeApproves,setPrizeApproves ] = createSignal()
   
    setDictionarys("en",{
       "act.overview" : "Overview",
@@ -63,13 +67,36 @@ export default function Account(props) {
         setTab(tab() || menus[0])
         setVisible(true)
         _account_inner.scrollTo({top:0,behavior:"smooth"})
-        setOffset(document.getElementById("account-tabs").offsetTop - 40)
+        if(document.getElementById("account-tabs")){
+          setOffset(document.getElementById("account-tabs")?.offsetTop - 40)
+        }
+
       },
       close:(e)=>{
         setVisible(false)
       }
     })
+    if(address()&&info?.agent_process){
+      // Load prize approves from localStorage
+      const key = `approve_prize_${info.agent_process}_${address()}`
+      const localPrizeApproves = localStorage.getItem(key)
+      if(localPrizeApproves){
+        setPrizeApproves(JSON.parse(localPrizeApproves))
+      }
+    }
   })
+
+  const [approveStates] = createResource(() => ({
+    msg_ids : prizeApproves()?.map((i)=>i.id),
+    agent_id : info?.agent_process,
+  }), fetchClaimApproveResult)
+
+  createEffect(()=>{
+    if(approveStates.state == "ready" && approveStates() ){
+      console.log("Approve States:",approveStates())
+    }
+  })
+
   const menus = createMemo(()=>[{
     key : "overview",
     label : ()=> t("act.overview"),
@@ -125,6 +152,41 @@ export default function Account(props) {
       </div>
     </div>
     )
+    const Approves = () =>(
+      <div className="flex flex-col py-2">
+        
+        <div className=" rounded-lg bg-primary/20 p-2">
+          <h3 className=" flex items-center justify-between text-sm">
+            <span>{prizeApproves()?.length} pending claims</span>
+            <svg class="size-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m12,17v-5.5c0-.276-.224-.5-.5-.5h-1.5" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path><circle cx="12" cy="7.25" r="1.25" fill="currentColor" stroke-width="2"></circle></g></svg>
+          </h3>
+          <ul className="mt-2 pt-2 border-t border-base-content/20 ">
+          <For each={prizeApproves()}>
+            {(approve) => (
+              <li className="flex items-center justify-between gap-2 py-1 text-sm">
+                <div className="flex items-center gap-2 ">
+                  Cliamed ${toBalanceValue(approve?.amount,6)}
+                </div>
+                <div className="flex items-center gap-2">
+                  
+                  <Show when={approveStates?.state == "ready"} fallback ={<Spinner size="sm"/>}>
+                    <span>{approveStates()?.[approve?.id]? <span>Approved <button className="btn btn-xs" onClick={()=>{
+                      setPrizeApproves(prizeApproves()?.filter((i)=>i.id != approve.id))
+                      localStorage.setItem(`approve_prize_${info.agent_process}_${address()}`,JSON.stringify(prizeApproves()?.filter((i)=>i.id != approve.id)))
+                    }}>clean</button></span> : "Approving..."}</span>
+                  </Show>
+                  <a href={"https://www.ao.link/#/message/"+approve?.id} target="_blank"><Icon icon="ei:external-link"></Icon></a>
+                </div>
+              </li>
+            )}
+          </For>
+            {/* <li>1</li>
+            <li>2</li> */}
+          </ul>
+        </div>
+
+      </div>
+    )
     const UnClaims = () => (
       <div className="flex flex-col py-2">
         <div className=" rounded-xl  px-2 py-2 flex justify-between items-center">
@@ -134,11 +196,18 @@ export default function Account(props) {
             <Show when={player.state == "ready"} fallback={<span className=" skeleton w-[4em] h-[1em] inline-block"></span>}>${toBalanceValue(player()?.win?.[0],6)}</Show>
             </span>
           </div>
-          <div>
+          <div class="flex gap-2 items-center">
+            <Show when={prizeApproves()&& prizeApproves()?.length > 0}>
+              <button class="badge badge-info rounded-full badge-sm">
+                <svg class="size-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m12,17v-5.5c0-.276-.224-.5-.5-.5h-1.5" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path><circle cx="12" cy="7.25" r="1.25" fill="currentColor" stroke-width="2"></circle></g></svg>
+                {prizeApproves()?.length}
+              </button>
+            </Show>
             <Show when={player.state=="ready"} fallback={<button className="btn btn-sm" disabled><Spinner/></button>}>
               <button 
                 disabled={player()?.win?.[0] < 1 ||!player()} 
                 className="btn btn-sm btn-primary"
+                onClick={()=>_prize_claimer.open({amount : player()?.win?.[0] || 0})}
               >
                 {t("act.claims")}
               </button>
@@ -181,6 +250,10 @@ export default function Account(props) {
           <Heading/>
         </div>
         <div className=" px-4">
+          <Show when={prizeApproves() && prizeApproves()?.length > 0}>
+            <Approves/>
+          </Show>
+         
           <UnClaims/>
           <div className="border-t border-base-300 pt-2">
             <Balances/>
@@ -235,7 +308,15 @@ export default function Account(props) {
               notify("Dividend has been claimed.","alert-info")
             }}/>
           </Portal>
-        
+        <Portal>
+          <Claimer ref={_prize_claimer} onClaimed={(prizeApproves)=>{
+             batch(()=>{
+              setPrizeApproves(prizeApproves)
+              refetchPlayer()
+            })
+            notify("Your claim request has been submitted. The reward will be reviewed and distributed within 24 hours.","alert-info")
+          }}/>
+        </Portal>
       </div>
       {/* mask */}
       <div 

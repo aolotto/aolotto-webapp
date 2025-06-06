@@ -18,6 +18,7 @@ export default function Mintings(props) {
         ()=>({
           pool_id : info.pool_process, 
           agent_id : info.agent_process,
+          alt_id : info.alt_process,
           player_id : address()
         }),
         fetchPlayerMintings,

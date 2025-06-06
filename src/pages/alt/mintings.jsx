@@ -15,7 +15,11 @@ import { Datetime } from '../../compontents/moment';
 export default function Mintings(props) {
   const { info, agentStats } = useApp()
   const [mintings,{loadMore,loadingMore,hasMore}] = storeResource("alt_mintings",()=>createPagination(
-    ()=>({pool_id : info?.pool_process, agent_id : info?.agent_process}),
+    ()=>({
+      pool_id : info?.pool_process, 
+      agent_id : info?.agent_process,
+      alt_id : info?.alt_process,
+    }),
     fetchAltMintings,
     {size: 100}
   ))
@@ -38,10 +42,6 @@ export default function Mintings(props) {
     "m.tax" : "征税",
     "m.time" : "时间",
   })
-  createEffect(()=>{
-    console.log(agentStats())
-  }
-  )
   return(
   <>
   <Table class="w-full">
@@ -72,7 +72,7 @@ export default function Mintings(props) {
               <div className=' hidden md:block'><span class="text-current/50">{shortStr(item.address||"",8)}</span></div>
             </div>
           </Cell>
-          <Cell>{item?.action == "Save-Ticket"? <div className="badge badge-accent uppercase rounded-full">Bet2mint</div> : <div className="badge badge-info uppercase rounded-full">gap-reward</div>}</Cell>
+          <Cell>{item?.type == "Bet2Mint"? <div className="badge badge-accent uppercase rounded-full">Bet2mint</div> : <div className="badge badge-info uppercase rounded-full">gap-reward</div>}</Cell>
           <Cell className="text-right md:text-left">{toBalanceValue(item?.total,12)} <span className='text-current/50'>$ALT</span></Cell>
           <Cell className=" hidden md:table-cell">{toBalanceValue(item?.tax,12)} <span className='text-current/50'>$ALT</span></Cell>
           <Cell class="text-right hidden md:table-cell">

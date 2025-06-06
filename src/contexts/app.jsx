@@ -1,4 +1,4 @@
-import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match} from "solid-js";
+import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match, ErrorBoundary} from "solid-js";
 import { useWallet } from "arwallet-solid-kit";
 import { fetchStats,fetchProcessInfo } from "../api";
 import toast from "solid-toast";
@@ -24,7 +24,7 @@ export const AppProvider = (props) => {
     alt_process : import.meta.env.VITE_ALT_PROCESS,
     ao_link_url : import.meta.env.VITE_AO_LINK_URL || "https://ao.link",
   }
-  const [agentProcess,{refetch:refetchAgentProcess}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchProcessInfo)
+  const [agentProcess,{refetch:refetchAgentProcess}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,(pid)=>({Id:pid}))
   const [payProcess,{refetch:refetchPayProcess}] = createResource(()=>info?.pay_process || import.meta.env.VITE_PAY_PROCESS,fetchProcessInfo)
   const [stakeProcess,{refetch:refetchStakeProcess}] = createResource(()=>info?.stake_process || import.meta.env.VITE_STAKE_PROCESS,fetchProcessInfo)
   const [poolProcess,{refetch:refetchPoolProcess}] = createResource(()=>info?.pool_process || import.meta.env.VITE_POOL_PROCESS,fetchProcessInfo)

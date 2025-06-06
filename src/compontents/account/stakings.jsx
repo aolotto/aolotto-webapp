@@ -17,6 +17,7 @@ export default function Stakings(props) {
         ()=>({
           stake_id : info.stake_process, 
           agent_id : info.agent_process,
+          alt_id : info.alt_process,
           player_id : address()
         }),
         fetchPlayerStakings,

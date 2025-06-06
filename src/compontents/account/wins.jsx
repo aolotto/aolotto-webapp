@@ -3,7 +3,7 @@ import { createPagination } from "../../lib/pagination"
 import { fetchPlayerWinings } from "../../api"
 import { useApp, useWallet } from "../../contexts"
 import Loadmore from "../loadmore"
-import { For, Match, Suspense, Switch } from "solid-js"
+import { createEffect, For, Match, Suspense, Switch } from "solid-js"
 import { Moment } from "../moment"
 import { toBalanceValue } from "../../lib/tools"
 import  Empty from "../empty"
@@ -16,12 +16,16 @@ export default function Wins(props) {
       ()=>createPagination(
         ()=>({
           agent_id : info.agent_process,
+          alt_id : info.alt_process,
           player_id : address()
         }),
         fetchPlayerWinings,
         {size: 100}
       )
     )
+  createEffect(()=>{
+    console.log(wins())
+  })
   return(
     <div class = " divide-y divide-base-300">
       <Switch>
@@ -30,9 +34,10 @@ export default function Wins(props) {
             {(win) => (
               <div class=" flex items-center justify-between gap-4 px-2 py-4 ">
                 <div className="flex items-center gap-4 flex-wrap">
-                  d
+                  <p>R{win?.round} - </p>
+                  <p>${toBalanceValue(win?.prize,6)}</p>
                 </div>
-                <div className="text-sm text-current/50"><Moment ts={win?.created * 1000}/></div>
+                <div className="text-sm text-current/50"><Moment ts={win?.timestamp * 1000}/></div>
               </div>
             )}
           </For>

@@ -15,7 +15,7 @@ import { Datetime } from '../../compontents/moment';
 export default function Stakings(props) {
   const { info, agentStats } = useApp()
   const [stakings,{loadMore,loadingMore,hasMore}] = storeResource("alt_stakings",()=>createPagination(
-    ()=>({stake_id : info?.stake_process, agent_id : info?.agent_process}),
+    ()=>({stake_id : info?.stake_process, agent_id : info?.agent_process, alt_id : info?.alt_process}),
     fetchAltStakings,
     {size: 100}
   ))
