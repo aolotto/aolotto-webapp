@@ -67,17 +67,17 @@ export default function ALT() {
       setTab(tabs()?.[Math.max(idx,0)])
     }
   })
-  const {info, agentProcess} = useApp();
+  const {info, altProcess} = useApp();
   const [price] = createResource(() => info?.swap_process || import.meta.env.VITE_ALT_WUSDC_PROCESS, fetchPrice);
-  const [supply] = createResource(() => info?.agent_process || import.meta.env.VITE_AGENT_PROCESS, fetchSupply);
+  const [supply] = createResource(() => info?.alt_process || import.meta.env.VITE_ALT_PROCESS, fetchSupply);
 
   return (
     <main className="container">
       <section class="response_cols py-8 md:py-10 lg:py-16">
         <div class="col-start-auto col-span-full md:col-span-5 lg:col-span-8 flex flex-col  gap-4">
           <div class="flex gap-4 items-center w-full justify-center md:justify-start">
-            <image src={agentProcess.state=="ready"&&`https://arweave.net/${agentProcess()?.Logo}`} class="size-12 rounded-full inline-flex"/>
-            <span class="text-current/50">${agentProcess.state=="ready"&&agentProcess()?.Ticker} - <a href={`${info.ao_link_url}/#/token/${info?.agent_process}`} target="_blank" class="inline-flex items-center">AoLottoToken <Icon icon="ei:external-link"></Icon></a></span>
+            <image src={altProcess.state=="ready"&&`https://arweave.net/${altProcess()?.Logo}`} class="size-12 rounded-full inline-flex"/>
+            <span class="text-current/50">${altProcess.state=="ready"&&altProcess()?.Ticker} - <a href={`${info.ao_link_url}/#/token/${info?.alt_process}`} target="_blank" class="inline-flex items-center">AoLottoToken <Icon icon="ei:external-link"></Icon></a></span>
           </div>
           <p class=" text-center md:text-left text-4xl sm:text-5xl lg:text-6xl text-balance">          
           {t("slogan")}

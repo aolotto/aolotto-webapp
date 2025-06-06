@@ -15,7 +15,7 @@ import  Loadmore  from '../../compontents/loadmore';
 export default function Unstakes(props) {
   const { info,agentStats } = useApp()
   const [unstakes,{loadMore,loadingMore,hasMore}] = storeResource("alt_unstakes",()=>createPagination(
-    ()=>({stake_id : info?.stake_process, agent_id : info?.agent_process}),
+    ()=>({stake_id : info?.stake_process, agent_id : info?.alt_process, alt_id : info?.alt_process}),
     fetchAltUnStakings,
     {size: 100}
   ))
@@ -36,10 +36,7 @@ export default function Unstakes(props) {
     "m.penalty" : "罚金",
     "m.time" : "时间",
   })
-  createEffect(()=>{
-    console.log(agentStats())
-  }
-  )
+
   return(
     <>
     <Table class="w-full">

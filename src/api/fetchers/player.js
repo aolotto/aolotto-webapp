@@ -87,16 +87,15 @@ export async function fetchPlayerTickets([{player_id,pool_id},{size,cursor}],{re
 }
 
 
-export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cursor}],{refetching}){
-  console.log("fetchPlayerMintings",player_id,pool_id,agent_id)
+export async function fetchPlayerMintings([{player_id,pool_id,agent_id,alt_id},{size,cursor}],{refetching}){
+  console.log("fetchPlayerMintings",player_id,alt_id)
 
-  if(!player_id||!pool_id||!agent_id) return null
+  if(!player_id||!alt_id) return null
 
   try {
     const query_str =  `
       query{
         transactions(
-          recipients: ["${pool_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{
@@ -110,13 +109,13 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id},{size,cu
               values: ["Message"]
             },{
               name: "From-Process",
-              values: ["${agent_id}"]
+              values: ["${alt_id}"]
             },{
               name: "Mint-For",
               values: ["${player_id}"]
             },{
-              name: "Mint",
-              values: ["${agent_id}"]
+              name: "Action",
+              values: ["Minted"]
             }]
         ) {
           edges {
@@ -251,7 +250,7 @@ export async function fetchPlayerDividends([{player_id,pool_id,token_id,agent_id
 }
 
 
-export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cursor}],{refetching}){
+export async function fetchPlayerCliams([{player_id,token_id,agent_id,alt_id},{size,cursor}],{refetching}){
   console.log("fetchPlayerDividends",player_id)
 
   if(!player_id) return null
@@ -280,7 +279,7 @@ export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cur
               values: ["${token_id}"]
             },{
               name: "Sender",
-              values: ["${agent_id}"]
+              values: ["${agent_id}","${alt_id}"]
             },{
               name: "Action",
               values: ["Credit-Notice"]
@@ -329,7 +328,7 @@ export async function fetchPlayerCliams([{player_id,token_id,agent_id},{size,cur
 }
 
 
-export async function fetchPlayerStakings([{player_id,stake_id,agent_id},{size,cursor}]){
+export async function fetchPlayerStakings([{player_id,stake_id,agent_id,alt_id},{size,cursor}]){
   console.log("fetchPlayerStakings",player_id,stake_id,agent_id)
   if(!player_id||!stake_id||!agent_id) return null
  
@@ -354,7 +353,7 @@ export async function fetchPlayerStakings([{player_id,stake_id,agent_id},{size,c
               values: ["${stake_id}"]
             },{
               name: "Asset-Id",
-              values: ["${agent_id}"]
+              values: ["${alt_id}"]
             },{
               name: "Action",
               values: ["Staked"]
@@ -410,7 +409,7 @@ export async function fetchPlayerStakings([{player_id,stake_id,agent_id},{size,c
 
 
 
-export async function fetchPlayerWinings([{player_id,agent_id},{size,cursor}]){
+export async function fetchPlayerWinings([{player_id,agent_id,alt_id},{size,cursor}]){
   console.log("fetchPlayerWinings",player_id,agent_id)
   if(!player_id||!agent_id) return null
  
@@ -432,7 +431,7 @@ export async function fetchPlayerWinings([{player_id,agent_id},{size,cursor}]){
               values: ["Message"]
             },{
               name: "From-Process",
-              values: ["${agent_id}"]
+              values: ["${agent_id}","${alt_id}"]
             },{
               name: "Action",
               values: ["Win-Notice"]
@@ -464,7 +463,7 @@ export async function fetchPlayerWinings([{player_id,agent_id},{size,cursor}]){
         }
         return({
           id: node.id,
-          prize: tags?.Price,
+          prize: tags?.Prize,
           tax: tags?.Tax,
           round: tags?.Round,
           jackpot: tags?.Jackpot,
@@ -487,3 +486,66 @@ export async function fetchPlayerWinings([{player_id,agent_id},{size,cursor}]){
 
 
 
+export async function fetchClaimApproveResult({msg_ids,agent_id}){
+  console.log('fetchClaimApproveResult: ', msg_ids);
+  if(!agent_id) throw new Error("Missed agent id")
+  if(!msg_ids||!Array.isArray(msg_ids)||msg_ids.length <= 0) throw new Error("Missed message ids")
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          tags: [{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            },{
+              name: "From-Process",
+              values: ["${agent_id}"]
+            },{
+              name: "Action",
+              values: ["Transfer"]
+            },{
+              name: "X-Transfer-Type",
+              values: ["Claim-Notice"]
+            },{
+              name: "X-Claim-Id",
+              values: ${JSON.stringify(msg_ids)}
+            }],
+        ) {
+          edges {
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+            }
+          }
+        }
+      }
+    `
+    const res = await ao.query(query_str)
+
+    let approved = {}
+  
+    if(res?.length > 0){
+      for (const {node} of res) {
+        const tags = {}
+        for (const {name,value} of node.tags) {
+          tags[name] = value
+        }
+        approved[tags?.['X-Claim-Id']] = node?.id
+      }
+    }
+
+    return approved
+  } catch (error) {
+    console.error("fetch claim approve result faild.", error)
+    throw error
+  }
+}

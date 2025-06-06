@@ -1,7 +1,7 @@
 /* @refresh reload */
 import './index.css'
 import { render } from 'solid-js/web'
-import { Suspense } from 'solid-js'
+import { Suspense,ErrorBoundary } from 'solid-js'
 import { Toaster } from 'solid-toast';
 import { HashRouter, Route } from "@solidjs/router"
 import { AppProvider,UserProvider } from './contexts'
@@ -28,6 +28,14 @@ import ALT from './pages/alt';
 
 const App = props => {
   return (
+    <ErrorBoundary
+        fallback={(error, reset) => (
+          <div>
+            <p>Something went wrong: {error.message}</p>
+            <button onClick={reset}>Try Again</button>
+          </div>
+        )}
+      >
     <Suspense fallback={<Spinner className="w-full h-[100vh] flex-col">Aolotto</Spinner>}>
       <AppProvider>
         <UserProvider>
@@ -42,6 +50,7 @@ const App = props => {
         </UserProvider>
       </AppProvider>
     </Suspense>
+    </ErrorBoundary>
   )
 }
 render(() => (

@@ -1,8 +1,8 @@
 import { AO } from "../ao";
 let ao = new AO()
 
-export async function fetchDividends([{pool_id,agent_id},{size,cursor}],{refetching}){
-  console.log("fetchLottoDividends",agent_id)
+export async function fetchDividends([{pool_id,agent_id,alt_id},{size,cursor}],{refetching}){
+  console.log("fetchLottoDividends",agent_id,alt_id)
 
   if(!pool_id||!agent_id) return null
 
@@ -24,7 +24,7 @@ export async function fetchDividends([{pool_id,agent_id},{size,cursor}],{refetch
               values: ["Message"]
             },{
               name: "From-Process",
-              values: ["${agent_id}"]
+              values: ["${agent_id}","${alt_id}"]
             },{
               name: "Action",
               values: ["Distributed-Dividends"]

@@ -4,7 +4,7 @@ import { action } from "@solidjs/router";
 let ao = new AO()
 
 
-export async function fetchAltMintings([{pool_id,agent_id},{size,cursor}],{refetching}){
+export async function fetchAltMintings([{pool_id,agent_id,alt_id},{size,cursor}],{refetching}){
   console.log("fetchMinings",cursor)
 
   if(!pool_id||!agent_id) return null
@@ -13,7 +13,6 @@ export async function fetchAltMintings([{pool_id,agent_id},{size,cursor}],{refet
     const query_str =  `
       query{
         transactions(
-          recipients: ["${pool_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{
@@ -27,13 +26,10 @@ export async function fetchAltMintings([{pool_id,agent_id},{size,cursor}],{refet
               values: ["Message"]
             },{
               name: "From-Process",
-              values: ["${agent_id}"]
+              values: ["${alt_id}"]
             },{
               name:"Action",
-              values: ["Save-Ticket","Minting-Plused"]
-            },{
-              name:"Mint",
-              values: ["${agent_id}"]
+              values: ["Minted"]
             }]
         ) {
           edges {
@@ -77,6 +73,7 @@ export async function fetchAltMintings([{pool_id,agent_id},{size,cursor}],{refet
           cursor,
           timestamp: node?.block?.timestamp,
           action: tags?.Action,
+          type : tags?.['Mint-Type']
         })
       })
     }
@@ -89,16 +86,16 @@ export async function fetchAltMintings([{pool_id,agent_id},{size,cursor}],{refet
 }
 
 
-export async function fetchAltBurnings([{agent_id},{size,cursor}],{refetching}){
-  console.log("fetchAltBuybacks",agent_id)
+export async function fetchAltBurnings([{alt_id},{size,cursor}],{refetching}){
+  console.log("fetchAltBuybacks",alt_id)
 
-  if(!agent_id) return null
+  if(!alt_id) return null
 
   try {
     const query_str =  `
       query{
         transactions(
-          recipients: ["${agent_id}"],
+          recipients: ["${alt_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{
@@ -158,16 +155,15 @@ export async function fetchAltBurnings([{agent_id},{size,cursor}],{refetching}){
 }
 
 
-export async function fetchAltStakings([{stake_id,agent_id},{size,cursor}],{refetching}){
-  console.log("fetchAltStakings",stake_id,agent_id)
+export async function fetchAltStakings([{stake_id,alt_id,agent_id},{size,cursor}],{refetching}){
+  console.log("fetchAltStakings",stake_id,alt_id)
 
-  if(!stake_id||!agent_id) return null
+  if(!stake_id||!alt_id) return null
 
   try {
     const query_str =  `
       query{
         transactions(
-          recipients: ["${agent_id}"],
           first: ${size||100},
           after: "${cursor?cursor:''}",
           tags: [{
@@ -184,10 +180,10 @@ export async function fetchAltStakings([{stake_id,agent_id},{size,cursor}],{refe
               values: ["${stake_id}"]
             },{
               name: "Asset-Id",
-              values: ["${agent_id}"]
+              values: ["${alt_id}"]
             },{
               name: "Action",
-              values: ["Stake-Notice"]
+              values: ["Staked"]
             }]
         ) {
           edges {
@@ -221,7 +217,7 @@ export async function fetchAltStakings([{stake_id,agent_id},{size,cursor}],{refe
           quantity: tags?.Quantity,
           address: tags?.Staker,
           duration: tags?.["Locked-Time"],
-          timestamp: node.block.timestamp,
+          timestamp: node?.block?.timestamp ,
           cursor
         })
       })
@@ -298,7 +294,7 @@ export async function fetchAltUnStakings([{stake_id,agent_id},{size,cursor}],{re
           quantity: tags?.Quantity,
           address: tags?.['X-Staker'],
           amount: tags?.['X-Unstake-Amount'],
-          timestamp: node?.block?.timestamp,
+          timestamp: node?.block?.timestamp || new Date().getTime()/1000,
           cursor
         })
       })

@@ -17,6 +17,7 @@ export default function Claims(props) {
         ()=>({
           agent_id : info.agent_process,
           token_id : info.pay_process,
+          alt_id : info.alt_process,
           player_id : address()
         }),
         fetchPlayerCliams,

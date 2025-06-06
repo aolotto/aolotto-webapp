@@ -19,7 +19,8 @@ export {
   fetchPlayerCliams,
   fetchPlayerDividends,
   fetchPlayerStakings,
-  fetchPlayerWinings
+  fetchPlayerWinings,
+  fetchClaimApproveResult
 } from "./fetchers/player"
 export { 
   fetchAltMintings,
@@ -34,3 +35,4 @@ export {
 export { postBet } from "./submits/postBet"
 export { cliamDividends } from "./submits/cliamDividends"
 export { submitStaking } from "./submits/postStake"
+export { cliamPrize } from "./submits/cliamPrize"

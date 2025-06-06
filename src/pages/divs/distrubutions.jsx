@@ -33,7 +33,7 @@ export default props => {
   const {info} = useApp()
   
   const [pool]  = storeResource("pool_state",()=>createResource(()=>info?.pool_process,fetchState))
-  const [divs,{loadMore,hasMore,loadingMore}] = storeResource("dividends",()=>createPagination(()=>({pool_id:info?.pool_process,agent_id:info?.agent_process}),fetchDividends,{size:100}))
+  const [divs,{loadMore,hasMore,loadingMore}] = storeResource("dividends",()=>createPagination(()=>({pool_id:info?.pool_process,agent_id:info?.agent_process,alt_id: info.alt_process}),fetchDividends,{size:100}))
  
   return (
     <Suspense fallback={<Spinner className="py-10 w-full"/>}>
