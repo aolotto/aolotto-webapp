@@ -148,7 +148,7 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id,alt_id},{
  
         return({
           id: node.id,
-          type: tags?.Action,
+          type: tags?.["Mint-Type"] || tags?.Action,
           total: tags?.['Mint-Total'],
           buff: tags?.['Mint-Buff'],
           speed : tags?.['Mint-Speed'],
@@ -161,7 +161,7 @@ export async function fetchPlayerMintings([{player_id,pool_id,agent_id,alt_id},{
         })
       })
     }
-    // console.log(mints)
+    console.log(mints)
     return mints
   } catch (error) {
     console.error("fetch user mintings faild.", error)

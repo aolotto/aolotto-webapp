@@ -67,7 +67,7 @@ export async function fetchDividends([{pool_id,agent_id,alt_id},{size,cursor}],{
         })
       })
     }
-    dividends.sort((a,b)=>{return Number(a.ref) > Number(b.ref)})
+    // dividends.sort((a,b)=>{return Number(a.ref) > Number(b.ref)})
     return dividends
   } catch (error) {
     console.error("fetch minings faild.", error)
