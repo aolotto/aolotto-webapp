@@ -41,7 +41,7 @@ export default function Mintings(props) {
               {(minting) => (
                 <div class=" flex items-center justify-between gap-4 px-2 py-4 border-b border-base-300 text-sm">
                   <div className="flex items-center gap-4 flex-wrap">
-                    <p>{minting?.type == "Save-Ticket"? <span className="badge badge-accent badge-sm uppercase rounded-full">bet2mint</span>:<span  className="badge uppercase badge-sm badge-primary">Gap-reward</span>}</p>
+                    <p>{minting?.type == "Bet2Mint"? <span className="badge badge-accent badge-sm uppercase rounded-full">bet2mint</span>:<span  className="badge uppercase badge-sm badge-primary">Gap-reward</span>}</p>
                     <p>{toBalanceValue(minting?.amount,12)} $ALT</p>
                   </div>
                    <div className="text-sm text-current/50 flex items-center gap-2">
