@@ -98,7 +98,7 @@ export default props => {
             </div>
           </Match>
           <Match when={!details()?.isFirst}>
-            <InfoItem label={<span className=" inline-flex items-center gap-2"><Icon icon="ph:arrow-elbow-down-right-light" className=" scale-90"/><span>Gap Time</span></span>} value={()=><span>{details()?.diff_time / 60 / 1000 || 0} mins</span>} className="text-sm"/>
+            <InfoItem label={<span className=" inline-flex items-center gap-2"><Icon icon="ph:arrow-elbow-down-right-light" className=" scale-90"/><span>Gap Time</span></span>} value={()=><span>{Math.floor(details()?.diff_time / 60 / 1000 || 0)} mins</span>} className="text-sm"/>
             <InfoItem label={<span className=" inline-flex items-center gap-2"><Icon icon="ph:arrow-elbow-down-right-light" className=" scale-90"/><span>Total Rewards</span></span>} value={()=>toBalanceValue(details()?.gap_rewards + details()?.bekilled,12,12) + " $ALT"}  className="text-sm"/>
             <InfoItem label={<span className=" inline-flex items-center gap-2"><Icon icon="ph:arrow-elbow-down-right-light" className=" scale-90"/><span>Split</span></span>}  value={()=>toBalanceValue(details()?.bekilled,12,12) + " $ALT"}   className="text-sm"/>
           </Match>
