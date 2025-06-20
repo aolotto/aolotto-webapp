@@ -6,7 +6,7 @@ import { Show, splitProps,createMemo } from "solid-js"
 export default props => {
   setDictionarys("en",{
     "tooltop.bet2mint" : ()=>"$ALT (The Dividends Token) is minted in rounds via the Bet2Mint mechanism. At the start of each round, the minting reward is reset to (max supply - current supply) * 0.002. Users receive minting rewards based on their betting order, calculated as: current round’s Bet2Mint balance * minting speed [1] * reward ladder coefficient",
-    "m.mint_tip" : (v)=><span class='leading-[0.5em]'>Remaining Bet2Mint rewards in this round: <b class="text-base-content">{v.balance}</b> / {v.total} $ALT. Rewards for each bet follow the ladder. If no new bets, the last bettor will gets <b class="text-base-content">~{v.auto_reward}</b> $ALT Gap-Reward every <span class="text-base-content">10m</span>, Bet NOW or watch the rewards vanish!</span>,
+    "m.mint_tip" : (v)=><span class='leading-[0.5em]'>Each bet earns $ALT based on the reward ladder. If no new bets are placed for a while, Gap-Rewards on the latest bet build up every 10 minutes. If the next bet is higher, half the Gap-Rewards are split; otherwise, the previous bettor keeps all. </span>,
     "m.bet" : "Bet",
     "m.mint_speed" : "Mint Speed",
     "m.next_auto_mint" : "latest Gap-Reward",
@@ -21,7 +21,7 @@ export default props => {
   })
   setDictionarys("zh",{
     "tooltop.bet2mint" : ()=>"$ALT (分红代币) 通过 Bet2Mint 机制进行铸造。在每轮开始时，铸造奖励重置为 (最大供应量 - 当前供应量) * 0.002。用户根据下注顺序获得铸造奖励，计算公式为：当前轮次的 Bet2Mint 余额 * 铸造速度 [1] * 奖励阶梯系数",
-    "m.mint_tip" : (v)=><span>本轮Bet2Mint铸币奖励剩余 <b class="text-base-content">{v.balance}</b> / {v.total} $ALT, 单次投注获得的奖励参照奖励阶梯；没有新的投注追加时，协议将每<span class="text-base-content">10分钟</span>下发一次空当奖励 <span class="text-base-content">~{v.auto_reward}</span> $ALT给最后下注者,建议尽早下注，避免本轮铸币奖励被其它玩家耗光。</span>,
+    "m.mint_tip" : (v)=><span>每次投注可根據獎勵階梯獲得 $ALT。如果一段時間內沒有新的投注追加，最新投注的每 10 分鐘统计一次空当獎勵。如果下一個投注金额高于前者，空当獎勵將被平分；否則，前一個投注者將保留全部獎勵。</span>,
     "m.bet" : "投注",
     "m.mint_speed" : "铸币速度",
     "m.next_auto_mint" : "最近一次空当奖励",
