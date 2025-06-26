@@ -104,7 +104,7 @@ export default props => {
           </Match>
         </Switch>
         
-        <p className="py-4 border-t border-current/20 mt-4 text-sm">A total of {()=>toBalanceValue(Number(details()?.mint?.total || 0) + (details()?.gap_rewards || 0),12,12)} $ALT were earned; after 20% tax, received {()=>toBalanceValue(Number((details()?.mint?.total || 0) + (details()?.gap_rewards || 0)) * 0.8,12,12)}  $ALT.</p>
+        <p className="py-4 border-t border-current/20 mt-4 text-sm">A total of {()=>toBalanceValue(Number(details()?.mint?.total || 0) + (details()?.gap_rewards || 0),12,12)} $ALT were earned; after 20% tax, received {()=>toBalanceValue(Number(details()?.mint?.total || 0) + (details()?.gap_rewards || 0) * 0.8,12,12)}  $ALT.</p>
       </div>
       
 
