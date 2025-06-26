@@ -27,6 +27,7 @@ jobs:
           VITE_STAKE_PROCESS : kqDiKjXCwO16RJmjJqSNDbqdMVbrCaplEh7KnUHinlA
           VITE_ALT_WUSDC_PROCESS : 2sWVPeUTYuB0VMrkgC9m_0MwljaZqEJdAfgJXNZgEIw
           VITE_ALT_PROCESS : 3IYRZBvph5Xx9566RuGWdLvUHnOcG8cHXT95s1CYRBo
+          VITE_ALCOG_PROCESS : PURLGdY5k7ujpBM_j_5XkKbnE9Rv9ta8cr7EOPWYRqk
           VITE_LAUNCH_TIME: 1735689601000
           VITE_GATEWAY_URL: https://arweave.net
           VITE_GATEWAY: arweave.net
