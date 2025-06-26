@@ -12,6 +12,7 @@ import Skeleton from "../../compontents/skeleton"
 import Locker from "../../compontents/locker"
 import Unlocker from "../../compontents/unlocker"
 import Booster from "../../compontents/booster"
+import Spinner from "../../compontents/spinner"
 
 
 export default props => {
@@ -282,6 +283,7 @@ export default props => {
     <main class="container flex flex-col min-h-lvh/2 overflow-visible py-4 md:py-6 lg:py-10">
       
       <ErrorBoundary fallback={(err,reset)=><div>{err.message}</div>}>
+      <Suspense fallback={<Spinner/>}>
       {/* top */}
         <section class="response_cols overflow-visible py-6">
           <div class="col-span-full md:col-span-6 lg:col-span-7 flex flex-col justify-between">
@@ -303,7 +305,7 @@ export default props => {
           <Distrubutions/>
         </section>
 
-        <Suspense>
+        
           <Locker ref={_locker} onSubmited={(res)=>{
             notify("Locked","success")
             batch(()=>{

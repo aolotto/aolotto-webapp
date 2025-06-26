@@ -1,5 +1,5 @@
 import Modal from "./modal";
-import { onMount,createResource,createEffect,createSignal, Switch, Match, Show } from "solid-js";
+import { onMount,createResource,createEffect,createSignal, Switch, Match, Show,Suspense } from "solid-js";
 import { fetchBalance } from "../api";
 import { useApp,useWallet } from "../contexts";
 import { boostStake } from "../api";
@@ -60,8 +60,11 @@ export default props => {
   return (
     <Modal ref={_booster} className="w-[360px] max-[360px]" title={()=>boosted()?"Boosted":"Boost with ALC"} closable = {!boosting()}>
     
+    <Suspense fallback={<Spinner class="w-6 h-6" />}>
+
+    
       
-      <Switch when={balance.state == "ready"} whenFallback={<Spinner class="w-6 h-6" />}>
+      <Switch >
         <Match when={!boosted()}>
           <div className="pt-2 pb-4 px-5 flex flex-col justify-center items-center gap-4">
             <p className="text-sm ">Boost your account with an ALC NFT to raise the veALT multiplier to 1.2x, giving you more veALT for the same lock amount and period.</p>
@@ -120,6 +123,7 @@ export default props => {
         </div>
         </Match>
       </Switch>
+      </Suspense>
     </Modal>
   );
 }
