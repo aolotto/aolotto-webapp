@@ -1,5 +1,5 @@
 import Modal from "./modal";
-import { onMount,createResource,createEffect,createSignal, Switch, Match } from "solid-js";
+import { onMount,createResource,createEffect,createSignal, Switch, Match, Show } from "solid-js";
 import { fetchBalance } from "../api";
 import { useApp,useWallet } from "../contexts";
 import { boostStake } from "../api";
@@ -7,13 +7,16 @@ import toast from "solid-toast";
 import { Table,Head,Body,Cols,Col,Cell,Row } from "./table";
 import { Icon } from "@iconify-icon/solid";
 import { toBalanceValue } from "../lib/tools";
+import Skeleton from "./skeleton";
+import { storeResource } from "../store";
+import Spinner from "./spinner";
 
 export default props => {
   let _booster;
   const { info } = useApp();
   const { address,wallet } = useWallet();
   const [boosting, setBoosting] = createSignal(false);
-  const [ balance, { refetch: refetchBalance }] = createResource(()=> ({pid: info?.alcog_process, address: address() }), fetchBalance);
+  const [ balance, { refetch: refetchBalance }] = storeResource("alc_balance_"+address(),()=>createResource(()=> ({pid: info?.alcog_process, address: address() }), fetchBalance));
   const boosted = () => {
     return props?.staker?.boosted > 1;
   }
@@ -56,7 +59,9 @@ export default props => {
 
   return (
     <Modal ref={_booster} className="w-[360px] max-[360px]" title={()=>boosted()?"Boosted":"Boost with ALC"} closable = {!boosting()}>
-      <Switch>
+    
+      
+      <Switch when={balance.state == "ready"} whenFallback={<Spinner class="w-6 h-6" />}>
         <Match when={!boosted()}>
           <div className="pt-2 pb-4 px-5 flex flex-col justify-center items-center gap-4">
             <p className="text-sm ">Boost your account with an ALC NFT to raise the veALT multiplier to 1.2x, giving you more veALT for the same lock amount and period.</p>
@@ -85,7 +90,7 @@ export default props => {
             <div className="flex items-center justify-between mt-2">
               <p className=" flex items-center gap-1 text-sm ">
                 <span className="text-current/50 uppercase">ALC:</span>
-                <span>{balance()} </span>
+                <span><Show when={balance?.state == "ready"} fallback={<Skeleton w={2} h={1} />}>{balance()}</Show> </span>
                 <img src="https://arweave.net/PURLGdY5k7ujpBM_j_5XkKbnE9Rv9ta8cr7EOPWYRqk" alt="" className={`size-6 ${balance()>0?"":"grayscale"}`} />
               </p>
               <p className="text-right text-sm">
@@ -115,7 +120,6 @@ export default props => {
         </div>
         </Match>
       </Switch>
-      
     </Modal>
   );
 }
