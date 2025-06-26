@@ -47,7 +47,7 @@ export default props => {
   const { info } = useApp();
   const { address,wallet } = useWallet();
   const [boosting, setBoosting] = createSignal(false);
-  const [ balance, { refetch: refetchBalance }] = storeResource("alc_balance_"+address(),()=>createResource(()=> ({pid: info?.alcog_process, address: address() }), fetchBalance));
+  const [ balance, { refetch: refetchBalance }] = createResource(()=> ({pid: info?.alcog_process, address: address() }), fetchBalance)
   const boosted = () => {
     return props?.staker?.boosted > 1;
   }
@@ -116,7 +116,7 @@ export default props => {
             <div className="flex flex-col gap-2 w-full">
               <button 
                 className="btn btn-primary w-full" 
-                disabled={balance?.state != "ready" || balance() <= 0 || boosting() || !address() }
+                disabled={balance?.state != "ready" || balance() <= 0 || boosting() || !address() || !balance() }
                 onClick={handlePayforBoost}
               >
               {boosting() ? "Boosting..." : t("alc.btn.pay")}
@@ -124,7 +124,7 @@ export default props => {
             <div className="flex items-center justify-between mt-2">
               <p className=" flex items-center gap-1 text-sm ">
                 <span className="text-current/50 uppercase">ALC:</span>
-                <span><Show when={balance?.state == "ready"} fallback={<Skeleton w={2} h={1} />}>{balance()}</Show> </span>
+                <span><Show when={balance?.state == "ready"} fallback={<Skeleton w={2} h={1} />}>{balance()||0}</Show> </span>
                 <img src="https://arweave.net/PURLGdY5k7ujpBM_j_5XkKbnE9Rv9ta8cr7EOPWYRqk" alt="" className={`size-6 ${balance()>0?"":"grayscale"}`} />
               </p>
               <p className="text-right text-sm">
