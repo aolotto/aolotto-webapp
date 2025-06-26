@@ -116,7 +116,7 @@ export default props => {
             <div className="flex flex-col gap-2 w-full">
               <button 
                 className="btn btn-primary w-full" 
-                disabled={()=>balance?.state != "ready" || balance() < 1 || boosting() || !address() || !balance()}
+                disabled={balance?.state != "ready" || balance() <= 0 || boosting() || !address() }
                 onClick={handlePayforBoost}
               >
               {boosting() ? "Boosting..." : t("alc.btn.pay")}
