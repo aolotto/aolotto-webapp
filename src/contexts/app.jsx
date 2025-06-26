@@ -22,6 +22,7 @@ export const AppProvider = (props) => {
     stake_process : import.meta.env.VITE_STAKE_PROCESS,
     swap_process : import.meta.env.VITE_ALT_WUSDC_PROCESS,
     alt_process : import.meta.env.VITE_ALT_PROCESS,
+    alcog_process : import.meta.env.VITE_ALCOG_PROCESS,
     ao_link_url : import.meta.env.VITE_AO_LINK_URL || "https://ao.link",
   }
   const [agentProcess,{refetch:refetchAgentProcess}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,(pid)=>({Id:pid}))
@@ -30,6 +31,7 @@ export const AppProvider = (props) => {
   const [poolProcess,{refetch:refetchPoolProcess}] = createResource(()=>info?.pool_process || import.meta.env.VITE_POOL_PROCESS,fetchProcessInfo)
   const [altProcess,{refetch:refetchAltProcess}] = createResource(()=>info?.alt_process || import.meta.env.VITE_ALT_PROCESS,fetchProcessInfo)
   const [agentStats,{refetch:refetchAgentStats}] = createResource(()=>info?.agent_process || import.meta.env.VITE_AGENT_PROCESS,fetchStats)
+  const [alcogProcess,{refetch:refetchAlcogProcess}] = createResource(()=>info?.alcog_process || import.meta.env.VITE_ALCOG_PROCESS,fetchProcessInfo)
   const hooks = {
     timer,
     address,
@@ -41,6 +43,8 @@ export const AppProvider = (props) => {
     stakeProcess,
     poolProcess,
     altProcess,
+    alcogProcess,
+    refetchAlcogProcess,
     refetchAgentProcess,
     refetchAltProcess,
     refetchPayProcess,

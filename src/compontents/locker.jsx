@@ -88,14 +88,14 @@ export default props => {
         <div className=" py-4 px-1">
           <InfoItem label={t("tk.locked")} value={<span>{toBalanceValue((submission()?.amount||0)+(submission()?.staker?.amount || 0),12)} <span class="text-current/50">$ALT</span></span>} className="text-sm"/>
           <InfoItem label={t("tk.unlock_time")} value={()=>new Date(Date.now()+(submission()?.duration || 7*24*60*60*1000)).toLocaleString()} className="text-sm"/>
-          <InfoItem label={t("tk.boosting")} value={submission()?.staker?.boost || "1X"} className="text-sm"/>
+          <InfoItem label={t("tk.boosting")} value={()=>submission()?.staker?.boosted?submission()?.staker?.boosted+"X" : "1X"} className="text-sm"/>
           {/* <InfoItem label="锁仓余额" value={<span>{toBalanceValue((submission()?.amount + (props?.staker?.amount || 0)) * Math.min(submission()?.duration/(1440*24*60*60*1000),1) * (submission()?.staker?.boost||1) ,12,12)} <span className="text-current/50">veALT</span></span>} className="text-sm"/> */}
         </div>
         <div className="flex justify-between items-center py-4 border-t border-base-300">
           <div className="flex items-center gap-2">
             <Icon icon="ph:arrow-elbow-down-right-light" className="ml-1 text-current/50 scale-90"/>
             <div className="flex flex-col">
-              <span>{toBalanceValue((submission()?.amount + (submission()?.staker?.amount || 0)) * Math.min(submission()?.duration/(1440*24*60*60*1000),1) * (submission()?.staker?.boost||1) ,12)} </span>
+              <span>{()=>toBalanceValue((submission()?.amount + (submission()?.staker?.amount || 0)) * Math.min(submission()?.duration/(1440*24*60*60*1000),1) * (submission()?.staker?.boosted||1) ,12)} </span>
               <span className="text-current/50 text-xs">veALT</span>
             </div>
           </div>

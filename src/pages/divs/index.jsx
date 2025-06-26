@@ -11,11 +11,13 @@ import { storeResource } from "../../store"
 import Skeleton from "../../compontents/skeleton"
 import Locker from "../../compontents/locker"
 import Unlocker from "../../compontents/unlocker"
+import Booster from "../../compontents/booster"
 
 
 export default props => {
   let _locker
   let _unlock
+  let _booster
   const {notify,agentProcess,info,altProcess} = useApp()
   const {address,connected,showConnector,connecting,walletConnectionCheck} = useWallet()
   const {altBalance, refetchAltBalance,refetchVeAltBalance,refetchPlayer } = useUser()
@@ -243,9 +245,9 @@ export default props => {
           <button
             className="btn btn-circle btn-ghost"
             disabled={staker.loading || !staker()}
-            onClick={() => _boost?.open()}
+            onClick={() => _booster?.open()}
           >
-            <Icon icon="iconoir:flash" />
+            {staker()?.boosted>1?<Icon icon="iconoir:flash-solid" />:<Icon icon="iconoir:flash" /> }  
           </button>
         </div>
         <div className="dropdown dropdown-end">
@@ -317,6 +319,20 @@ export default props => {
             staker={staker()}
             onSubmited={(res)=>{
               notify("UnLocked","success")
+              batch(()=>{
+                refetchStaker()
+                refetchStake()
+                refetchAltBalance()
+                refetchVeAltBalance()
+                refetchPlayer()
+              })
+            }}
+          />
+          <Booster 
+            ref={_booster}
+            staker={staker()}
+            onSubmit={()=>{
+              notify("Your account has been boosted.","success")
               batch(()=>{
                 refetchStaker()
                 refetchStake()
