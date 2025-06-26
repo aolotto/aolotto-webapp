@@ -70,17 +70,6 @@ export default props => {
 
       <div className=" p-4">
 
-      {/* <div className=" flex justify-between items-center px-2 border-t border-base-300 py-4">
-        <div className="flex flex-col w-1/2 items-center">
-          <div className="stat-title">Bet2Mint</div>
-          <div className="text-lg">{toBalanceValue(details()?.mint?.amount,12)} $ALT</div>
-        </div>
-        <div className="flex flex-col w-1/2 items-center">
-          <div className="stat-title">Gap-Rewards</div>
-          <div className="text-lg">{toBalanceValue(details()?.mint?.plus?.[0],12)} $ALT</div>
-        </div>
-      </div> */}
-
       <div>
         <p className="py-4 border-t border-current/20">Bet2Mint</p>
         <InfoItem label={<span className=" inline-flex items-center gap-2"><Icon icon="ph:arrow-elbow-down-right-light" className=" scale-90"/><span>Minted</span></span>} value={()=>toBalanceValue(details()?.mint?.total,12,12)+" $ALT"} className="text-sm"/>
