@@ -27,6 +27,7 @@ export default props => {
     "alt.boosted" : "Your account has been permanently boosted. Stake anytime and enjoy a 1.2x multiplier on your veALT balance.",
     "alc.yes_i_know": "Yes, I know!",
     "alc.btn.pay" : "Pay 1 ALC to Boost",
+    "alt.btn.boosting": "Boosting...",
   });
   setDictionarys("zh",{
     "alc.booster.title": "使用 ALC 提升",
@@ -42,6 +43,7 @@ export default props => {
     "alt.boosted" : "您的账户已永久提升。随时进行质押，享受 1.2x 的 veALT 余额乘数。",
     "alc.yes_i_know": "是的，我知道！",
     "alc.btn.pay" : "支付 1 ALC 进行提升",
+    "alt.btn.boosting": "正在提升...",
   });
   let _booster;
   const { info } = useApp();
